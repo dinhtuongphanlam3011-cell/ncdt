@@ -394,14 +394,6 @@
     }
 
     try {
-      if (typeof window.showLivePlayedNote === "function") {
-        window.showLivePlayedNote({
-          instId: "dantranh",
-          noteIdx: i,
-          noteName: NOTES[i] || ("Dây " + (i + 1)),
-          key: KEY_MAP[i] || String(i + 1)
-        });
-      }
       if (typeof isDemoPlaying !== "undefined" && !isDemoPlaying && typeof window.recordUserPlayedNote === "function") {
         window.recordUserPlayedNote("dantranh", i, NOTES[i] || ("Dây " + (i + 1)), KEY_MAP[i] || String(i + 1));
       }
@@ -2547,13 +2539,172 @@
   }
   window.isVietnameseInstrumentTopic = isVietnameseInstrumentTopic;
 
+  // LẤY THÔNG TIN THỜI GIAN THỰC VỀ HÀNH ĐỘNG CỦA NGƯỜI DÙNG (YÊU CẦU 3)
+  function getUserLiveContextSummary() {
+    var activeTab = "encyclopedia";
+    try {
+      var panes = document.querySelectorAll(".tab-pane");
+      for (var p = 0; p < panes.length; p++) {
+        if (panes[p].style.display !== "none" && panes[p].classList.contains("active")) {
+          activeTab = panes[p].id.replace("tabContent", "").toLowerCase();
+          break;
+        }
+      }
+    } catch(e) {}
+
+    var instId = window.currentActiveInstrument || "dantranh";
+    var instName = "Đàn Tranh (Thập lục huyền cầm)";
+    var instCat = "Nhóm đàn dây gảy";
+    var instOrigin = "Cổ truyền Việt Nam";
+    try {
+      if (typeof ALL_INSTRUMENTS !== "undefined") {
+        var found = ALL_INSTRUMENTS.find(function(it) { return it.id === instId; });
+        if (found) {
+          instName = found.name;
+          instCat = found.catName || found.cat;
+          instOrigin = found.origin || instOrigin;
+        }
+      }
+    } catch(e2) {}
+
+    var lastNote = (window.lastPlayedNoteInfo && window.lastPlayedNoteInfo.noteName)
+      ? (window.lastPlayedNoteInfo.noteName + " (Phím [" + (window.lastPlayedNoteInfo.key || "") + "])")
+      : "Chưa gảy nốt";
+    var trail = (window.livePlayedTrailBuffer && window.livePlayedTrailBuffer.length > 0)
+      ? window.livePlayedTrailBuffer.map(function(b) { return b.name; }).join(" → ")
+      : "(Chưa có chuỗi nốt gần đây)";
+    var sessionNotes = window.sessionTotalPlayedNotesCount || 0;
+    var dailyNotes = 0;
+    try {
+      var todayStr = (typeof getTodayDateStr === "function") ? getTodayDateStr() : new Date().toISOString().slice(0, 10);
+      dailyNotes = parseInt(localStorage.getItem("dt_daily_notes_" + todayStr) || "0", 10);
+    } catch(e3) {}
+
+    var isDemo = (typeof isDemoPlaying !== "undefined" && isDemoPlaying);
+    var isRec = (typeof isRecordingMelodySession !== "undefined" && isRecordingMelodySession);
+
+    var tabNamesVN = {
+      encyclopedia: "Trang chủ - Giới thiệu tổng quan",
+      lookup: "Thông tin & Cấu tạo các nhạc cụ",
+      dantranh: "Sân khấu Chơi nhạc cụ 3D & Bàn phím ngũ cung",
+      heritage: "Trung tâm Nghiên cứu di sản chuyên sâu",
+      gallery: "Triển lãm 4 Bộ Nhạc cụ Hoàng kim",
+      demosongs: "Kho tấu nhạc mẫu cổ truyền",
+      artisan: "Nghệ nhân & Làng nghề chế tác",
+      studio: "Phòng thu âm & Bộ sưu tập yêu thích"
+    };
+
+    var currentScreenName = tabNamesVN[activeTab] || activeTab;
+
+    return {
+      activeTab: activeTab,
+      screenName: currentScreenName,
+      instId: instId,
+      instName: instName,
+      instCat: instCat,
+      instOrigin: instOrigin,
+      lastNote: lastNote,
+      trail: trail,
+      sessionNotes: sessionNotes,
+      dailyNotes: dailyNotes,
+      isDemoPlaying: isDemo,
+      isRecording: isRec
+    };
+  }
+  window.getUserLiveContextSummary = getUserLiveContextSummary;
+
+  function updateAiLiveObservationUI() {
+    try {
+      var obsTextEl = document.getElementById("aiLiveObservationText");
+      var obsBadgeEl = document.getElementById("aiLiveObsNotesBadge");
+      if (!obsTextEl) return;
+      var ctx = getUserLiveContextSummary();
+      var summaryText = ctx.instName;
+      if (ctx.isDemoPlaying) {
+        summaryText += " • 🎶 Đang nghe tấu bài mẫu";
+      } else if (window.lastPlayedNoteInfo && window.lastPlayedNoteInfo.noteName) {
+        summaryText += " • 🎹 Vừa gảy " + window.lastPlayedNoteInfo.noteName;
+      } else {
+        summaryText += " • " + ctx.screenName;
+      }
+      obsTextEl.textContent = summaryText;
+      if (obsBadgeEl) {
+        obsBadgeEl.textContent = ctx.sessionNotes + " nốt phiên";
+      }
+    } catch(e) {}
+  }
+  window.updateAiLiveObservationUI = updateAiLiveObservationUI;
+
   function getKnowledgeAnswer(question) {
     var raw = (question || "").trim();
     var q = raw.toLowerCase();
 
+    // 0. TRUY VẤN VỀ HÀNH ĐỘNG THỜI GIAN THỰC CỦA NGƯỜI DÙNG (YÊU CẦU 3)
+    var ctxLive = getUserLiveContextSummary();
+    if (q.includes("tôi đang làm gì") || q.includes("tôi đang ở đâu") || q.includes("tôi đang xem gì") || q.includes("tôi đang chơi gì")) {
+      return "👁️ <strong>Tôi đang theo dõi hành động của bạn trên hệ thống:</strong><br><br>" +
+        "• 📍 <strong>Màn hình đang mở:</strong> " + ctxLive.screenName + "<br>" +
+        "• 🪕 <strong>Nhạc cụ đang chọn:</strong> <strong>" + ctxLive.instName + "</strong> (" + ctxLive.instCat + ")<br>" +
+        "• 🎹 <strong>Nốt vừa gảy:</strong> " + ctxLive.lastNote + "<br>" +
+        "• 🎶 <strong>Chuỗi nốt gần nhất:</strong> " + ctxLive.trail + "<br>" +
+        "• ⚡ <strong>Phiên này đã đánh:</strong> <strong>" + ctxLive.sessionNotes + " nốt</strong> (Tổng hôm nay: <strong>" + ctxLive.dailyNotes + " phím</strong>)<br>" +
+        (ctxLive.isDemoPlaying ? "• 📻 <em>Hệ thống đang tấu khúc nhạc mẫu của cây đàn này!</em><br>" : "") +
+        (ctxLive.isRecording ? "• 🔴 <em>Bạn đang bật chế độ phòng thu ghi âm giai điệu!</em><br>" : "") +
+        "<br>Bạn có thể bấm phím gảy thêm hoặc hỏi tôi về kỹ thuật ngón của cây " + ctxLive.instName + " nhé!";
+    }
+
+    if (q.includes("tôi đang chơi cây đàn nào") || q.includes("tôi đang chơi đàn gì") || q.includes("cây đàn tôi đang chọn") || q.includes("nhạc cụ tôi đang xem")) {
+      return "🪕 <strong>Bạn hiện đang trải nghiệm cây: " + ctxLive.instName + "</strong><br><br>" +
+        "• <strong>Phân loại:</strong> " + ctxLive.instCat + "<br>" +
+        "• <strong>Xuất xứ / Vùng miền:</strong> " + ctxLive.instOrigin + "<br>" +
+        "• <strong>Nốt gần nhất đã gảy:</strong> " + ctxLive.lastNote + "<br>" +
+        "• <strong>Số nốt gảy phiên này:</strong> " + ctxLive.sessionNotes + " nốt.<br><br>" +
+        "Bạn có muốn tôi tấu thử một khúc nhạc mẫu hay hướng dẫn cách rung/nhấn trên cây đàn này không?";
+    }
+
+    if (q.includes("tôi vừa đánh nốt nào") || q.includes("tôi vừa gảy nốt gì") || q.includes("nốt vừa rồi") || q.includes("vừa gảy nốt nào")) {
+      if (!window.lastPlayedNoteInfo) {
+        return "🎹 Hiện tại bạn <strong>chưa gảy nốt nào</strong> trong phiên này! Hãy bấm các phím chữ cái hoặc gảy dây trên Sân khấu 3D để tôi lắng nghe tiếng đàn của bạn nhé.";
+      }
+      return "🎶 <strong>Nốt bạn vừa gảy là:</strong> <span style='color:#6ee7b7; font-weight:800; font-size:15px;'>" + ctxLive.lastNote + "</span><br><br>" +
+        "• <strong>Chuỗi các nốt gần đây:</strong> " + ctxLive.trail + "<br>" +
+        "• <strong>Nhạc cụ phát âm:</strong> " + ctxLive.instName + "<br>" +
+        "• <strong>Tổng số nốt trong phiên:</strong> " + ctxLive.sessionNotes + " nốt.";
+    }
+
+    if (q.includes("chuỗi nốt") || q.includes("lịch sử đánh") || q.includes("chuỗi vừa gảy")) {
+      return "📜 <strong>Chuỗi nốt bạn vừa diễn tấu gần đây:</strong><br><br>" +
+        "<div style='background:rgba(239,196,123,0.12); padding:8px 12px; border-radius:8px; border:1px solid rgba(239,196,123,0.3); font-weight:700; color:#ffea9f;'>" +
+        ctxLive.trail + "</div><br>" +
+        "Bạn đã gảy tổng cộng <strong>" + ctxLive.sessionNotes + " nốt</strong> trong phiên này trên cây <strong>" + ctxLive.instName + "</strong>!";
+    }
+
+    if (q.includes("đánh giá") || q.includes("nhận xét tiếng đàn") || q.includes("tôi chơi thế nào") || q.includes("nghe tôi gảy")) {
+      if (ctxLive.sessionNotes === 0) {
+        return "✨ Bạn chưa gảy nốt nào cả! Hãy bấm phím diễn tấu một vài nốt trên cây <strong>" + ctxLive.instName + "</strong> rồi hỏi lại tôi nhé!";
+      }
+      return "🎼 <strong>Nhận xét diễn tấu ngũ cung của bạn:</strong><br><br>" +
+        "• Bạn đã diễn tấu <strong>" + ctxLive.sessionNotes + " nốt</strong> trên cây <strong>" + ctxLive.instName + "</strong>.<br>" +
+        "• Chuỗi nốt gần nhất: <em>" + ctxLive.trail + "</em>.<br>" +
+        "• Giai điệu mang âm hưởng ngũ cung rất thanh thoát. Với cây " + ctxLive.instName + ", nếu bạn kết hợp thêm ngón rung (tạo độ ngân vang) hoặc ngón vuốt/chùi mềm mại, tiếng đàn sẽ càng thấm đượm chất dân ca!";
+    }
+
+    if (q.includes("hôm nay tôi đánh bao nhiêu") || q.includes("được bao nhiêu nốt") || q.includes("bao nhiêu phím")) {
+      return "⚡ <strong>Thống kê diễn tấu của bạn:</strong><br><br>" +
+        "• <strong>Phiên hiện tại:</strong> " + ctxLive.sessionNotes + " nốt<br>" +
+        "• <strong>Tổng số phím trong ngày hôm nay:</strong> <strong style='color:#6ee7b7;'>" + ctxLive.dailyNotes + " phím</strong><br>" +
+        "• <strong>Cây đàn vừa chơi:</strong> " + ctxLive.instName + "<br><br>" +
+        "Tuyệt vời! Việc luyện ngón đều đặn mỗi ngày sẽ giúp ngón tay bạn linh hoạt và cảm âm ngũ cung chuẩn xác hơn rất nhiều.";
+    }
+
     // 1. Lời chào & Thân mật
     if (q === "chào" || q === "hi" || q === "hello" || q.startsWith("chào") || q.startsWith("xin chào") || q.startsWith("hé lô")) {
+      var greetExtra = "";
+      if (ctxLive.sessionNotes > 0) {
+        greetExtra = "Tôi thấy bạn đang trải nghiệm cây <strong>" + ctxLive.instName + "</strong> và đã gảy <strong>" + ctxLive.sessionNotes + " nốt</strong> (nốt vừa rồi là " + ctxLive.lastNote + ")!<br><br>";
+      }
       return "✨ <strong>Xin chào bạn! Tôi là Chuyên gia về nhạc cụ dân tộc.</strong><br><br>" +
+        greetExtra +
         "Rất vui được hỗ trợ bạn! Tôi chuyên giải đáp chuyên sâu về <strong>38 đại nhạc cụ dân tộc Việt Nam</strong>, kỹ thuật gảy/nhấn ngón đàn, thang âm ngũ cung <em>(Hò - Xự - Xang - Xê - Cống)</em>, cách chỉnh dây và kho tàng bài bản âm nhạc cổ truyền.<br><br>" +
         "Hôm nay bạn cần tôi giải đáp điều gì nào?";
     }
@@ -2984,6 +3135,20 @@
         "- QUY TẮC BẮT BUỘC: Bạn CHỈ ĐƯỢC PHÉP trả lời các câu hỏi liên quan đến Nhạc cụ Dân tộc và Âm nhạc Truyền thống Việt Nam.\n" +
         "- NẾU NGƯỜI DÙNG HỎI BẤT KỲ CHỦ ĐỀ NÀO NGOÀI LỀ KHÔNG LIÊN QUAN ĐẾN NHẠC CỤ DÂN TỘC VIỆT NAM, BẠN BẮT BUỘC PHẢI TỪ CHỐI LỊCH SỰ VÀ NHẮC NGƯỜI DÙNG HỎI VỀ NHẠC CỤ DÂN TỘC.\n" +
         "- CHẾ ĐỘ: PHẢN HỒI SIÊU TỐC (FAST MODE). Trả lời ngắn gọn, súc tích trong 1-3 câu hoặc 2-3 gạch đầu dòng ngắn gọn.";
+    }
+
+    // NẠP THÔNG TIN THỜI GIAN THỰC VỀ HÀNH ĐỘNG CỦA NGƯỜI DÙNG VÀO HỆ THỐNG PROMPT (YÊU CẦU 3)
+    var liveCtx = (typeof getUserLiveContextSummary === "function") ? getUserLiveContextSummary() : null;
+    if (liveCtx) {
+      systemInstruction += "\n\n[THÔNG TIN THỜI GIAN THỰC VỀ HÀNH ĐỘNG CỦA NGƯỜI DÙNG]:\n" +
+        "- Màn hình/tab đang xem: " + liveCtx.screenName + " (" + liveCtx.activeTab + ")\n" +
+        "- Nhạc cụ đang chọn/diễn tấu: " + liveCtx.instName + " (" + liveCtx.instCat + ")\n" +
+        "- Nốt vừa gảy gần nhất: " + liveCtx.lastNote + "\n" +
+        "- Chuỗi các nốt vừa đánh liên tiếp: " + liveCtx.trail + "\n" +
+        "- Số nốt đã gảy trong phiên này: " + liveCtx.sessionNotes + " nốt (Hôm nay: " + liveCtx.dailyNotes + " phím)\n" +
+        "- Trạng thái tấu bài mẫu: " + (liveCtx.isDemoPlaying ? "Đang tấu bài mẫu" : "Không") + "\n" +
+        "- Trạng thái phòng thu âm: " + (liveCtx.isRecording ? "Đang thu âm giai điệu" : "Không thu âm") + "\n" +
+        "LƯU Ý: Bạn có thể tự nhiên nhận xét, khen ngợi hoặc liên hệ trực tiếp đến các nốt người dùng vừa gảy hoặc cây đàn họ đang chọn để câu trả lời mang tính cá nhân hoá cao, thân thiện và chính xác!";
     }
 
     // 1. NẾU CÓ CẤU HÌNH GEMINI API KEY RIÊNG
@@ -9831,16 +9996,6 @@
       {"name": "Nốt Fa# (Fa# 5)", "freq": 739.99, "key": "7"},
       {"name": "Nốt Sol cao (Sol 5)", "freq": 783.99, "key": "8"}
     ]},
-    {"id": "kenla", "name": "Kèn lá", "alias": "Lá cây gấp tạo âm", "cat": "hoi", "catName": "Nhóm sáo, kèn & hơi", "icon": "🍃", "origin": "Vui chơi, giao duyên các dân tộc", "desc": "Họ: Hơi. Cấu tạo: Chiếc lá cây rừng tươi mềm (thường là lá đa, lá sung) được gấp mép ngậm giữa hai môi. Người thổi điều khiển hơi thở và độ căng môi để tạo cao độ. Âm thanh: Sắc bén, lảnh lót như tiếng chim hót rừng sâu.", "soundType": "leaf_reed", "demoSong": {"title": "Lời Tỏ Tình Bên Bờ Suối", "tempo": 240, "notes": [0, 1, 2, 3, 4, 3, 2, 1, 3, 4, 5, 4, 2, 0]}, "notes": [
-      {"name": "Đô 5", "freq": 523.25, "key": "1"},
-      {"name": "Rê 5", "freq": 587.33, "key": "2"},
-      {"name": "Mi 5", "freq": 659.25, "key": "3"},
-      {"name": "Sol 5", "freq": 783.99, "key": "4"},
-      {"name": "La 5", "freq": 880.00, "key": "5"},
-      {"name": "Đô 6", "freq": 1046.50, "key": "6"},
-      {"name": "Rê 6", "freq": 1174.66, "key": "7"},
-      {"name": "Mi 6", "freq": 1318.51, "key": "8"}
-    ]},
     {"id": "pi", "name": "Pí / Pi", "alias": "Sáo nứa Tây Bắc", "cat": "hoi", "catName": "Nhóm sáo, kèn & hơi", "icon": "🎵", "origin": "Các dân tộc vùng Tây Bắc", "desc": "Tên chung cho hệ nhạc cụ hơi truyền thống của đồng bào Thái (Pí thiu, Pí lè, Pí ló...). Ống nứa ngắn có dăm lưỡi gà, giai điệu thiết tha, mang hơi thở của thung lũng Tây Bắc mây mờ.", "soundType": "flute_reed", "demoSong": {"title": "Điệu Xòe Hoa Mai Châu", "tempo": 230, "notes": [0, 2, 3, 4, 3, 2, 0, 3, 4, 5, 4, 3, 0]}, "notes": [
       {"name": "La 4", "freq": 440.00, "key": "1"},
       {"name": "Đô 5", "freq": 523.25, "key": "2"},
@@ -10083,14 +10238,6 @@
     }
 
     try {
-      if (typeof window.showLivePlayedNote === "function") {
-        window.showLivePlayedNote({
-          instId: inst.id,
-          noteIdx: noteIdx,
-          noteName: note.name,
-          key: note.key || String(noteIdx + 1)
-        });
-      }
       if (!isDemoPlaying && typeof window.recordUserPlayedNote === "function") {
         window.recordUserPlayedNote(inst.id, noteIdx, note.name, note.key || String(noteIdx + 1));
       }
@@ -11262,8 +11409,8 @@
         '<line x1="515" y1="30" x2="515" y2="300" stroke="url(#u2d-gold-str)" stroke-width="2.6"/>' +
         tybaNotesSvg;
 
-    // 6. NHÓM SÁO TRÚC, TIÊU, ĐING BUỐT, PI, KÈN LÁ (NHẠC CỤ HƠI ĐỐT TRÚC CHỈ ĐỎ)
-    } else if (inst.cat === "hoi" && (instId === "saotruc" || instId === "tieu" || instId === "dingbuot" || instId === "pi" || instId === "kenla")) {
+    // 6. NHÓM SÁO TRÚC, TIÊU, ĐING BUỐT, PI (NHẠC CỤ HƠI ĐỐT TRÚC CHỈ ĐỎ)
+    } else if (inst.cat === "hoi" && (instId === "saotruc" || instId === "tieu" || instId === "dingbuot" || instId === "pi")) {
       var holesSvg = "";
       for (var i = 0; i < totalNotes; i++) {
         var n = notes[i];
@@ -11883,6 +12030,9 @@
     updateModalsForInstrument(inst);
     if (typeof window.syncInstrumentTaskbarInfo === "function") {
       window.syncInstrumentTaskbarInfo();
+    }
+    if (typeof updateAiLiveObservationUI === "function") {
+      updateAiLiveObservationUI();
     }
   }
 

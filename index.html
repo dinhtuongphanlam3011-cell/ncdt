@@ -115,7 +115,7 @@
           <span id="navTabInstIcon">🪕</span>
           <span id="navTabInstText">Nhạc cụ</span>
         </button>
-        <button type="button" class="nav-link tttt-plain-tab" id="navTabForum" onclick="switchNavTab('forum')">
+        <button type="button" class="nav-link tttt-plain-tab" id="navTabForum" onclick="switchNavTab('forum')" style="display: none !important;">
           💬 Diễn đàn MIT
         </button>
         <button type="button" class="nav-link tttt-plain-tab" id="navTabLookup" onclick="switchNavTab('lookup')" style="display: none !important;">
@@ -455,8 +455,8 @@
             <div class="tttt-roadmap-card" onclick="openCategoryInLookup('hoi')">
               <div class="tttt-roadmap-icon-circle">🎋</div>
               <h3>Bộ Sáo, Kèn &amp; Hơi</h3>
-              <p class="tttt-roadmap-highlight">11 Nhạc cụ</p>
-              <p class="tttt-roadmap-desc">Sáo trúc, Tiêu, Khèn Mông, Kèn bầu, Kèn lá, Pí Tây Bắc, Đing Năm...</p>
+              <p class="tttt-roadmap-highlight">10 Nhạc cụ</p>
+              <p class="tttt-roadmap-desc">Sáo trúc, Tiêu, Khèn Mông, Kèn bầu, Pí Tây Bắc, Đing Năm...</p>
             </div>
             <div class="tttt-roadmap-card" onclick="openCategoryInLookup('go')">
               <div class="tttt-roadmap-icon-circle">🔔</div>
@@ -545,13 +545,7 @@
               </div>
             </div>
 
-            <button type="button" id="btnPlayInstrumentDemo" class="btn btn-secondary btn-sm" onclick="playInstrumentDemoTrack()">
-              ▶ <span id="lblDemoSongBtn">Chơi ngay bản mẫu</span>
-            </button>
-            <button type="button" id="btnStopInstrumentDemo" class="btn btn-secondary btn-sm" onclick="stopInstrumentDemoTrack()" style="display:none;">
-              ⏹ Dừng bản nhạc mẫu
-            </button>
-            <button type="button" class="lux-gold-cta-btn" style="width:auto; padding:10px 18px;" onclick="openInstrumentResearchTab(window.currentActiveInstrument || 'dantranh')" title="Đi tìm hiểu thông tin cây đàn này">
+            <button type="button" class="lux-gold-cta-btn" style="width:auto; padding:8px 16px; font-size:12.5px;" onclick="openInstrumentResearchTab(window.currentActiveInstrument || 'dantranh')" title="Đi tìm hiểu thông tin cây đàn này">
               📖 Đi tìm hiểu thông tin cây đàn →
             </button>
             <button type="button" id="btnStageToggleFavorite" class="lux-icon-circle-btn lux-heart-btn" onclick="toggleFavoriteCurrentInstrument(this)" title="Lưu nhạc cụ vào danh sách Yêu thích trong Tài khoản">
@@ -564,25 +558,33 @@
         <div class="wf-stage-layout wf-stage-layout-single">
 
           <div class="wf-stage-main-right">
-            <!-- Thanh điều khiển góc nhìn 3D & Lướt nốt -->
-            <div class="view-mode-bar">
+            <!-- Thanh điều khiển góc nhìn 3D & Chức năng diễn tấu (Cân đối 2 bên: 3 nút trái - 3 nút phải) -->
+            <div class="view-mode-bar" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
+              <!-- BÊN TRÁI: ĐIỀU KHIỂN GÓC NHÌN CAMERA 3D -->
               <div id="controls3DGroup" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-                <button type="button" id="btnAutoRotate3D" class="btn btn-secondary btn-xs">
+                <button type="button" id="btnAutoRotate3D" class="btn btn-secondary btn-xs" title="Tự động xoay quanh nhạc cụ 360 độ">
                   🔄 Tự xoay 360°
                 </button>
-                <button type="button" id="btnTopView3D" class="btn btn-secondary btn-xs">
+                <button type="button" id="btnTopView3D" class="btn btn-secondary btn-xs" title="Chuyển góc nhìn từ trên xuống trực diện dây/mặt đàn">
                   📐 Góc trên xuống
                 </button>
-                <button type="button" id="btnResetView3D" class="btn btn-secondary btn-xs">
+                <button type="button" id="btnResetView3D" class="btn btn-secondary btn-xs" title="Khôi phục góc nhìn 3D ban đầu">
                   🎯 Đặt lại góc nhìn
                 </button>
               </div>
 
-              <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-                <button type="button" id="btnGlissandoHighLow" class="btn btn-secondary btn-xs">
+              <!-- BÊN PHẢI: TẤU BÀI MẪU & KỸ THUẬT LƯỚT NỐT (GLISSANDO) -->
+              <div id="controlsAudioGroup" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                <button type="button" id="btnPlayInstrumentDemo" class="btn btn-secondary btn-xs" onclick="playInstrumentDemoTrack()" title="Tấu khúc nhạc mẫu của cây đàn này">
+                  ▶ <span id="lblDemoSongBtn">Tấu bài mẫu</span>
+                </button>
+                <button type="button" id="btnStopInstrumentDemo" class="btn btn-secondary btn-xs" onclick="stopInstrumentDemoTrack()" style="display:none;" title="Dừng tấu bản nhạc mẫu">
+                  ⏹ Dừng bài mẫu
+                </button>
+                <button type="button" id="btnGlissandoHighLow" class="btn btn-secondary btn-xs" title="Kỹ thuật lướt dây từ âm cao xuống âm thấp">
                   🎶 Lướt: Cao → Thấp
                 </button>
-                <button type="button" id="btnGlissandoLowHigh" class="btn btn-secondary btn-xs">
+                <button type="button" id="btnGlissandoLowHigh" class="btn btn-secondary btn-xs" title="Kỹ thuật lướt dây từ âm thấp lên âm cao">
                   🎶 Thấp → Cao
                 </button>
               </div>
@@ -605,28 +607,45 @@
 
             <!-- Bàn phím 16 dây / phím ngũ cung tương tác -->
             <div id="universalInstrumentStage" class="lux-play-keyboard-card" style="display:block; width:100%;">
-              <!-- THANH HIỂN THỊ NỐT NHẠC VỪA ĐÁNH (YÊU CẦU 4: DỄ BIẾT MÌNH ĐÃ ĐÁNH NỐT NÀO) -->
-              <div id="livePlayedNoteDisplayBanner" class="live-played-note-banner" style="margin-bottom: 14px; background: linear-gradient(135deg, rgba(38, 14, 25, 0.95), rgba(18, 5, 12, 0.95)); border: 1px solid rgba(239, 196, 123, 0.4); border-radius: 14px; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; box-shadow: 0 4px 18px rgba(0,0,0,0.45);">
-                <div style="display: flex; align-items: center; gap: 12px;">
-                  <div style="font-size: 22px; filter: drop-shadow(0 0 6px #efc47b);">🎶</div>
-                  <div>
-                    <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #ffea9f; font-weight: 700; display: flex; align-items: center; gap: 8px;">
-                      <span>NỐT VỪA ĐÁNH RA:</span>
-                      <span id="liveSessionNotesCountBadge" style="font-size: 10.5px; background: rgba(239, 196, 123, 0.2); border: 1px solid rgba(239, 196, 123, 0.4); padding: 1px 7px; border-radius: 999px; color: #ffea9f; text-transform: none; font-weight: 600;">(0 nốt phiên này)</span>
-                    </div>
-                    <div id="liveActiveNoteName" style="font-size: 16.5px; font-weight: 800; color: #6ee7b7; text-shadow: 0 0 10px rgba(110, 231, 183, 0.5); transition: all 0.15s ease;">
+              <!-- THANH HIỂN THỊ NỐT NHẠC VỪA ĐÁNH (TRÊN 1 DÒNG GỌN GÀNG - YÊU CẦU 4) -->
+              <div id="livePlayedNoteDisplayBanner" class="live-played-note-banner" style="margin-bottom: 8px; background: linear-gradient(135deg, rgba(38, 14, 25, 0.95), rgba(18, 5, 12, 0.95)); border: 1px solid rgba(239, 196, 123, 0.4); border-radius: 12px; padding: 8px 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: nowrap; gap: 14px; box-shadow: 0 4px 18px rgba(0,0,0,0.45); overflow-x: auto; white-space: nowrap;">
+                <!-- BÊN TRÁI: NỐT VỪA ĐÁNH RA -->
+                <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
+                  <span style="font-size: 20px; filter: drop-shadow(0 0 6px #efc47b);">🎶</span>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #ffea9f; font-weight: 700;">NỐT VỪA ĐÁNH RA:</span>
+                    <span id="liveActiveNoteName" style="font-size: 15px; font-weight: 800; color: #6ee7b7; text-shadow: 0 0 10px rgba(110, 231, 183, 0.5); transition: all 0.15s ease;">
                       Chưa gảy nốt (Bấm phím hoặc gảy dây ảo)
-                    </div>
+                    </span>
+                    <span id="liveSessionNotesCountBadge" style="font-size: 10.5px; background: rgba(239, 196, 123, 0.2); border: 1px solid rgba(239, 196, 123, 0.4); padding: 1px 7px; border-radius: 999px; color: #ffea9f; font-weight: 600;">(0 nốt phiên này)</span>
                   </div>
                 </div>
-                <!-- Chuỗi các nốt vừa đánh liên tiếp (Note Trail) -->
-                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+
+                <!-- BÊN PHẢI: CHUỖI NỐT GẦN ĐÂY -->
+                <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
                   <span style="font-size: 11px; color: #a1a1aa;">Chuỗi nốt gần đây:</span>
-                  <div id="livePlayedNotesTrail" style="display: flex; gap: 6px; align-items: center; min-height: 28px; flex-wrap: wrap;">
+                  <div id="livePlayedNotesTrail" style="display: inline-flex; gap: 6px; align-items: center; min-height: 26px; max-width: 460px; overflow-x: auto; scrollbar-width: none;">
                     <span class="note-bead empty" style="font-size: 11.5px; color: #71717a; font-style: italic;">(Sẵn sàng ghi nhận...)</span>
                   </div>
                   <button type="button" class="btn btn-xs" onclick="clearLivePlayedNotesTrail()" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); color: #d4d4d8; border-radius: 999px; padding: 2px 8px; font-size: 10.5px; cursor: pointer;" title="Xóa chuỗi nốt vừa đánh">
                     ✕ Xóa chuỗi
+                  </button>
+                </div>
+              </div>
+
+              <!-- DÒNG LỊCH SỬ ĐÁNH NỐT CỦA NGƯỜI DÙNG (YÊU CẦU 4: THÊM 1 DÒNG HIỆN LỊCH SỬ ĐÁNH NỐT) -->
+              <div id="userNoteHistoryRow" class="user-note-history-row" style="margin-bottom: 14px; background: rgba(18, 5, 12, 0.78); border: 1px dashed rgba(239, 196, 123, 0.32); border-radius: 10px; padding: 6px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 12px; overflow-x: auto; white-space: nowrap;">
+                <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
+                  <span style="font-size: 13px;">📜</span>
+                  <span style="color: #ffd166; font-weight: 700; font-size: 11.5px; letter-spacing: 0.04em;">LỊCH SỬ ĐÁNH NỐT:</span>
+                  <span id="userNoteHistorySummaryBadge" style="font-size: 10.5px; color: #94a3b8; font-style: italic;">(Chưa có thao tác trong phiên)</span>
+                </div>
+                <div id="userNoteHistoryStream" style="display: flex; align-items: center; gap: 6px; overflow-x: auto; max-width: 65%; scrollbar-width: none; padding: 2px 0;">
+                  <span style="font-size: 11px; color: #71717a; font-style: italic;">Chưa có lịch sử diễn tấu</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
+                  <button type="button" class="btn btn-xs" onclick="clearUserNoteHistory()" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: #cbd5e1; border-radius: 6px; padding: 2px 8px; font-size: 10.5px; cursor: pointer;" title="Xóa toàn bộ lịch sử đánh nốt">
+                    ✕ Xóa lịch sử
                   </button>
                 </div>
               </div>
@@ -1111,11 +1130,11 @@
         <div class="wf-col-card">
           <div class="wf-col-thumb">
             <span style="font-size:46px;">🎋</span>
-            <span class="wf-col-count">11 nhạc cụ</span>
+            <span class="wf-col-count">10 nhạc cụ</span>
           </div>
           <h3 class="wf-col-title">2. Bộ Sáo, Kèn & Hơi</h3>
           <p class="wf-col-text">
-            Sáo Trúc, Tiêu (Động tiêu), Khèn Mông, Khèn Bè Thái, Kèn Bầu, Kèn Lá, Pí Tây Bắc, Đing Năm, Đing Buốt, Đing Tút, Pi Lè.
+            Sáo Trúc, Tiêu (Động tiêu), Khèn Mông, Khèn Bè Thái, Kèn Bầu, Pí Tây Bắc, Đing Năm, Đing Buốt, Đing Tút, Pi Lè.
           </p>
           <div class="wf-col-meta">
             <span>🎵 Âm thanh thanh thoát, mộc mạc</span>
@@ -1683,6 +1702,64 @@
       </div>
     </section>
   </div> <!-- /tabContentStudio -->
+
+  <!-- =========================================================
+       FOOTER BẢN QUYỀN & THÔNG TIN GIÁO DỤC: NXB GIÁO DỤC VIỆT NAM (HEID)
+       ========================================================= -->
+  <footer id="officialPublisherFooter" class="official-publisher-footer" style="background: linear-gradient(180deg, #07192f 0%, #030d1a 100%); border-top: 1px solid rgba(56, 189, 248, 0.25); color: #dbeafe; padding: 28px 36px 32px; margin-top: 56px; position: relative; z-index: 10; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+    <div style="max-width: 1400px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 28px; flex-wrap: wrap;">
+      <!-- KHỐI BÊN TRÁI: LOGO & TÊN NHÀ XUẤT BẢN -->
+      <div style="display: flex; align-items: center; gap: 16px; min-width: 320px;">
+        <div style="width: 52px; height: 52px; border-radius: 8px; border: 2px solid #38bdf8; background: #0c2340; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 0 14px rgba(56, 189, 248, 0.4); flex-shrink: 0;">
+          <span style="font-size: 13px; font-weight: 900; color: #38bdf8; line-height: 1.1; letter-spacing: -0.5px;">HE</span>
+          <span style="font-size: 13px; font-weight: 900; color: #ffffff; line-height: 1.1; letter-spacing: -0.5px;">ID</span>
+        </div>
+        <div>
+          <div style="font-size: 14.5px; font-weight: 700; color: #ffffff; letter-spacing: 0.02em; line-height: 1.35;">NHÀ XUẤT BẢN GIÁO DỤC VIỆT NAM</div>
+          <div style="font-size: 13.5px; font-weight: 700; color: #ffffff; letter-spacing: 0.02em; line-height: 1.35;">CÔNG TY CỔ PHẦN ĐẦU TƯ VÀ PHÁT TRIỂN GIÁO DỤC HÀ NỘI</div>
+          <div style="font-size: 11.5px; color: #94a3b8; margin-top: 4px;">
+            Số ĐKKD: 0102222393 <span style="margin: 0 5px; color: #475569;">|</span> Ngày, nơi cấp: 26/04/2021, Sở KH&amp;ĐT Hà Nội
+          </div>
+        </div>
+      </div>
+
+      <!-- KHỐI Ở GIỮA: THÔNG TIN HỖ TRỢ & ĐỊA CHỈ -->
+      <div style="display: flex; gap: 32px; flex-wrap: wrap; font-size: 12.5px; color: #cbd5e1; align-items: center;">
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="color: #38bdf8; font-size: 14px;">🎧</span>
+            <span>Hỗ trợ: <strong style="color: #ffffff; font-size: 13px;">1900 636 011</strong></span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="color: #38bdf8; font-size: 14px;">✉</span>
+            <span>Email: <a href="mailto:hotro@hoclieu.vn" style="color: #38bdf8; text-decoration: none; font-weight: 600;">hotro@hoclieu.vn</a></span>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: flex-start; gap: 8px; max-width: 320px;">
+          <span style="color: #38bdf8; font-size: 15px; margin-top: 1px;">📍</span>
+          <span style="line-height: 1.45;">Tòa nhà VP HEID, ngõ 12 Láng Hạ, phường Giảng Võ, TP. Hà Nội</span>
+        </div>
+      </div>
+
+      <!-- KHỐI BÊN PHẢI: THEO DÕI & MẠNG XÃ HỘI -->
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" style="width: 34px; height: 34px; border-radius: 50%; background: #3b5998; color: #fff; display: flex; align-items: center; justify-content: center; text-decoration: none; font-weight: 800; font-size: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); transition: transform 0.2s;" title="Facebook" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">f</a>
+          <a href="https://zalo.me" target="_blank" rel="noopener noreferrer" style="width: 34px; height: 34px; border-radius: 50%; background: #0068ff; color: #fff; display: flex; align-items: center; justify-content: center; text-decoration: none; font-weight: 800; font-size: 10.5px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); transition: transform 0.2s;" title="Zalo" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">Zalo</a>
+          <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" style="width: 34px; height: 34px; border-radius: 50%; background: #ff0000; color: #fff; display: flex; align-items: center; justify-content: center; text-decoration: none; font-weight: 800; font-size: 13px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); transition: transform 0.2s;" title="Youtube" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">▶</a>
+        </div>
+        <span style="font-size: 11px; color: #94a3b8; letter-spacing: 0.04em;">Theo dõi chúng tôi</span>
+      </div>
+    </div>
+
+    <!-- CÁC NÚT LIÊN HỆ NỔI BÊN PHẢI MÀN HÌNH (GÓC DƯỚI BÊN PHẢI THEO ẢNH 2) -->
+    <div class="heid-floating-contact-pills" style="position: fixed; right: 18px; bottom: 85px; display: flex; flex-direction: column; gap: 10px; z-index: 99990;">
+      <a href="https://m.me" target="_blank" rel="noopener noreferrer" style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #00B2FE, #006AFF); color: #fff; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 20px; box-shadow: 0 4px 14px rgba(0, 106, 255, 0.45); transition: transform 0.2s ease;" title="Nhắn tin Messenger" onmouseover="this.style.transform='scale(1.12)'" onmouseout="this.style.transform='scale(1)'">💬</a>
+      <a href="https://zalo.me" target="_blank" rel="noopener noreferrer" style="width: 44px; height: 44px; border-radius: 50%; background: #0068FF; color: #fff; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 11px; font-weight: 800; box-shadow: 0 4px 14px rgba(0, 104, 255, 0.45); transition: transform 0.2s ease;" title="Zalo hỗ trợ" onmouseover="this.style.transform='scale(1.12)'" onmouseout="this.style.transform='scale(1)'">Zalo</a>
+      <a href="tel:1900636011" style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #10b981, #059669); color: #fff; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 18px; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.45); transition: transform 0.2s ease;" title="Gọi tổng đài hỗ trợ 1900 636 011" onmouseover="this.style.transform='scale(1.12)'" onmouseout="this.style.transform='scale(1)'">📞</a>
+    </div>
+  </footer>
 
 
   <!-- =========================================================
@@ -2988,6 +3065,16 @@
         </div>
       </div>
 
+      <!-- THANH TRẠNG THÁI QUAN SÁT THỜI GIAN THỰC CỦA AI (YÊU CẦU 3) -->
+      <div id="aiLiveObservationPill" style="display: flex; align-items: center; justify-content: space-between; padding: 6px 14px; background: rgba(16, 185, 129, 0.12); border-bottom: 1px solid rgba(16, 185, 129, 0.28); font-size: 11px; color: #a7f3d0; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+          <span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px #10b981; flex-shrink: 0;"></span>
+          <span style="color: #6ee7b7; font-weight: 700; flex-shrink: 0;">Đang quan sát:</span>
+          <span id="aiLiveObservationText" style="color: #e2e8f0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Đàn Tranh 3D • Sẵn sàng gảy nốt</span>
+        </div>
+        <span id="aiLiveObsNotesBadge" style="font-size: 10px; background: rgba(239, 196, 123, 0.2); border: 1px solid rgba(239, 196, 123, 0.4); padding: 1px 6px; border-radius: 999px; color: #ffea9f; white-space: nowrap; flex-shrink: 0;">0 nốt phiên</span>
+      </div>
+
       <!-- Nội dung hội thoại -->
       <div id="chatMessages" class="dt-chat-messages">
         <div class="dt-message bot">
@@ -3172,7 +3259,6 @@
       { id: 'tieu', icon: '🎋', name: 'Tiêu', cat: 'hoi', ethnic: 'Việt (Kinh)' },
       { id: 'khen', icon: '🌾', name: 'Khèn Mông', cat: 'hoi', ethnic: 'H\'Mông' },
       { id: 'kenbau', icon: '🎺', name: 'Kèn bầu', cat: 'hoi', ethnic: 'Việt (Kinh)' },
-      { id: 'kenla', icon: '🍃', name: 'Kèn lá', cat: 'hoi', ethnic: 'H\'Mông, Thái' },
       { id: 'pi', icon: '🎵', name: 'Pí Tây Bắc', cat: 'hoi', ethnic: 'Thái Tây Bắc' },
       { id: 'dingnam', icon: '🎋', name: 'Đing Năm', cat: 'hoi', ethnic: 'Ê Đê' },
       { id: 'dingbuot', icon: '🎋', name: 'Đing Buốt', cat: 'hoi', ethnic: 'Ê Đê' },
@@ -3203,6 +3289,7 @@
           window.currentResearchInstrument = savedInst;
         }
       }
+
     } catch (e) {}
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -3228,7 +3315,8 @@
             syncInstrumentTaskbarInfo();
           }
         }
-      } catch (e) {}
+      }
+ catch (e) {}
     });
 
     // 0A. Bật / tắt nút Bộ lọc 4 loại nhạc cụ (#megaFilterDropdownPanel)
@@ -3267,6 +3355,7 @@
           selectMegaFilterCategory(targetCat, activeCatBtn);
         }
       }
+
     }
 
     // 0B. Khi ấn vào 1 trong 4 loại nhạc cụ ở cột trái của Bộ lọc -> hiện danh sách các nhạc cụ nằm trong loại đó
@@ -3308,7 +3397,8 @@
           shortName: 'Bộ Trống Dân Tộc',
           firstInst: 'trongcom'
         }
-      };
+      }
+;
 
       const meta = catInfoMap[catKey] || catInfoMap.day;
       const headingEl = document.getElementById('megaSelectedCatHeading');
@@ -3382,6 +3472,7 @@
           icn.style.display = 'inline';
         }
       }
+
       // Đã bỏ phần nhạc mẫu theo yêu cầu
       if (navTabDemoSongs) {
         navTabDemoSongs.style.display = 'none';
@@ -3470,6 +3561,7 @@
           toggleMegaFilterPanel(false);
         }
       }
+
     });
 
     window.toggleMegaFilterPanel = toggleMegaFilterPanel;
@@ -3497,7 +3589,8 @@
           }
           searchInp.focus();
         }
-      }, 60);
+      }
+, 60);
     }
 
     function clearDedicatedLookupSearch() {
@@ -3664,7 +3757,8 @@
           item.el.classList.remove('active');
           item.el.style.setProperty('display', 'none', 'important');
         }
-      });
+      }
+);
     }
     window.setExclusiveTaskbar = setExclusiveTaskbar;
 
@@ -3785,21 +3879,11 @@
         return;
       }
 
-      // CHƯA VÀO ĐƯỢC DIỄN ĐÀN KHI CHƯA TẠO TÀI KHOẢN / ĐĂNG NHẬP (YÊU CẦU 2)
+      // BỎ DIỄN ĐÀN ĐI THEO YÊU CẦU (YÊU CẦU 1)
       if (tabName === 'forum') {
-        const activeUser = (typeof getActiveUserAccount === 'function') ? getActiveUserAccount() : null;
-        if (!activeUser || activeUser.username === 'guest') {
-          if (typeof openUnifiedAuthModal === 'function') {
-            openUnifiedAuthModal('login');
-          }
-          const msgEl = document.getElementById('ownerAuthMessage');
-          if (msgEl) {
-            msgEl.style.color = '#ffea9f';
-            msgEl.innerHTML = '🔒 <strong>Diễn Đàn MIT yêu cầu tài khoản:</strong><br>Vui lòng đăng nhập hoặc chuyển sang tab "Sign Up" để tạo tài khoản trước khi vào diễn đàn!';
-          }
-          return;
-        }
+        tabName = 'encyclopedia';
       }
+
 
       document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
       document.querySelectorAll('.lux-dock-item').forEach(item => item.classList.remove('active'));
@@ -3856,7 +3940,8 @@
         if (typeof filterBySubreddit === 'function') {
           filterBySubreddit(window.redditCurrentSubreddit || 'all');
         }
-      } else {
+      }
+ else {
         setExclusiveTaskbar('taskbarHome');
       }
 
@@ -3866,7 +3951,8 @@
         if (window.location.hash !== '#' + hashVal) {
           history.replaceState(null, '', '#' + hashVal);
         }
-      } catch (err) {}
+      }
+ catch (err) {}
 
       // Khi một ai đó ấn vào nút 3D thì mới hiện ra cái Tab 3D nhạc cụ trên thanh điều hướng
       if (targetKey === 'dantranh' && navButtons.dantranh) {
@@ -3917,20 +4003,24 @@
         if (typeof autoSelectInstrumentInLookup === 'function') {
           autoSelectInstrumentInLookup(activeId);
         }
-      } else if (targetKey === 'demosongs') {
+      }
+ else if (targetKey === 'demosongs') {
         const activeId = window.currentActiveInstrument || 'dantranh';
         if (typeof syncDemoSongWithInstrument === 'function') {
           syncDemoSongWithInstrument(activeId);
         }
-      } else if (targetKey === 'feedback') {
+      }
+ else if (targetKey === 'feedback') {
         if (typeof renderUserAccountDashboard === 'function') {
           renderUserAccountDashboard();
         }
-      } else if (targetKey === 'forum') {
+      }
+ else if (targetKey === 'forum') {
         if (typeof initCommunityForumUI === 'function') {
           initCommunityForumUI();
         }
       }
+
 
       if (typeof logTabNavigationHistory === 'function') {
         logTabNavigationHistory(targetKey);
@@ -4488,14 +4578,6 @@
           '<strong>Phím bấm:</strong> <kbd>3</kbd> <kbd>4</kbd> <kbd>6</kbd> <kbd>7</kbd> <kbd>8</kbd>'
         ]
       },
-      kenla: {
-        title: '🍃 Lời Tỏ Tình Bên Bờ Suối (Kèn Lá)',
-        desc: 'Âm sắc sắc bén, lảnh lót như tiếng chim rừng gọi bạn tình thiết tha.',
-        lines: [
-          '<strong>Câu 1:</strong> Đô - Rê - Mi - Sol - La - Sol - Mi - Rê',
-          '<strong>Phím bấm:</strong> <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd> <kbd>5</kbd> <kbd>4</kbd> <kbd>3</kbd> <kbd>2</kbd>'
-        ]
-      },
       xoehoa: {
         title: '🎵 Điệu Xòe Hoa Mai Châu (Pí)',
         desc: 'Khúc sáo vui nhộn dẫn bước điệu xòe xúng xính váy áo thiếu nữ Tây Bắc.',
@@ -4645,7 +4727,6 @@
       tinhcagoiban: 'danmoi',
       donkhach: 'dangoong',
       kenhoilang: 'kenbau',
-      kenla: 'kenla',
       xoehoa: 'pi',
       ayray: 'dingnam',
       giothoirungkhop: 'dingbuot',
@@ -4695,6 +4776,7 @@
           }
         }
       }
+
     }
 
     function selectQuickSongCard(songId, btnEl) {
@@ -4730,7 +4812,6 @@
       khen: 'khenmong',
       khenmong: 'khenmong',
       kenbau: 'kenhoilang',
-      kenla: 'kenla',
       pi: 'xoehoa',
       pithiu: 'xoehoa',
       dingnam: 'ayray',
@@ -5045,7 +5126,8 @@
           feed.appendChild(botRow);
           feed.scrollTop = feed.scrollHeight;
         }
-      }, 450);
+      }
+, 450);
     }
 
     // 7. Gửi biểu mẫu Góp ý / Báo cáo của người dùng -> Lưu trực tiếp vào hòm thư Báo cáo của Owner
@@ -5270,7 +5352,8 @@
           const list = JSON.parse(raw);
           if (Array.isArray(list) && list.length > 0) return list;
         }
-      } catch (e) {}
+      }
+ catch (e) {}
       return DEFAULT_OWNER_ANNOUNCEMENTS;
     }
     window.getOwnerAnnouncementsList = getOwnerAnnouncementsList;
@@ -5299,6 +5382,7 @@
           bellBadge.style.display = 'none';
         }
       }
+
 
       if (!container) return;
 
@@ -5423,6 +5507,7 @@
           return;
         }
       }
+
       const el = document.getElementById(modalId);
       if (el) {
         el.style.display = 'flex';
@@ -5595,7 +5680,8 @@
         if (spotlight) {
           spotlight.style.background = `radial-gradient(circle 800px at ${e.clientX}px ${e.clientY}px, rgba(163, 18, 56, 0.18), transparent 80%)`;
         }
-      });
+      }
+);
 
       if (logoBox && logoGlow) {
         logoBox.addEventListener('mousemove', function(e) {
@@ -5706,7 +5792,8 @@
             return list;
           }
         }
-      } catch (e) {}
+      }
+ catch (e) {}
       const defaults = [
         { username: 'admin', password: 'admin123', displayName: 'Quản Trị Viên (Admin)', role: 'admin', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80', createdAt: '2026-09-14' },
         { username: 'khanhlam', password: '123', displayName: 'Khánh Lâm', role: 'member', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80', createdAt: '2026-09-14' }
@@ -5761,7 +5848,8 @@
             return parsedOwner;
           }
         }
-      } catch (e) {}
+      }
+ catch (e) {}
       return {
         username: 'guest',
         displayName: 'Khách (Guest)',
@@ -5815,7 +5903,8 @@
             return parsed;
           }
         }
-      } catch (e) {}
+      }
+ catch (e) {}
 
       // Khởi tạo dữ liệu mẫu ban đầu cho tài khoản mới để giao diện sinh động ngay lập tức
       const initialData = {
@@ -5941,7 +6030,8 @@
           );
           userPlayingSessionNotes = [];
         }
-      }, 2500);
+      }
+, 2500);
     }
 
     function logTabNavigationHistory(tabKey) {
@@ -6004,6 +6094,7 @@
         }
       }
 
+
       // Ghi nhận chuỗi nốt thực tế vào Lịch sử đánh (play history)
       try {
         queuePlayHistoryLog(targetInstId, noteName);
@@ -6046,6 +6137,7 @@
         }
       }
 
+
       // Cập nhật thanh hiển thị chuỗi nốt đang đánh trên Sân khấu 3D & Studio
       updateLivePlayedNotesBarUI();
       if (typeof renderStudioRecentNotesBuffer === 'function') {
@@ -6060,9 +6152,18 @@
     // HIỂN THỊ NỐT VỪA ĐÁNH VÀ CHUỖI NỐT GẦN ĐÂY (YÊU CẦU 4 & 2)
     window.livePlayedTrailBuffer = [];
     window.sessionTotalPlayedNotesCount = 0;
+    window.userNotePlayHistoryList = [];
 
     function showLivePlayedNote(noteInfo) {
       if (!noteInfo) return;
+      const now = Date.now();
+      // Ngăn chặn cộng 2 nốt / trùng lặp nốt khi gảy cùng lúc (Yêu cầu 4)
+      if (window._lastLiveNoteKey === noteInfo.key && window._lastLiveNoteTime && (now - window._lastLiveNoteTime < 45)) {
+        return;
+      }
+      window._lastLiveNoteKey = noteInfo.key;
+      window._lastLiveNoteTime = now;
+
       window.sessionTotalPlayedNotesCount = (window.sessionTotalPlayedNotesCount || 0) + 1;
       const banner = document.getElementById('livePlayedNoteDisplayBanner');
       const nameEl = document.getElementById('liveActiveNoteName');
@@ -6077,8 +6178,8 @@
       const keyText = noteInfo.key || String(noteInfo.noteIdx + 1);
 
       if (nameEl) {
-        nameEl.innerHTML = `<span style="color: #6ee7b7; font-weight: 800; font-size: 17px; text-shadow: 0 0 12px rgba(110, 231, 183, 0.6);">${noteText}</span> <span style="font-size: 12.5px; color: #ffea9f; font-weight: 700; margin-left: 6px; background: rgba(239, 196, 123, 0.15); border: 1px solid rgba(239, 196, 123, 0.35); padding: 1px 8px; border-radius: 999px;">Phím [${keyText}]</span>`;
-        nameEl.style.transform = 'scale(1.06)';
+        nameEl.innerHTML = `<span style="color: #6ee7b7; font-weight: 800; font-size: 15.5px; text-shadow: 0 0 12px rgba(110, 231, 183, 0.6);">${noteText}</span> <span style="font-size: 12px; color: #ffea9f; font-weight: 700; margin-left: 6px; background: rgba(239, 196, 123, 0.15); border: 1px solid rgba(239, 196, 123, 0.35); padding: 1px 7px; border-radius: 999px;">Phím [${keyText}]</span>`;
+        nameEl.style.transform = 'scale(1.05)';
         setTimeout(() => { if (nameEl) nameEl.style.transform = 'scale(1)'; }, 140);
       }
 
@@ -6095,11 +6196,66 @@
           const color = isLatest ? '#ffffff' : '#ffea9f';
           const border = isLatest ? '1px solid #ffd166' : '1px solid rgba(239, 196, 123, 0.3)';
           const glow = isLatest ? 'box-shadow: 0 0 10px rgba(222, 25, 75, 0.6);' : '';
-          return `<span class="note-bead" style="background:${bg}; color:${color}; border:${border}; ${glow} padding:2px 9px; border-radius:999px; font-size:11.5px; font-weight:700; white-space:nowrap; transition: all 0.2s ease;">${b.name}</span>`;
+          return `<span class="note-bead" style="background:${bg}; color:${color}; border:${border}; ${glow} padding:2px 8px; border-radius:999px; font-size:11px; font-weight:700; white-space:nowrap; transition: all 0.2s ease;">${b.name}</span>`;
         }).join('');
+      }
+
+      // Cập nhật dòng Lịch sử đánh nốt của người dùng (Yêu cầu 4)
+      if (!Array.isArray(window.userNotePlayHistoryList)) {
+        window.userNotePlayHistoryList = [];
+      }
+      const timeStr = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      window.userNotePlayHistoryList.push({
+        name: noteText,
+        key: keyText,
+        time: timeStr,
+        inst: noteInfo.instId || (window.currentActiveInstrument || 'dantranh')
+      });
+      if (window.userNotePlayHistoryList.length > 50) {
+        window.userNotePlayHistoryList.shift();
+      }
+      renderUserNoteHistoryUI();
+
+      // Cập nhật trạng thái quan sát của AI Chatbot (Yêu cầu 3)
+      if (typeof updateAiLiveObservationUI === 'function') {
+        updateAiLiveObservationUI();
       }
     }
     window.showLivePlayedNote = showLivePlayedNote;
+
+    function renderUserNoteHistoryUI() {
+      const streamEl = document.getElementById('userNoteHistoryStream');
+      const badgeEl = document.getElementById('userNoteHistorySummaryBadge');
+      if (!streamEl) return;
+      const list = window.userNotePlayHistoryList || [];
+      if (badgeEl) {
+        badgeEl.textContent = list.length > 0 ? `(${list.length} nốt đã ghi nhận)` : '(Chưa có thao tác trong phiên)';
+        badgeEl.style.fontStyle = list.length > 0 ? 'normal' : 'italic';
+      }
+      if (list.length === 0) {
+        streamEl.innerHTML = '<span style="font-size: 11px; color: #71717a; font-style: italic;">Chưa có lịch sử diễn tấu</span>';
+        return;
+      }
+      const recent = list.slice(-15);
+      streamEl.innerHTML = recent.map((item, idx) => {
+        const isLatest = idx === recent.length - 1;
+        const bg = isLatest ? 'rgba(110, 231, 183, 0.25)' : 'rgba(255, 255, 255, 0.05)';
+        const border = isLatest ? '1px solid #6ee7b7' : '1px solid rgba(255, 255, 255, 0.12)';
+        const color = isLatest ? '#6ee7b7' : '#e2e8f0';
+        return `<span style="background:${bg}; border:${border}; color:${color}; padding: 1px 7px; border-radius: 6px; font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap;" title="Lúc ${item.time}">
+          <span>${item.name}</span>
+          <span style="font-size: 9.5px; opacity: 0.7; color: #ffea9f;">[${item.key}]</span>
+        </span>`;
+      }).join('');
+      streamEl.scrollLeft = streamEl.scrollWidth;
+    }
+    window.renderUserNoteHistoryUI = renderUserNoteHistoryUI;
+
+    function clearUserNoteHistory() {
+      window.userNotePlayHistoryList = [];
+      renderUserNoteHistoryUI();
+    }
+    window.clearUserNoteHistory = clearUserNoteHistory;
 
     function clearLivePlayedNotesTrail() {
       window.livePlayedTrailBuffer = [];
@@ -6130,7 +6286,8 @@
           const accData = getUserAccountData();
           todayCount = (accData && accData.todayNotesDate === todayStr) ? (accData.todayNotesCount || 0) : 0;
         }
-      } catch(e) {}
+      }
+ catch(e) {}
       const elStageToday = document.getElementById('stageTodayNotesCount');
       if (elStageToday) elStageToday.textContent = todayCount;
       const elAccToday = document.getElementById('statAccTodayNotes');
@@ -6171,6 +6328,7 @@
         }
       }
 
+
       if (btnStart) {
         if (isRec) {
           btnStart.innerHTML = '🔴 Đang thu...';
@@ -6180,6 +6338,7 @@
           btnStart.style.background = '';
         }
       }
+
 
       if (btnStop) {
         if (isRec || buf.length > 0) {
@@ -6192,6 +6351,7 @@
           btnStop.style.cursor = 'not-allowed';
         }
       }
+
 
       if (btnReplay) {
         btnReplay.style.display = buf.length > 0 ? 'inline-flex' : 'none';
@@ -6220,6 +6380,7 @@
           }
         }
       }
+
     }
 
     // =========================================================
@@ -6334,6 +6495,7 @@
         }
       }
 
+
       if (btnStudioStop) {
         if (isRec || buf.length > 0) {
           btnStudioStop.removeAttribute('disabled');
@@ -6345,6 +6507,7 @@
           btnStudioStop.style.cursor = 'not-allowed';
         }
       }
+
 
       if (btnStudioReplay) btnStudioReplay.style.display = buf.length > 0 ? 'inline-flex' : 'none';
       if (btnStudioClear) btnStudioClear.style.display = buf.length > 0 ? 'inline-flex' : 'none';
@@ -6367,6 +6530,7 @@
         }
       }
 
+
       if (studioBadge) {
         studioBadge.textContent = `${buf.length} nốt`;
       }
@@ -6383,6 +6547,7 @@
           studioStrip.scrollLeft = studioStrip.scrollWidth;
         }
       }
+
 
       if (studioDockDot) {
         studioDockDot.style.display = isRec ? 'block' : 'none';
@@ -6484,7 +6649,8 @@
           updateLivePlayedNotesBarUI();
           playNoteSequenceForInstrument(song.instId, song.notes);
         }
-      }, 280);
+      }
+, 280);
     }
     window.openPlayedSongOn3DStage = openPlayedSongOn3DStage;
 
@@ -6611,6 +6777,7 @@
           window.switchInstrument(instId);
         }
       }
+
       if (targetTab === 'lookup' && instId) {
         handleMegaInstViewInfo(instId);
       } else if (targetTab === 'heritage' && instId) {
@@ -6651,7 +6818,8 @@
         if (typeof checkAndPrefillSavedCredentials === 'function') {
           checkAndPrefillSavedCredentials();
         }
-      } else if (mode === 'register') {
+      }
+ else if (mode === 'register') {
         if (titleEl) titleEl.innerHTML = '✨ Tạo Tài khoản Người dùng mới';
         if (userWrap) userWrap.style.display = 'block';
         if (passWrap) passWrap.style.display = 'block';
@@ -6797,6 +6965,7 @@
           checkAndPrefillSavedCredentials();
         }
       }
+
       setTimeout(function() {
         if (uInp && !uInp.value) uInp.focus();
       }, 60);
@@ -6832,6 +7001,7 @@
           checkAndPrefillSavedCredentials();
         }
       }
+
     }
     window.switchUnifiedAuthTab = switchUnifiedAuthTab;
 
@@ -6964,6 +7134,7 @@
         }
       }
 
+
       // 2. Đồng bộ Nút Admin nổi & Nút Cài đặt Tài khoản nổi ở góc màn hình
       const dockBtnAdminFloating = document.getElementById('dockBtnAdminFloating');
       const dockBtnAccountFloating = document.getElementById('dockBtnAccountFloating');
@@ -6989,6 +7160,7 @@
         }
       }
 
+
       // 3. Cập nhật tên user trên topbar của WordPress
       const wpAdminBarUserName = document.getElementById('wpAdminBarUserName');
       if (wpAdminBarUserName) {
@@ -7013,6 +7185,7 @@
           if (ownerWin) ownerWin.style.display = 'none';
         }
       }
+
 
       // Yêu cầu 1: Bỏ cái nút thông báo khi dùng admin (Owner)
       const btnReportBell = document.getElementById('btnReportBell');
@@ -7096,7 +7269,8 @@
         if (rawDaily !== null) {
           dailyNotes = parseInt(rawDaily, 10) || 0;
         }
-      } catch(e) {}
+      }
+ catch(e) {}
 
       const elNotes = document.getElementById('statAccTotalNotes');
       const elToday = document.getElementById('statAccTodayNotes');
@@ -7253,7 +7427,8 @@
             btns[k].classList.add('btn-secondary');
           }
         }
-      });
+      }
+);
       if (tabName === 'keybind' && typeof renderUserKeybindingEditor === 'function') {
         const curId = window.currentKeybindEditingInstId || 'dantranh';
         renderUserKeybindingEditor(curId);
@@ -7309,7 +7484,8 @@
         if (sc && note) {
           sc.textContent = getUserEffectiveKeyForNote(activeId, idx, note.key || (idx + 1));
         }
-      });
+      }
+);
 
       if (typeof window.render2DInstrument === 'function') {
         window.render2DInstrument(activeId);
@@ -7457,7 +7633,8 @@
         if (Array.isArray(item.notes)) {
           map[item.id] = item.notes.map((_, idx) => currentSeq[idx] || String(idx + 1));
         }
-      });
+      }
+);
       saveUserCustomKeybindingsMap(map);
       renderUserKeybindingEditor(instId);
       refreshActiveStageKeyboardLabels();
@@ -7692,7 +7869,8 @@
           const parsed = JSON.parse(raw);
           if (parsed && typeof parsed === 'object') return parsed;
         }
-      } catch (e) {}
+      }
+ catch (e) {}
       return {};
     }
 
@@ -7732,7 +7910,8 @@
         } else if (initialTab) {
           switchOwnerDashboardTab(initialTab);
         }
-      } else {
+      }
+ else {
         win.style.display = 'none';
       }
 
@@ -7832,7 +8011,8 @@
         if (e.touches && e.touches[0]) {
           startDrag(e.touches[0].clientX, e.touches[0].clientY);
         }
-      }, { passive: true });
+      }
+, { passive: true });
 
       window.addEventListener('touchmove', function(e) {
         if (!isDragging || !e.touches || !e.touches[0]) return;
@@ -8069,6 +8249,7 @@
           stripEl.scrollLeft = stripEl.scrollWidth;
         }
       }
+
     }
     window.renderStudioRecentNotesBuffer = renderStudioRecentNotesBuffer;
 
@@ -8114,7 +8295,8 @@
         if (dockBtn) {
           dockBtn.classList.remove('is-recording');
         }
-      } else {
+      }
+ else {
         if (typeof window.startAudioRecording === 'function') {
           window.startAudioRecording();
         }
@@ -8126,6 +8308,7 @@
           dockBtn.classList.add('is-recording');
         }
       }
+
     }
     window.toggleStudioLiveRecording = toggleStudioLiveRecording;
 
@@ -8426,6 +8609,7 @@
           renderWpUsersManagementTable();
         }
       }
+
     }
     window.switchWpAdminView = switchWpAdminView;
 
@@ -8483,6 +8667,7 @@
           tbl.classList.remove('extended-view');
         }
       }
+
     }
     window.wpChangeViewMode = wpChangeViewMode;
 
@@ -8809,7 +8994,8 @@
           b.classList.remove('active', 'btn-primary');
           b.classList.add('btn-secondary');
         }
-      });
+      }
+);
       initOwnerSoundSettingsPanel();
     }
     window.filterOwnerInstrumentsByCat = filterOwnerInstrumentsByCat;
@@ -8876,7 +9062,8 @@
           btn.classList.remove('btn-primary', 'active');
           btn.classList.add('btn-secondary');
         }
-      });
+      }
+);
 
       const allInst = window.ALL_INSTRUMENTS || [];
       const instObj = allInst.find(i => i.id === targetId) || allInst[0] || {};
@@ -9210,7 +9397,8 @@
         if (typeof window.removeServerAudioForNote === 'function') {
           window.removeServerAudioForNote(instId, noteIdx);
         }
-      } else {
+      }
+ else {
         if (typeof window.setServerAudioForNote === 'function') {
           window.setServerAudioForNote(instId, noteIdx, {
             fileName: cleanUrl.split('/').pop() || 'online_audio.mp3',
@@ -9218,6 +9406,7 @@
           });
         }
       }
+
       renderOwnerInstStringsAudioTable(instId);
       showOwnerStringsNotice(`✅ Đã cập nhật link audio cho nốt số ${noteIdx + 1}!`);
     }
@@ -9355,7 +9544,8 @@
         } catch (err) {
           showOwnerStringsNotice(`❌ Lỗi đọc file JSON: ${err.message}`, true);
         }
-      };
+      }
+;
       reader.readAsText(file);
     }
     window.handleImportServerAudioConfigFile = handleImportServerAudioConfigFile;
@@ -9370,7 +9560,8 @@
           const parsed = JSON.parse(raw);
           if (Array.isArray(parsed) && parsed.length > 0) return parsed;
         }
-      } catch (e) {}
+      }
+ catch (e) {}
       const defaults = [
         {
           id: 1710000001,
@@ -9438,6 +9629,7 @@
           dockNotifBadge.style.display = 'none';
         }
       }
+
     }
     window.syncOwnerHeaderFeedbackBadge = syncOwnerHeaderFeedbackBadge;
 
@@ -9617,7 +9809,8 @@
             saveCredentialsIfAutoSaveEnabled(u.username, pass);
           }
         }
-      } else {
+      }
+ else {
         localStorage.removeItem('dan_tranh_saved_credentials');
       }
     }
@@ -9656,7 +9849,8 @@
             if (accP && !accP.value) accP.value = creds.password || '';
           }
         }
-      } catch (e) {}
+      }
+ catch (e) {}
     }
     window.checkAndPrefillSavedCredentials = checkAndPrefillSavedCredentials;
 
@@ -9930,7 +10124,8 @@
             return realOnly;
           }
         }
-      } catch (e) {
+      }
+ catch (e) {
         console.warn('Lỗi đọc diễn đàn:', e);
       }
       return [];
@@ -10103,7 +10298,8 @@
         if (onlineEl) {
           onlineEl.innerHTML = `🟢 ${onlineCount}`;
         }
-      } catch (err) {
+      }
+ catch (err) {
         console.warn('updateForumRealStats error:', err);
       }
     }
@@ -10146,7 +10342,8 @@
           if (k === key) el.classList.add('active');
           else el.classList.remove('active');
         }
-      });
+      }
+);
 
       // Đồng bộ thanh taskbar MIT ở trên
       const taskbarPills = {
@@ -10158,7 +10355,8 @@
         if (taskbarPills[k]) {
           taskbarPills[k].classList.toggle('active', k === key);
         }
-      });
+      }
+);
 
       if (key === 'popular') {
         setRedditSort('top');
@@ -10399,7 +10597,8 @@
         } catch (err) {
           callback(src);
         }
-      };
+      }
+;
       img.onerror = function() {
         callback(src);
       };
@@ -10439,6 +10638,7 @@
           if (inp) inp.focus();
         }
       }
+
     }
     window.toggleRedditPostImageUrlInput = toggleRedditPostImageUrlInput;
 
@@ -10546,6 +10746,7 @@
           posts = posts.filter(activeCluster.filter);
         }
       }
+
 
       // 3. Sắp xếp Sort
       if (window.redditCurrentSort === 'hot' || window.redditCurrentSort === 'best') {
@@ -10803,6 +11004,7 @@
         }
       }
 
+
       const authorHandle = formatUserHandle(authorDisplayName.replace(/\s+/g, '_').toLowerCase());
       const authorAvatar = (activeUser && activeUser.avatar) ? activeUser.avatar : '🪕';
       const authorBadge = 'Thành viên Diễn đàn';
@@ -10871,6 +11073,7 @@
           authorDisplayName = 'Bạn đọc';
         }
       }
+
       const authorHandle = formatUserHandle(authorDisplayName.replace(/\s+/g, '_').toLowerCase());
       const authorAvatar = (activeUser && activeUser.avatar) ? activeUser.avatar : '🪕';
 
@@ -10917,7 +11120,8 @@
           }
           return;
         }
-      } catch (e) {}
+      }
+ catch (e) {}
       alert('Liên kết bài viết Diễn đàn MIT: ' + shareUrl);
     }
     window.handleShareRedditPost = handleShareRedditPost;
@@ -10982,6 +11186,7 @@
           card.style.color = '#111827';
         }
       }
+
     }
     window.selectPadletCardColor = selectPadletCardColor;
 
@@ -11151,6 +11356,7 @@
           statusLbl.style.color = '#ffd166';
         }
       }
+
       if (resetBtn) {
         resetBtn.style.display = (window.currentAiTopicCluster === 'all') ? 'none' : 'inline-flex';
       }
@@ -11189,7 +11395,8 @@
         if (!candidates.some(c => c.username.toLowerCase() === u.username.toLowerCase())) {
           candidates.push({ username: u.username, password: u.password, displayName: u.displayName });
         }
-      });
+      }
+);
 
       if (candidates.length === 0) {
         candidates.push({ username: 'admin', password: 'admin123', displayName: 'Quản Trị Viên (Admin)' });
@@ -11401,7 +11608,7 @@
       if (h === 'dantranh' || h === 'stage' || h === 'nhaccu') {
         switchNavTab('dantranh');
       } else if (h === 'forum' || h === 'diendan' || h === 'mit') {
-        switchNavTab('forum');
+        switchNavTab('encyclopedia');
       } else if (h === 'lookup' || h === 'thongtin') {
         switchNavTab('lookup');
       } else if (h === 'heritage' || h === 'nghiencuu') {
@@ -11446,7 +11653,7 @@
       } else if (window.location.hash === '#heritage' || window.location.hash === '#research') {
         switchNavTab('heritage');
       } else if (window.location.hash === '#forum' || window.location.hash === '#diendan') {
-        switchNavTab('forum');
+        switchNavTab('encyclopedia');
       } else {
         switchNavTab('encyclopedia');
       }
