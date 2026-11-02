@@ -1,4 +1,4 @@
-﻿/* =========================================================
+/* =========================================================
    DOHOA.CSS - ĐÀN TRANH ONLINE & 42 ĐẠI NHẠC CỤ DÂN TỘC
    Phong cách Cổ Điển Hoàng Gia: Màu Nâu Cũ Truyền Thống & Vàng Ánh Kim
    - Bố cục lưới thẻ từng ô hiện đại Pixel-Perfect theo chuẩn Design System
@@ -6343,9 +6343,9 @@ body.tttt-theme-body .lux-4cat-card-btn.active .lux-4cat-info small {
 .owner-floating-window {
   position: fixed;
   top: 50px;
-  left: calc(50% - 550px);
-  width: 1100px;
-  max-width: calc(100vw - 20px);
+  left: calc(50% - 590px);
+  width: 1180px;
+  max-width: calc(100vw - 32px);
   height: 740px;
   max-height: calc(100vh - 70px);
   z-index: 100005 !important;
@@ -6836,19 +6836,20 @@ body.tttt-theme-body .lux-4cat-card-btn.active .lux-4cat-info small {
 }
 
 .wp-list-table th {
-  padding: 9px 12px;
+  padding: 12px 16px;
   background: rgba(48, 12, 18, 0.98);
-  border-bottom: 1px solid rgba(239, 196, 123, 0.28);
+  border-bottom: 1px solid rgba(239, 196, 123, 0.35);
   font-weight: 700;
   color: #ffea9f;
   white-space: nowrap;
 }
 
 .wp-list-table td {
-  padding: 10px 12px;
-  border-bottom: 1px solid rgba(239, 196, 123, 0.1);
-  vertical-align: top;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(239, 196, 123, 0.12);
+  vertical-align: middle;
   color: #d8cbb8;
+  white-space: nowrap;
 }
 
 .wp-list-table tr:hover td {

@@ -2258,16 +2258,16 @@
               </div>
 
               <!-- Bảng quản lý chi tiết từng dây -->
-              <div style="overflow-x: auto; max-height: 480px; overflow-y: auto; border: 1px solid rgba(239, 196, 123, 0.25); border-radius: 6px; background: rgba(14, 1, 7, 0.95); box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);">
-                <table class="wp-table" style="width: 100%; border-collapse: collapse; font-size: 12px; text-align: left;">
+              <div style="overflow-x: auto; max-height: 480px; overflow-y: auto; border: 1px solid rgba(239, 196, 123, 0.25); border-radius: 10px; background: rgba(14, 1, 7, 0.95); box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);">
+                <table class="wp-table" style="width: 100%; min-width: 980px; border-collapse: separate; border-spacing: 0; font-size: 12.5px; text-align: left;">
                   <thead style="position: sticky; top: 0; background: #1c020f; border-bottom: 2px solid rgba(239, 196, 123, 0.4); z-index: 2;">
                     <tr>
-                      <th style="padding: 10px 10px; color: #ffea9f; width: 140px;">Dây / Nốt</th>
-                      <th style="padding: 10px 10px; color: #ffea9f; width: 180px;">Trạng Thái File</th>
-                      <th style="padding: 10px 10px; color: #ffea9f; min-width: 280px;">Gán File Âm Thanh / Dán Link</th>
-                      <th style="padding: 10px 10px; color: #ffea9f; width: 105px;">Âm Lượng (%)</th>
-                      <th style="padding: 10px 10px; color: #ffea9f; width: 95px;">Pitch (bán cung)</th>
-                      <th style="padding: 10px 10px; color: #ffea9f; width: 130px; text-align: center;">Hành Động</th>
+                      <th style="padding: 12px 16px; color: #ffea9f; width: 170px; min-width: 170px; white-space: nowrap;">Dây / Nốt</th>
+                      <th style="padding: 12px 16px; color: #ffea9f; width: 190px; min-width: 190px; white-space: nowrap;">Trạng Thái File</th>
+                      <th style="padding: 12px 16px; color: #ffea9f; min-width: 340px; white-space: nowrap;">Gán File Âm Thanh / Dán Link</th>
+                      <th style="padding: 12px 16px; color: #ffea9f; width: 120px; min-width: 120px; white-space: nowrap;">Âm Lượng (%)</th>
+                      <th style="padding: 12px 16px; color: #ffea9f; width: 110px; min-width: 110px; white-space: nowrap;">Pitch (bán cung)</th>
+                      <th style="padding: 12px 16px; color: #ffea9f; width: 140px; min-width: 140px; text-align: center; white-space: nowrap;">Hành Động</th>
                     </tr>
                   </thead>
                   <tbody id="ownerInstStringsTableBody">
@@ -2414,16 +2414,16 @@
           </div>
 
           <div class="wp-table-scroll-container">
-            <table class="wp-list-table">
+            <table class="wp-list-table" style="min-width: 1020px; width: 100%; border-collapse: separate; border-spacing: 0;">
               <thead>
                 <tr>
-                  <th style="width: 180px;">Tài khoản (Username)</th>
-                  <th>Tên hiển thị</th>
-                  <th>Mật khẩu</th>
-                  <th style="width: 140px;">Vai trò (Role)</th>
-                  <th style="width: 130px;">Trạng thái</th>
-                  <th style="width: 110px;">Ngày tạo</th>
-                  <th style="width: 180px; text-align: center;">Hành động kiểm soát</th>
+                  <th style="width: 200px; min-width: 200px; padding: 12px 16px; white-space: nowrap;">Tài khoản (Username)</th>
+                  <th style="width: 220px; min-width: 220px; padding: 12px 16px; white-space: nowrap;">Tên hiển thị</th>
+                  <th style="width: 130px; min-width: 130px; padding: 12px 16px; white-space: nowrap;">Mật khẩu</th>
+                  <th style="width: 180px; min-width: 180px; padding: 12px 16px; white-space: nowrap;">Vai trò (Role)</th>
+                  <th style="width: 140px; min-width: 140px; padding: 12px 16px; white-space: nowrap;">Trạng thái</th>
+                  <th style="width: 120px; min-width: 120px; padding: 12px 16px; white-space: nowrap;">Ngày tạo</th>
+                  <th style="width: 180px; min-width: 180px; padding: 12px 16px; text-align: center; white-space: nowrap;">Hành động kiểm soát</th>
                 </tr>
               </thead>
               <tbody id="wpUsersTableBody">
@@ -7497,9 +7497,9 @@
         btnMin.innerHTML = '─ Thu gọn';
         btnMin.title = 'Thu gọn bảng điều khiển';
       }
-      const w = Math.min(880, window.innerWidth - 24);
+      const w = Math.min(1180, window.innerWidth - 24);
       win.style.left = Math.max(12, Math.round((window.innerWidth - w) / 2)) + 'px';
-      win.style.top = '72px';
+      win.style.top = '50px';
     }
     window.resetOwnerWindowPosition = resetOwnerWindowPosition;
 
@@ -8909,42 +8909,57 @@
         const keyLabel = (n.key || (idx + 1)).toUpperCase();
 
         const badgeHtml = hasCustomFile
-          ? `<span class="badge" style="background:#2b8a3e; color:#fff; font-size:11px; padding:3px 7px; border-radius:4px; display:inline-flex; align-items:center; gap:4px; max-width:170px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${fileName}">🟢 ${fileName}</span>`
-          : `<span class="badge" style="background:rgba(255,255,255,0.12); color:#cfc6ba; font-size:11px; padding:3px 7px; border-radius:4px;">⚪ Web Audio Synth</span>`;
+          ? `<span style="background: rgba(34, 197, 94, 0.18); border: 1px solid rgba(34, 197, 94, 0.45); color: #86efac; font-size: 11.5px; font-weight: 700; padding: 5px 12px; border-radius: 999px; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; max-width: 220px; overflow: hidden; text-overflow: ellipsis;" title="${fileName}">
+               <span style="font-size: 9px;">🟢</span> <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${fileName}</span>
+             </span>`
+          : `<span style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.16); color: #cbd5e1; font-size: 11.5px; font-weight: 600; padding: 5px 12px; border-radius: 999px; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;">
+               <span style="font-size: 10px; opacity: 0.8;">⚪</span> <span style="white-space: nowrap;">Web Audio Synth</span>
+             </span>`;
 
         return `
-          <tr style="border-bottom:1px solid rgba(239,196,123,0.14); background:${hasCustomFile ? 'rgba(43,138,62,0.10)' : 'transparent'};">
-            <td style="padding:10px 14px; color:#fff8eb;">
-              <strong style="color:#ffea9f; font-size:13px;">${idx + 1}. ${n.name}</strong><br>
-              <span style="color:#b8a996; font-size:11px;">${n.freq}Hz • Phím [${keyLabel}]</span>
-            </td>
-            <td style="padding:10px 14px;">
-              ${badgeHtml}
-            </td>
-            <td style="padding:10px 14px;">
-              <div style="display:flex; gap:8px; align-items:center;">
-                <input type="file" id="inpStringFile_${targetId}_${idx}" accept="audio/*" style="display:none;" onchange="handleStringAudioFileUpload('${targetId}', ${idx}, this.files[0])">
-                <button type="button" class="btn btn-secondary btn-xs" onclick="document.getElementById('inpStringFile_${targetId}_${idx}').click()" title="Tải file mp3/wav cho nốt này" style="height:28px; padding:0 10px; border-radius:5px; font-weight:600;">
-                  📁 Tải file
-                </button>
-                <input type="text" class="wp-input" style="flex:1; height:28px; font-size:11.5px; padding:3px 8px; background:rgba(0,0,0,0.45); border:1px solid rgba(239,196,123,0.25); border-radius:5px; color:#fff;" placeholder="Hoặc dán URL audio (.mp3)..." value="${custom.fileUrl && !custom.fileUrl.startsWith('data:') ? custom.fileUrl : ''}" onchange="updateStringAudioUrl('${targetId}', ${idx}, this.value)">
+          <tr style="border-bottom: 1px solid rgba(239, 196, 123, 0.14); background: ${hasCustomFile ? 'rgba(43, 138, 62, 0.12)' : 'transparent'};">
+            <td style="padding: 12px 16px; color: #fff8eb; white-space: nowrap; vertical-align: middle;">
+              <div style="font-weight: 800; color: #ffea9f; font-size: 13.5px; white-space: nowrap; letter-spacing: 0.01em;">${idx + 1}. ${n.name}</div>
+              <div style="color: #b8a996; font-size: 11px; white-space: nowrap; margin-top: 3px; display: flex; align-items: center; gap: 6px;">
+                <span style="color: #6ee7b7; font-weight: 600;">${n.freq}Hz</span>
+                <span style="opacity: 0.4;">•</span>
+                <span style="background: rgba(239, 196, 123, 0.15); padding: 1px 6px; border-radius: 4px; color: #ffd166; font-weight: 600;">Phím [${keyLabel}]</span>
               </div>
             </td>
-            <td style="padding:10px 14px;">
-              <input type="number" min="20" max="200" step="5" value="${vol}" onchange="updateStringVolume('${targetId}', ${idx}, this.value)" style="width:68px; height:28px; font-size:12px; background:rgba(0,0,0,0.45); border:1px solid rgba(239,196,123,0.25); color:#fff; padding:2px 6px; border-radius:5px;"> %
+            <td style="padding: 12px 16px; white-space: nowrap; vertical-align: middle;">
+              ${badgeHtml}
             </td>
-            <td style="padding:10px 14px;">
-              <input type="number" min="-12" max="12" step="1" value="${pitch}" onchange="updateStringPitch('${targetId}', ${idx}, this.value)" style="width:58px; height:28px; font-size:12px; background:rgba(0,0,0,0.45); border:1px solid rgba(239,196,123,0.25); color:#fff; padding:2px 6px; border-radius:5px;">
-            </td>
-            <td style="padding:10px 14px; text-align:center; white-space:nowrap;">
-              <button type="button" class="btn btn-primary btn-xs" onclick="ownerTestPlayStringAudio('${targetId}', ${idx})" title="Nghe thử nốt này" style="height:28px; padding:0 10px; border-radius:5px; font-weight:600;">
-                🔊 Thử
-              </button>
-              ${hasCustomFile ? `
-                <button type="button" class="btn btn-danger btn-xs" onclick="ownerDeleteStringAudio('${targetId}', ${idx})" title="Xóa file âm thanh tùy chỉnh và dùng mặc định" style="height:28px; padding:0 8px; margin-left:6px; border-radius:5px;">
-                  🗑️
+            <td style="padding: 12px 16px; white-space: nowrap; vertical-align: middle;">
+              <div style="display: flex; gap: 10px; align-items: center; white-space: nowrap; min-width: 320px;">
+                <input type="file" id="inpStringFile_${targetId}_${idx}" accept="audio/*" style="display: none;" onchange="handleStringAudioFileUpload('${targetId}', ${idx}, this.files[0])">
+                <button type="button" class="btn btn-secondary btn-xs" onclick="document.getElementById('inpStringFile_${targetId}_${idx}').click()" title="Tải file mp3/wav cho nốt này" style="height: 32px; padding: 0 12px; border-radius: 6px; font-weight: 700; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0;">
+                  <span>📁</span> <span>Tải file</span>
                 </button>
-              ` : ''}
+                <input type="text" class="wp-input" style="flex: 1; min-width: 200px; height: 32px; font-size: 12px; padding: 4px 10px; background: rgba(0,0,0,0.55); border: 1px solid rgba(239,196,123,0.3); border-radius: 6px; color: #fff; outline: none;" placeholder="Hoặc dán URL audio (.mp3)..." value="${custom.fileUrl && !custom.fileUrl.startsWith('data:') ? custom.fileUrl : ''}" onchange="updateStringAudioUrl('${targetId}', ${idx}, this.value)">
+              </div>
+            </td>
+            <td style="padding: 12px 16px; white-space: nowrap; vertical-align: middle;">
+              <div style="display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;">
+                <input type="number" min="20" max="200" step="5" value="${vol}" onchange="updateStringVolume('${targetId}', ${idx}, this.value)" style="width: 58px; height: 32px; font-size: 12.5px; font-weight: 600; text-align: center; background: rgba(0,0,0,0.55); border: 1px solid rgba(239,196,123,0.3); color: #ffea9f; padding: 2px 4px; border-radius: 6px;">
+                <span style="color: #cbd5e1; font-size: 12px; font-weight: 600;">%</span>
+              </div>
+            </td>
+            <td style="padding: 12px 16px; white-space: nowrap; vertical-align: middle;">
+              <div style="display: inline-flex; align-items: center; white-space: nowrap;">
+                <input type="number" min="-12" max="12" step="1" value="${pitch}" onchange="updateStringPitch('${targetId}', ${idx}, this.value)" style="width: 52px; height: 32px; font-size: 12.5px; font-weight: 600; text-align: center; background: rgba(0,0,0,0.55); border: 1px solid rgba(239,196,123,0.3); color: #fff; padding: 2px 4px; border-radius: 6px;">
+              </div>
+            </td>
+            <td style="padding: 12px 16px; text-align: center; white-space: nowrap; vertical-align: middle;">
+              <div style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap;">
+                <button type="button" class="btn btn-primary btn-xs" onclick="ownerTestPlayStringAudio('${targetId}', ${idx})" title="Nghe thử nốt này" style="height: 32px; padding: 0 14px; border-radius: 6px; font-weight: 700; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;">
+                  <span>🔊</span> <span>Thử</span>
+                </button>
+                ${hasCustomFile ? `
+                  <button type="button" class="btn btn-danger btn-xs" onclick="ownerDeleteStringAudio('${targetId}', ${idx})" title="Xóa file âm thanh tùy chỉnh và dùng mặc định" style="height: 32px; padding: 0 10px; border-radius: 6px; display: inline-flex; align-items: center;">
+                    🗑️
+                  </button>
+                ` : ''}
+              </div>
             </td>
           </tr>
         `;
@@ -9728,43 +9743,53 @@
         const isAdmin = (u.role === 'admin' || u.username.toLowerCase() === 'admin' || u.username.toLowerCase() === 'owner');
         const isLocked = !!u.isLocked;
         const roleBadge = isAdmin
-          ? '<span style="background: #de194b; color: #fff; border: 1px solid #efc47b; padding: 2px 10px; border-radius: 999px; font-size: 11px; font-weight: 700;">Quản trị viên (Admin)</span>'
-          : '<span style="background: rgba(239, 196, 123, 0.15); border: 1px solid rgba(239, 196, 123, 0.35); color: #ffea9f; padding: 2px 10px; border-radius: 999px; font-size: 11px;">Thành viên</span>';
+          ? '<span style="background: linear-gradient(135deg, #de194b, #b91c1c); color: #fff; border: 1px solid #efc47b; padding: 4px 12px; border-radius: 999px; font-size: 11.5px; font-weight: 700; white-space: nowrap; display: inline-flex; align-items: center; box-shadow: 0 2px 6px rgba(222,25,75,0.3);">Quản trị viên (Admin)</span>'
+          : '<span style="background: rgba(239, 196, 123, 0.15); border: 1px solid rgba(239, 196, 123, 0.35); color: #ffea9f; padding: 4px 12px; border-radius: 999px; font-size: 11.5px; white-space: nowrap; display: inline-flex; align-items: center;">Thành viên</span>';
         const statusBadge = isLocked
-          ? '<span style="color: #f87171; font-weight: 700;">🔒 Đã bị khóa</span>'
-          : '<span style="color: #69db7c; font-weight: 700;">✅ Hoạt động</span>';
-        const safeU = escapeRedditHtml(u.username);
-        const safeName = escapeRedditHtml(u.displayName || u.username);
-        const passDisplay = `<span id="passSpan_${safeU}" style="font-family: monospace; color: #ffd166;">••••••</span> <button type="button" class="btn btn-xs" onclick="adminToggleShowPass('${safeU}', '${escapeRedditHtml(u.password || '')}')" style="background:none; border:none; color:#a1a1aa; cursor:pointer;" title="Hiện/ẩn mật khẩu">👁️</button>`;
+          ? '<span style="color: #f87171; font-weight: 700; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;"><span>🔒</span> <span>Đã bị khóa</span></span>'
+          : '<span style="color: #6ee7b7; font-weight: 700; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;"><span>✅</span> <span>Hoạt động</span></span>';
+        const safeU = escapeHtml(u.username);
+        const safeName = escapeHtml(u.displayName || u.username);
+        const passDisplay = `<span id="passSpan_${safeU}" style="font-family: monospace; color: #ffd166; font-size: 13px; letter-spacing: 1px;">••••••</span> <button type="button" class="btn btn-xs" onclick="adminToggleShowPass('${safeU}', '${escapeHtml(u.password || '')}')" style="background:none; border:none; color:#a1a1aa; cursor:pointer; font-size: 14px; margin-left: 4px;" title="Hiện/ẩn mật khẩu">👁️</button>`;
 
         return `
-          <tr>
-            <td>
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <div style="width: 28px; height: 28px; border-radius: 50%; overflow: hidden; background: #333; display: flex; align-items: center; justify-content: center; font-size: 13px;">
-                  ${u.avatar ? `<img src="${escapeRedditHtml(u.avatar)}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.textContent='👤'" />` : '👤'}
+          <tr style="border-bottom: 1px solid rgba(239, 196, 123, 0.14);">
+            <td style="padding: 14px 16px; white-space: nowrap; vertical-align: middle;">
+              <div style="display: flex; align-items: center; gap: 10px; white-space: nowrap;">
+                <div style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; background: #333; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; border: 1px solid rgba(239, 196, 123, 0.3);">
+                  ${u.avatar ? `<img src="${escapeHtml(u.avatar)}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.textContent='👤'" />` : '👤'}
                 </div>
-                <strong style="color: #ffea9f;">@${safeU}</strong>
+                <strong style="color: #ffea9f; font-size: 13px; white-space: nowrap;">@${safeU}</strong>
               </div>
             </td>
-            <td style="color: #fff;">${safeName}</td>
-            <td>${passDisplay}</td>
-            <td>${roleBadge}</td>
-            <td>${statusBadge}</td>
-            <td style="color: #a1a1aa; font-size: 12px;">${escapeRedditHtml(u.createdAt || '2026-09-14')}</td>
-            <td>
-              <div style="display: flex; align-items: center; justify-content: center; gap: 6px;">
-                <button type="button" class="btn btn-secondary btn-xs" onclick="adminChangeUserPasswordPrompt('${safeU}')" title="Đổi mật khẩu tài khoản">
-                  🔑 Đổi MK
+            <td style="padding: 14px 16px; color: #fff; font-weight: 600; font-size: 13px; white-space: nowrap; vertical-align: middle;">
+              ${safeName}
+            </td>
+            <td style="padding: 14px 16px; white-space: nowrap; vertical-align: middle;">
+              ${passDisplay}
+            </td>
+            <td style="padding: 14px 16px; white-space: nowrap; vertical-align: middle;">
+              ${roleBadge}
+            </td>
+            <td style="padding: 14px 16px; white-space: nowrap; vertical-align: middle;">
+              ${statusBadge}
+            </td>
+            <td style="padding: 14px 16px; color: #a1a1aa; font-size: 12px; white-space: nowrap; vertical-align: middle;">
+              ${escapeHtml(u.createdAt || '2026-09-14')}
+            </td>
+            <td style="padding: 14px 16px; text-align: center; white-space: nowrap; vertical-align: middle;">
+              <div style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap;">
+                <button type="button" class="btn btn-secondary btn-xs" onclick="adminChangeUserPasswordPrompt('${safeU}')" title="Đổi mật khẩu tài khoản" style="white-space: nowrap; padding: 4px 12px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">
+                  <span>🔑</span> <span>Đổi MK</span>
                 </button>
                 ${!isAdmin ? `
-                  <button type="button" class="btn btn-xs" onclick="adminToggleUserLock('${safeU}')" style="background: ${isLocked ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)'}; border: 1px solid ${isLocked ? '#22c55e' : '#ef4444'}; color: ${isLocked ? '#86efac' : '#fca5a5'};" title="${isLocked ? 'Mở khóa tài khoản' : 'Khóa tài khoản'}">
+                  <button type="button" class="btn btn-xs" onclick="adminToggleUserLock('${safeU}')" style="background: ${isLocked ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)'}; border: 1px solid ${isLocked ? '#22c55e' : '#ef4444'}; color: ${isLocked ? '#86efac' : '#fca5a5'}; padding: 4px 10px; border-radius: 6px; white-space: nowrap;" title="${isLocked ? 'Mở khóa tài khoản' : 'Khóa tài khoản'}">
                     ${isLocked ? '🔓 Mở' : '🔒 Khóa'}
                   </button>
-                  <button type="button" class="btn btn-danger btn-xs" onclick="adminDeleteUserPrompt('${safeU}')" title="Xóa tài khoản">
+                  <button type="button" class="btn btn-danger btn-xs" onclick="adminDeleteUserPrompt('${safeU}')" style="padding: 4px 8px; border-radius: 6px; white-space: nowrap;" title="Xóa tài khoản">
                     🗑️
                   </button>
-                ` : '<span style="font-size: 11px; color: #a1a1aa; font-style: italic;">(Bảo vệ)</span>'}
+                ` : '<span style="font-size: 11.5px; color: #a1a1aa; font-style: italic; white-space: nowrap;">(Bảo vệ)</span>'}
               </div>
             </td>
           </tr>
