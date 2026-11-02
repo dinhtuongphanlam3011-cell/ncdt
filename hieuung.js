@@ -2697,6 +2697,68 @@
         "Tuyệt vời! Việc luyện ngón đều đặn mỗi ngày sẽ giúp ngón tay bạn linh hoạt và cảm âm ngũ cung chuẩn xác hơn rất nhiều.";
     }
 
+    // TRẢ LỜI ĐẦY ĐỦ VÀ CHUYÊN SÂU TÊN CÁC LOẠI NHẠC CỤ DÂN TỘC VIỆT NAM (KHÔNG BAO GIỜ TRẢ LỜI "....")
+    var isListInstrumentsQuery =
+      q.includes("kể tên") ||
+      q.includes("tên các loại nhạc cụ") ||
+      q.includes("tên các nhạc cụ") ||
+      q.includes("các loại nhạc cụ") ||
+      q.includes("danh sách nhạc cụ") ||
+      q.includes("danh sách các loại nhạc cụ") ||
+      q.includes("có những loại nhạc cụ nào") ||
+      q.includes("có những nhạc cụ nào") ||
+      q.includes("gồm những loại nhạc cụ nào") ||
+      q.includes("gồm những nhạc cụ nào") ||
+      q.includes("liệt kê nhạc cụ") ||
+      q.includes("liệt kê các nhạc cụ") ||
+      q.includes("kể tên nhạc cụ") ||
+      q.includes("các nhạc cụ việt nam") ||
+      q.includes("có bao nhiêu loại nhạc cụ") ||
+      q.includes("có bao nhiêu nhạc cụ") ||
+      (q.includes("nhạc cụ") && (q.includes("loại nào") || q.includes("những gì") || q.includes("tên là gì") || q.includes("kể ra")));
+
+    if (isListInstrumentsQuery) {
+      return "🇻🇳 <strong>Hệ Thống 4 Bộ Đại Nhạc Cụ Dân Tộc Cổ Truyền Việt Nam:</strong><br><br>" +
+        "Kho tàng âm nhạc truyền thống Việt Nam vô cùng phong phú và độc đáo, được phân định chuẩn mực thành <strong>4 Bộ chính</strong> theo nguyên lý vật lý âm thanh và cấu tạo chế tác:<br><br>" +
+
+        "🪕 <strong>1. BỘ NHẠC CỤ DÂY (Dây gảy, Dây kéo, Dây gõ - 13 nhạc cụ tiêu biểu):</strong><br>" +
+        "• <em>Đàn gảy:</em> <strong>Đàn Tranh</strong> (Thập lục huyền cầm 16 dây ngũ cung), <strong>Đàn Bầu</strong> (Độc huyền cầm uốn cần sừng trâu phát bồi âm), <strong>Đàn Nguyệt</strong> (Đàn Kìm 2 dây mặt trăng), <strong>Đàn Tỳ Bà</strong> (4 dây dáng quả lê), <strong>Đàn Đáy</strong> (3 dây cần dài gắn liền nghệ thuật Ca Trù), <strong>Đàn Tam</strong> (3 dây mặt bịt da trăn), <strong>Đàn Sến</strong> (2 dây hoa thị), <strong>Đàn Tính</strong> (Đàn Then tơ tằm của người Tày, Nùng), <strong>Đàn Goong</strong> (Tây Nguyên), <strong>Đàn Chapi</strong> (Raglai), <strong>Đàn Môi</strong>.<br>" +
+        "• <em>Đàn kéo (cần vĩ):</em> <strong>Đàn Nhị</strong> (Đàn Cò 2 dây réo rắt), <strong>Đàn Gáo</strong> (Bầu đàn bằng sọ dừa trầm ấm), <strong>Đàn K'ní</strong>.<br>" +
+        "• <em>Đàn phím:</em> <strong>Đàn Ta Lư</strong>.<br><br>" +
+
+        "🎋 <strong>2. BỘ SÁO, KÈN &amp; HƠI (10 nhạc cụ tiêu biểu):</strong><br>" +
+        "• <strong>Sáo Trúc:</strong> Thổi ngang, âm sắc trong trẻo, bay bổng, réo rắt.<br>" +
+        "• <strong>Tiêu (Động Tiêu):</strong> Thổi dọc, âm sắc trầm ấm, sâu lắng, thanh u thiền vị.<br>" +
+        "• <strong>Khèn Mông:</strong> Nhạc cụ đa thanh bồi âm linh thiêng của đồng bào H'Mông vùng cao.<br>" +
+        "• <strong>Khèn Bè Thái:</strong> Ống nứa ghép đôi ngọt ngào tình tự.<br>" +
+        "• <strong>Kèn Bầu:</strong> Loa kèn bằng gỗ vang rộn rã trong lễ hội và nhã nhạc.<br>" +
+        "• <strong>Pí / Pi Tây Bắc</strong>, <strong>Đing Năm</strong>, <strong>Đing Buốt</strong>, <strong>Đing Tút</strong>, <strong>Pi Lè</strong>.<br><br>" +
+
+        "🔔 <strong>3. BỘ TỰ THÂN VANG / GÕ (8 nhạc cụ tiêu biểu):</strong><br>" +
+        "• <strong>Đàn Đá:</strong> Nhạc khí tiền sử hàng nghìn năm tuổi, âm thanh ngân vang hùng vĩ như tiếng thác ghềnh ngàn xưa.<br>" +
+        "• <strong>Đàn T'rưng:</strong> Dàn ống nứa xếp tầng rung vang rộn ràng núi rừng Tây Nguyên.<br>" +
+        "• <strong>Cồng:</strong> Mặt tròn có núm lồi - đại diện phái Dương, âm trầm ngân vang.<br>" +
+        "• <strong>Chiêng:</strong> Mặt bằng phẳng không núm - đại diện phái Âm, âm trong sáng, thanh thoát.<br>" +
+        "• <strong>Thanh La</strong>, <strong>Mõ</strong> (Mõ gỗ giữ nhịp thiền môn & nghi lễ), <strong>Phách</strong> (Thanh tre Ca Trù đanh giòn), <strong>Sinh Tiền</strong> (Nhạc cụ gõ kết hợp xâu tiền đồng độc đáo).<br><br>" +
+
+        "🥁 <strong>4. BỘ MÀNG RUNG / TRỐNG DA (4 nhạc cụ tiêu biểu):</strong><br>" +
+        "• <strong>Trống Cơm:</strong> Bịt da hai đầu gắn cơm nếp định âm, tiếng trống bập bùng trầm ấm.<br>" +
+        "• <strong>Trống Bản:</strong> Trống lễ hội đình làng.<br>" +
+        "• <strong>Trống Đế:</strong> Linh hồn nhịp điệu sân khấu Chèo cổ miền Bắc.<br>" +
+        "• <strong>Trống Paranưng:</strong> Trống vỗ tay truyền thống người Chăm.<br><br>" +
+
+        "✨ <em>Bạn có thể click vào các nút dưới đây để trực tiếp xem mô hình 3D và nghe tấu thử tiếng đàn của từng cây nhé:</em><br>" +
+        "<div style='display:flex; flex-wrap:wrap; gap:6px; margin-top:10px;'>" +
+        "<button type='button' class='btn btn-primary btn-sm btnAiSwitchInst' data-inst='dantranh'>🪕 Đàn Tranh</button>" +
+        "<button type='button' class='btn btn-secondary btn-sm btnAiSwitchInst' data-inst='danbau'>🎻 Đàn Bầu</button>" +
+        "<button type='button' class='btn btn-secondary btn-sm btnAiSwitchInst' data-inst='dannguyet'>🌕 Đàn Nguyệt</button>" +
+        "<button type='button' class='btn btn-secondary btn-sm btnAiSwitchInst' data-inst='saotruc'>🎋 Sáo Trúc</button>" +
+        "<button type='button' class='btn btn-secondary btn-sm btnAiSwitchInst' data-inst='danda'>💎 Đàn Đá</button>" +
+        "<button type='button' class='btn btn-secondary btn-sm btnAiSwitchInst' data-inst='cong'>🔔 Cồng Chiêng</button>" +
+        "<button type='button' class='btn btn-secondary btn-sm btnAiSwitchInst' data-inst='trongcom'>🥁 Trống Cơm</button>" +
+        "</div>";
+    }
+
     // 1. Lời chào & Thân mật
     if (q === "chào" || q === "hi" || q === "hello" || q.startsWith("chào") || q.startsWith("xin chào") || q.startsWith("hé lô")) {
       var greetExtra = "";
@@ -3124,17 +3186,17 @@
     var systemInstruction = "";
     if (isDeep) {
       // CHẾ ĐỘ SUY NGHĨ LÂU: KẾT QUẢ ĐÚNG VÀ CHI TIẾT HƠN
-      systemInstruction = "Bạn là 'Chuyên gia Cố vấn AI về Nhạc cụ Dân tộc Việt Nam' tại nền tảng Đàn Tranh Online (MIT).\n" +
-        "- QUY TẮC BẮT BUỘC: Bạn CHỈ ĐƯỢC PHÉP trả lời các câu hỏi liên quan đến Nhạc cụ Dân tộc và Âm nhạc Cổ truyền Việt Nam (38 đại nhạc cụ: Đàn Tranh, Đàn Bầu, Đàn Nguyệt, Đàn Nhị, Sáo Trúc, Cồng Chiêng, T'rưng, Đàn Đáy...; kỹ thuật ngón đàn gảy/nhấn/rung/vuốt, thang âm ngũ cung Hò-Xự-Xang-Xê-Cống, cách chỉnh dây, bài bản dân ca cổ truyền).\n" +
-        "- NẾU NGƯỜI DÙNG HỎI BẤT KỲ CHỦ ĐỀ NÀO KHÁC (toán học, tin học/lập trình, thời tiết, địa lý, chính trị, thể thao, khoa học tự nhiên... không liên quan nhạc cụ dân tộc), BẠN BẮT BUỘC PHẢI TỪ CHỐI LỊCH SỰ VÀ HƯỚNG DẪN NGƯỜI DÙNG QUAY LẠI CÂU HỎI VỀ NHẠC CỤ DÂN TỘC VIỆT NAM.\n" +
-        "- CHẾ ĐỘ: SUY NGHĨ SÂU & CHI TIẾT. Phân tích cặn kẽ, dẫn chứng rõ ràng, thể hiện sự am tường sâu sắc của nghệ nhân danh cầm.\n" +
-        "- Trình bày mạch lạc, sử dụng các tiêu đề mục (###), in đậm (**), gạch đầu dòng rõ ràng.";
+      systemInstruction = "Bạn là 'Chuyên gia Cố vấn AI về Nhạc cụ Dân tộc Việt Nam' tại nền tảng số Đàn Tranh Online (MIT).\n" +
+        "- QUY TẮC NỘI DUNG: Bạn am tường sâu sắc về 4 Bộ Nhạc cụ Cổ truyền Việt Nam: Bộ Dây (Đàn Tranh, Đàn Bầu, Đàn Nguyệt, Đàn Nhị, Đàn Tỳ Bà, Đàn Đáy, Đàn Tam, Đàn Sến, Đàn Tính, Đàn Goong, Đàn Chapi, Đàn Môi, Đàn Ta Lư), Bộ Hơi (Sáo Trúc, Tiêu/Động Tiêu, Khèn Mông, Khèn Bè Thái, Kèn Bầu, Pí Tây Bắc, Đing Năm, Đing Buốt, Đing Tút, Pi Lè), Bộ Tự Thân Vang (Đàn Đá, Đàn T'rưng, Cồng, Chiêng, Thanh La, Mõ, Phách, Sinh Tiền) và Bộ Màng Rung (Trống Cơm, Trống Bản, Trống Đế, Trống Paranưng); cùng thang âm ngũ cung Hò-Xự-Xang-Xê-Cống và kỹ thuật ngón gảy/nhấn/rung/vuốt/vê/lia/phi.\n" +
+        "- TUYỆT ĐỐI KHÔNG BAO GIỜ TRẢ LỜI CẨU THẢ BẰNG DẤU BA CHẤM (...) HOẶC (....). Khi người dùng hỏi tên các loại nhạc cụ, bạn BẮT BUỘC liệt kê đầy đủ, rõ ràng từng loại nhạc cụ theo 4 bộ, giải thích nguồn gốc và âm sắc.\n" +
+        "- TỪ CHỐI LỊCH SỰ: Nếu người dùng hỏi các chủ đề ngoài lề (toán học, tin học, thời tiết, chính trị... không liên quan đến nhạc cụ dân tộc), hãy từ chối nhã nhặn và mời người dùng quay lại câu hỏi về âm nhạc cổ truyền.\n" +
+        "- PHONG THÁI: Tận tâm, thông thái, giàu chất thơ và nhạc cảm của một nghệ nhân danh cầm cổ truyền. Trình bày khoa học với đề mục (###), in đậm (**), gạch đầu dòng rõ ràng.";
     } else {
-      // CHẾ ĐỘ NHANH: PHẢN HỒI SIÊU TỐC, NGẮN GỌN SÚC TÍCH
+      // CHẾ ĐỘ NHANH: PHẢN HỒI SIÊU TỐC NHƯNG ĐẦY ĐỦ THÔNG MINH
       systemInstruction = "Bạn là 'Chuyên gia Cố vấn AI về Nhạc cụ Dân tộc Việt Nam' tại nền tảng Đàn Tranh Online (MIT).\n" +
-        "- QUY TẮC BẮT BUỘC: Bạn CHỈ ĐƯỢC PHÉP trả lời các câu hỏi liên quan đến Nhạc cụ Dân tộc và Âm nhạc Truyền thống Việt Nam.\n" +
-        "- NẾU NGƯỜI DÙNG HỎI BẤT KỲ CHỦ ĐỀ NÀO NGOÀI LỀ KHÔNG LIÊN QUAN ĐẾN NHẠC CỤ DÂN TỘC VIỆT NAM, BẠN BẮT BUỘC PHẢI TỪ CHỐI LỊCH SỰ VÀ NHẮC NGƯỜI DÙNG HỎI VỀ NHẠC CỤ DÂN TỘC.\n" +
-        "- CHẾ ĐỘ: PHẢN HỒI SIÊU TỐC (FAST MODE). Trả lời ngắn gọn, súc tích trong 1-3 câu hoặc 2-3 gạch đầu dòng ngắn gọn.";
+        "- QUY TẮC NỘI DUNG: Chuyên giải đáp về 4 Bộ Nhạc cụ Dân tộc Việt Nam (Bộ Dây, Bộ Hơi, Bộ Tự Thân Vang, Bộ Màng Rung) và nghệ thuật diễn tấu cổ truyền.\n" +
+        "- TUYỆT ĐỐI KHÔNG TRẢ LỜI BẰNG DẤU BA CHẤM (...) HOẶC (....). Khi người dùng hỏi tên các nhạc cụ, hãy liệt kê đầy đủ, mạch lạc theo từng bộ: Bộ Dây (Đàn Tranh, Đàn Bầu, Đàn Nguyệt, Đàn Nhị, Đàn Tỳ Bà, Đàn Đáy, Đàn Tam), Bộ Hơi (Sáo Trúc, Tiêu, Khèn Mông, Kèn Bầu), Bộ Tự Thân Vang (Đàn Đá, Đàn T'rưng, Cồng Chiêng) và Bộ Màng Rung (Trống Cơm, Trống Đế).\n" +
+        "- PHONG CÁCH: Trả lời thông minh, đúng trọng tâm, nhanh gọn nhưng đầy đủ thông tin, không cắt bớt thông tin quan trọng.";
     }
 
     // NẠP THÔNG TIN THỜI GIAN THỰC VỀ HÀNH ĐỘNG CỦA NGƯỜI DÙNG VÀO HỆ THỐNG PROMPT (YÊU CẦU 3)

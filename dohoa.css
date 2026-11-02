@@ -1623,7 +1623,9 @@ body {
 .dt-chat-window.minimized .dt-quick-topics,
 .dt-chat-window.minimized .dt-chat-form,
 .dt-chat-window.minimized .dt-ai-drawer,
-.dt-chat-window.minimized .dt-chat-resize-handle {
+.dt-chat-window.minimized .dt-chat-resize-handle,
+.dt-chat-window.minimized #aiLiveObservationPill,
+.dt-chat-window.minimized .ai-mode-selector-bar {
   display: none !important;
 }
 
@@ -2180,13 +2182,46 @@ body {
   }
 }
 
-/* --- TAB 2: SÂN KHẤU 3D TOÀN MÀN HÌNH (BỎ CỘT THÔNG TIN BÊN TRÁI) --- */
-.wf-stage-layout,
+/* --- TAB 2: SÂN KHẤU 3D & HÔNG PHẢI LỊCH SỬ ĐÁNH NỐT (YÊU CẦU 3) --- */
+.wf-stage-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 20px;
+  align-items: start;
+}
+
 .wf-stage-layout-single {
   display: grid;
-  grid-template-columns: 1fr !important;
+  grid-template-columns: 1fr;
   gap: 24px;
   align-items: start;
+}
+
+.wf-stage-history-right-flank {
+  background: linear-gradient(165deg, rgba(32, 6, 18, 0.95) 0%, rgba(16, 2, 8, 0.98) 100%);
+  border: 1.5px solid rgba(239, 196, 123, 0.35);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  color: #fff8eb;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: sticky;
+  top: 76px;
+  max-height: calc(100vh - 96px);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1100px) {
+  .wf-stage-layout {
+    grid-template-columns: 1fr;
+  }
+  .wf-stage-history-right-flank {
+    position: static;
+    max-height: none;
+  }
 }
 
 .wf-stage-info-left {
@@ -7444,7 +7479,9 @@ body.tttt-theme-body .floating-account-trigger.is-admin-dock,
 .dt-chat-window.minimized .dt-quick-topics,
 .dt-chat-window.minimized .dt-chat-form,
 .dt-chat-window.minimized .dt-ai-drawer,
-.dt-chat-window.minimized .dt-chat-resize-handle {
+.dt-chat-window.minimized .dt-chat-resize-handle,
+.dt-chat-window.minimized #aiLiveObservationPill,
+.dt-chat-window.minimized .ai-mode-selector-bar {
   display: none !important;
 }
 
