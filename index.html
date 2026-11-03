@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
@@ -17,13 +17,15 @@
        ========================================================================= */
     .contextual-taskbar,
     #taskbarHome,
-    #taskbarInstrument {
+    #taskbarInstrument,
+    #taskbarForum {
       display: none !important;
     }
 
     .contextual-taskbar.active,
     #taskbarHome.active,
-    #taskbarInstrument.active {
+    #taskbarInstrument.active,
+    #taskbarForum.active {
       display: flex !important;
     }
 
@@ -112,7 +114,7 @@
           <span id="navTabInstIcon">🪕</span>
           <span id="navTabInstText">Nhạc cụ</span>
         </button>
-        <button type="button" class="nav-link tttt-plain-tab" id="navTabForum" onclick="switchNavTab('forum')" style="display: none !important;">
+        <button type="button" class="nav-link tttt-plain-tab" id="navTabForum" onclick="switchNavTab('forum')">
           💬 Diễn đàn MIT
         </button>
         <button type="button" class="nav-link tttt-plain-tab" id="navTabLookup" onclick="switchNavTab('lookup')" style="display: none !important;">
@@ -194,6 +196,47 @@
         <button type="button" class="btn btn-primary btn-xs" onclick="toggleMegaFilterPanel(undefined, event)" style="border-radius: 999px; font-weight: 700; height: 36px; padding: 0 16px;">
           ☰ Đổi nhạc cụ
         </button>
+      </div>
+    </div>
+
+<!-- ==================== 3. TASKBAR DIỄN ĐÀN MIT (GỘP THÀNH 1 THANH DUY NHẤT - YÊU CẦU 1, 2, 3) ==================== -->
+    <div class="contextual-taskbar taskbar-forum" id="taskbarForum" style="display: none !important;">
+      <!-- Cụm trái: Nút Quay Về Trang Chủ & Logo Diễn Đàn MIT -->
+      <div class="contextual-taskbar-left">
+        <button type="button" class="taskbar-back-btn" onclick="switchNavTab('encyclopedia')" title="Quay về Trang chủ">
+          <span class="taskbar-back-arrow">←</span>
+          <span class="taskbar-back-text">Quay về</span>
+        </button>
+
+        <div class="mit-taskbar-brand" onclick="filterBySubreddit('all'); renderRedditFeed();" title="Trang chủ diễn đàn MIT">
+          <div class="mit-brand-symbol">MIT</div>
+          <div class="mit-brand-desc">
+            <span class="mit-brand-title">Diễn Đàn MIT</span>
+            <span class="mit-brand-tag">Cộng Đồng</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cụm giữa: Ô Tìm kiếm bài viết -->
+      <div class="taskbar-forum-center">
+        <div class="mit-taskbar-search">
+          <span class="mit-search-icon">🔍</span>
+          <input type="text" id="mitTaskbarSearchInput" placeholder="Tìm kiếm bài viết, chủ đề, nốt số trên diễn đàn MIT..." oninput="handleRedditSearch(this.value)" />
+        </div>
+      </div>
+
+      <!-- Cụm phải: Nút Lịch đăng bài, Tạo bài viết mới & Avatar cá nhân -->
+      <div class="contextual-taskbar-right">
+        <button type="button" class="btn btn-secondary btn-xs" id="btnOpenForumSchedule" onclick="openForumScheduleModal()" title="Xem lịch đăng bài &amp; kế hoạch hoạt động diễn đàn" style="border-radius: 999px; height: 36px; padding: 0 14px; font-weight: 700; color: #ffea9f; border-color: rgba(239, 196, 123, 0.4); display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;">
+          <span>📅</span> <span>Lịch đăng bài</span>
+        </button>
+        <button type="button" class="mit-create-post-btn" onclick="openRedditComposer()" title="Đăng bài viết mới lên diễn đàn MIT">
+          <span>➕</span> <span>Tạo bài viết</span>
+        </button>
+        <div class="mit-user-avatar-btn" id="mitTaskbarUserAvatar" onclick="switchNavTab('feedback')" title="Hồ sơ cá nhân">
+          🪕
+          <span class="reddit-online-dot"></span>
+        </div>
       </div>
     </div>
 
@@ -282,8 +325,10 @@
       try {
         var h = document.getElementById('taskbarHome');
         var i = document.getElementById('taskbarInstrument');
+        var f = document.getElementById('taskbarForum');
         if (h) { h.classList.add('active'); h.style.setProperty('display', 'flex', 'important'); }
         if (i) { i.classList.remove('active'); i.style.setProperty('display', 'none', 'important'); }
+        if (f) { f.classList.remove('active'); f.style.setProperty('display', 'none', 'important'); }
       } catch (e) {}
     })();
   </script>
@@ -624,6 +669,399 @@
       </div>
     </main>
   </div> <!-- /tabContentDanTranh -->
+
+<!-- =========================================================
+       TAB: DIỄN ĐÀN MIT (NỀN TẢNG CỘNG ĐỒNG ÂM NHẠC TRUYỀN THỐNG)
+       ========================================================= -->
+  <div id="tabContentForum" class="tab-pane" style="display: none;">
+    <main class="reddit-forum-wrapper">
+
+      <!-- 2. BỐ CỤC 3 CỘT HIỆN ĐẠI (LEFT RAIL - MAIN FEED - RIGHT RAIL) -->
+      <div class="reddit-layout-grid">
+
+        <!-- CỘT TRÁI: MIT LEFT SIDEBAR -->
+        <aside class="reddit-left-sidebar">
+          <div class="reddit-sidebar-section-title">BẢNG TIN &amp; KHÁM PHÁ</div>
+          <ul class="reddit-nav-list">
+            <li class="reddit-nav-item active" id="redditNavItemHome" onclick="selectRedditNav('home')">
+              <span class="reddit-nav-item-icon">🏠</span>
+              <span>Bảng tin</span>
+            </li>
+            <li class="reddit-nav-item" id="redditNavItemPopular" onclick="selectRedditNav('popular')">
+              <span class="reddit-nav-item-icon">🔥</span>
+              <span>Phổ biến</span>
+            </li>
+            <li class="reddit-nav-item" id="redditNavItemNews" onclick="selectRedditNav('news')">
+              <span class="reddit-nav-item-icon">📰</span>
+              <span>Bản nhạc mới</span>
+            </li>
+            <li class="reddit-nav-item" id="redditNavItemExplore" onclick="selectRedditNav('explore')">
+              <span class="reddit-nav-item-icon">🧭</span>
+              <span>Khám phá chủ đề</span>
+            </li>
+            <li class="reddit-nav-item" onclick="openRedditComposer()" style="color: #ffea9f;">
+              <span class="reddit-nav-item-icon">➕</span>
+              <span>Tạo bài viết mới</span>
+            </li>
+          </ul>
+
+          <div class="reddit-divider"></div>
+
+          <div class="reddit-sidebar-section-title">DANH MỤC CHỦ ĐỀ</div>
+          <ul class="reddit-community-list" id="redditCommunityList">
+            <li class="reddit-community-item active" data-sub="all" onclick="filterBySubreddit('all')">
+              <div class="reddit-sub-avatar" style="background: linear-gradient(135deg, #ef4444, #f97316);">🌐</div>
+              <div class="reddit-sub-name">Tất cả chủ đề</div>
+            </li>
+            <li class="reddit-community-item" data-sub="dantranh" onclick="filterBySubreddit('dantranh')">
+              <div class="reddit-sub-avatar" style="background: #c97a2b;">🪕</div>
+              <div class="reddit-sub-name">Đàn Tranh</div>
+              <span class="reddit-sub-members" id="subCount_dantranh">28</span>
+            </li>
+            <li class="reddit-community-item" data-sub="danbau" onclick="filterBySubreddit('danbau')">
+              <div class="reddit-sub-avatar" style="background: #9b2c2c;">🎻</div>
+              <div class="reddit-sub-name">Đàn Bầu</div>
+              <span class="reddit-sub-members" id="subCount_danbau">16</span>
+            </li>
+            <li class="reddit-community-item" data-sub="dannguyet" onclick="filterBySubreddit('dannguyet')">
+              <div class="reddit-sub-avatar" style="background: #d69e2e;">🌕</div>
+              <div class="reddit-sub-name">Đàn Nguyệt</div>
+              <span class="reddit-sub-members" id="subCount_dannguyet">12</span>
+            </li>
+            <li class="reddit-community-item" data-sub="saotruc" onclick="filterBySubreddit('saotruc')">
+              <div class="reddit-sub-avatar" style="background: #2f855a;">🎋</div>
+              <div class="reddit-sub-name">Sáo Trúc &amp; Tiêu</div>
+              <span class="reddit-sub-members" id="subCount_saotruc">19</span>
+            </li>
+            <li class="reddit-community-item" data-sub="dannhi" onclick="filterBySubreddit('dannhi')">
+              <div class="reddit-sub-avatar" style="background: #805ad5;">🎻</div>
+              <div class="reddit-sub-name">Đàn Nhị</div>
+              <span class="reddit-sub-members" id="subCount_dannhi">11</span>
+            </li>
+            <li class="reddit-community-item" data-sub="congchieng" onclick="filterBySubreddit('congchieng')">
+              <div class="reddit-sub-avatar" style="background: #dd6b20;">🔔</div>
+              <div class="reddit-sub-name">Cồng Chiêng &amp; Trống</div>
+              <span class="reddit-sub-members" id="subCount_congchieng">8</span>
+            </li>
+            <li class="reddit-community-item" data-sub="bannhaccotruyen" onclick="filterBySubreddit('bannhaccotruyen')">
+              <div class="reddit-sub-avatar" style="background: #3182ce;">🎼</div>
+              <div class="reddit-sub-name">Bản Nhạc &amp; Nốt Số</div>
+              <span class="reddit-sub-members" id="subCount_bannhaccotruyen">34</span>
+            </li>
+            <li class="reddit-community-item" data-sub="tuvanchondan" onclick="filterBySubreddit('tuvanchondan')">
+              <div class="reddit-sub-avatar" style="background: #744210;">🪵</div>
+              <div class="reddit-sub-name">Tư Vấn Chọn Đàn</div>
+              <span class="reddit-sub-members" id="subCount_tuvanchondan">15</span>
+            </li>
+          </ul>
+
+          <div class="reddit-divider"></div>
+
+          <div class="reddit-sidebar-section-title">TRẢI NGHIỆM TƯƠNG TÁC</div>
+          <div class="reddit-game-card" onclick="switchNavTab('dantranh')">
+            <div class="reddit-game-thumb">🪕</div>
+            <div class="reddit-game-info">
+              <h4>Hòa Tấu Đàn Tranh 3D</h4>
+              <p>Phím bấm &amp; Thử thách gảy dây ảo · 260 lượt hòa tấu</p>
+            </div>
+          </div>
+        </aside>
+
+        <!-- CỘT GIỮA: MIT MAIN FEED -->
+        <section class="reddit-main-feed">
+
+          <!-- Thanh phân loại Sort Bar: Đã gộp toàn bộ chức năng lên Thanh Điều Hướng Taskbar phía trên (Yêu Cầu 1) -->
+          <div class="reddit-sort-bar" style="display: none !important;">
+            <div class="reddit-sort-options">
+              <button type="button" class="reddit-sort-btn active" id="btnSortBest" onclick="setRedditSort('best')">
+                <span>🚀</span>
+                <span>Nổi bật ▾</span>
+              </button>
+              <button type="button" class="reddit-sort-btn" id="btnSortHot" onclick="setRedditSort('hot')">
+                <span>🔥</span>
+                <span>Thảo luận sôi nổi</span>
+              </button>
+              <button type="button" class="reddit-sort-btn" id="btnSortNew" onclick="setRedditSort('new')">
+                <span>⚡</span>
+                <span>Mới nhất</span>
+              </button>
+              <button type="button" class="reddit-sort-btn" id="btnSortTop" onclick="setRedditSort('top')">
+                <span>🏆</span>
+                <span>Đánh giá cao</span>
+              </button>
+            </div>
+
+            <div class="reddit-view-switch">
+              <button type="button" class="reddit-view-btn active" id="btnViewCard" title="Hiển thị dạng thẻ" onclick="setRedditViewMode('card')">🗂️</button>
+              <button type="button" class="reddit-view-btn" id="btnViewCompact" title="Hiển thị rút gọn" onclick="setRedditViewMode('compact')">📑</button>
+            </div>
+          </div>
+
+          <!-- MODAL TẠO BÀI VIẾT DIỄN ĐÀN THEO BỐ CỤC PADLET (YÊU CẦU 9 & ẢNH MEDIA_1793444609363_B7DD9512.PNG) -->
+          <div class="reddit-composer-expanded padlet-composer-modal" id="redditComposerExpanded" onclick="if(event.target === this) closeRedditComposer()">
+            <div class="padlet-composer-card" onclick="event.stopPropagation()">
+              <!-- Padlet Header: Close, Expand, Minimize & Submit/Publish button -->
+              <div class="padlet-composer-header">
+                <div class="padlet-header-window-btns">
+                  <button type="button" class="padlet-win-btn close" onclick="closeRedditComposer()" title="Đóng">✕</button>
+                  <button type="button" class="padlet-win-btn expand" onclick="togglePadletComposerFullscreen()" title="Toàn màn hình">↗</button>
+                  <button type="button" class="padlet-win-btn minimize" onclick="closeRedditComposer()" title="Thu gọn">—</button>
+                </div>
+                <button type="button" class="padlet-top-submit-btn" onclick="document.getElementById('formRedditCreatePost').requestSubmit()">
+                  Xuất bản (Publish)
+                </button>
+              </div>
+
+              <form id="formRedditCreatePost" onsubmit="handleCreateRedditPost(event)">
+                <!-- Subject / Title field -->
+                <div class="padlet-field-wrap">
+                  <input type="text" id="inpRedditPostTitle" class="padlet-subject-input" placeholder="Tiêu đề bài viết (Subject)..." required maxlength="300" />
+                </div>
+
+                <!-- Padlet Attachment Segmented Toolbar (Upload, Camera, Link, AI Assist, Search) -->
+                <div class="padlet-media-toolbar">
+                  <div class="padlet-media-bar-inner">
+                    <button type="button" class="padlet-tool-btn" onclick="document.getElementById('inpRedditPostImageFile').click()" title="Tải ảnh / tệp từ máy lên">
+                      <span class="padlet-tool-icon">📤</span>
+                      <span class="padlet-tool-label">Tải tệp lên</span>
+                    </button>
+                    <button type="button" class="padlet-tool-btn" onclick="triggerPadletCameraUpload()" title="Chụp ảnh / Máy ảnh">
+                      <span class="padlet-tool-icon">📷</span>
+                      <span class="padlet-tool-label">Máy ảnh</span>
+                    </button>
+                    <button type="button" class="padlet-tool-btn" onclick="toggleRedditPostImageUrlInput()" title="Dán liên kết web hoặc ảnh">
+                      <span class="padlet-tool-icon">🔗</span>
+                      <span class="padlet-tool-label">Liên kết</span>
+                    </button>
+                    <button type="button" class="padlet-tool-btn" onclick="triggerPadletAiDraftHelper()" title="AI Gợi ý soạn bài viết về nhạc cụ">
+                      <span class="padlet-tool-icon">✨</span>
+                      <span class="padlet-tool-label">AI Gợi ý</span>
+                    </button>
+                    <button type="button" class="padlet-tool-btn" onclick="triggerPadletSearchSampleMusic()" title="Tìm kiếm bản nhạc nốt số mẫu">
+                      <span class="padlet-tool-icon">🔍</span>
+                      <span class="padlet-tool-label">Tìm nhạc mẫu</span>
+                    </button>
+                  </div>
+                  <div class="padlet-tool-hint">Thêm hình ảnh, liên kết, bản nhạc nốt số hoặc tệp âm thanh...</div>
+                  <input type="file" id="inpRedditPostImageFile" accept="image/*" style="display: none;" onchange="handleRedditPostImageSelect(event)" />
+                </div>
+
+                <!-- Input dán link ảnh / web (mặc định ẩn) -->
+                <div id="redditPostImageUrlBox" style="display: none; margin-bottom: 12px;">
+                  <input type="url" id="inpRedditPostImageUrl" placeholder="Nhập liên kết hình ảnh hoặc bài viết (https://...)..." oninput="handleRedditPostImageUrlInput(this.value)" class="padlet-link-input" />
+                </div>
+
+                <!-- Preview ảnh đã đính kèm -->
+                <div id="redditPostImagePreviewContainer" style="display: none; position: relative; margin-bottom: 12px; border-radius: 12px; overflow: hidden; max-height: 240px; background: rgba(0,0,0,0.5); border: 1px solid rgba(239, 196, 123, 0.35); text-align: center;">
+                  <img id="redditPostImagePreview" src="" alt="Xem trước ảnh" style="max-width: 100%; max-height: 240px; object-fit: contain;" />
+                  <button type="button" onclick="removeRedditPostImage()" title="Gỡ bỏ ảnh" style="position: absolute; top: 8px; right: 8px; background: rgba(239, 68, 68, 0.9); border: none; color: #fff; border-radius: 999px; padding: 4px 10px; cursor: pointer; font-size: 11.5px; font-weight: 700;">✕ Gỡ ảnh</button>
+                </div>
+
+                <!-- Main Body: Write something fantastic... -->
+                <div class="padlet-field-wrap">
+                  <textarea id="inpRedditPostContent" class="padlet-body-textarea" placeholder="Viết điều gì đó tuyệt vời... (Chia sẻ kinh nghiệm ngón đàn, bản nhạc nốt số, câu hỏi kỹ thuật hay trao đổi cổ nhạc)" rows="5" required></textarea>
+                </div>
+
+                <!-- Padlet Bottom Bar: Color picker, Category dropdown, and Post button -->
+                <div class="padlet-composer-footer">
+                  <div class="padlet-footer-left">
+                    <!-- Color picker dots -->
+                    <div class="padlet-color-picker" title="Chọn màu nền thẻ bài viết">
+                      <span class="padlet-color-dot active" data-color="#ffffff" onclick="selectPadletCardColor('#ffffff', this)" style="background: #ffffff;" title="Trắng"></span>
+                      <span class="padlet-color-dot" data-color="#fef3c7" onclick="selectPadletCardColor('#fef3c7', this)" style="background: #fef3c7;" title="Vàng kem"></span>
+                      <span class="padlet-color-dot" data-color="#d1fae5" onclick="selectPadletCardColor('#d1fae5', this)" style="background: #d1fae5;" title="Xanh thanh ngọc"></span>
+                      <span class="padlet-color-dot" data-color="#e0e7ff" onclick="selectPadletCardColor('#e0e7ff', this)" style="background: #e0e7ff;" title="Lam dịu"></span>
+                      <span class="padlet-color-dot" data-color="#fce7f3" onclick="selectPadletCardColor('#fce7f3', this)" style="background: #fce7f3;" title="Hồng đào"></span>
+                    </div>
+
+                    <!-- Category / Section dropdown (§) -->
+                    <div class="padlet-section-selector">
+                      <span style="color: #9ca3af; font-size: 13px;">§</span>
+                      <select id="selRedditSubreddit" class="padlet-section-select">
+                        <option value="dantranh">Đàn Tranh</option>
+                        <option value="danbau">Đàn Bầu</option>
+                        <option value="dannguyet">Đàn Nguyệt</option>
+                        <option value="dannhi">Đàn Nhị</option>
+                        <option value="saotruc">Sáo Trúc &amp; Tiêu</option>
+                        <option value="congchieng">Cồng Chiêng &amp; Trống</option>
+                        <option value="bannhaccotruyen">Bản Nhạc &amp; Nốt Số</option>
+                        <option value="tuvanchondan">Tư Vấn Chọn Đàn</option>
+                      </select>
+                    </div>
+
+                    <select id="selRedditFlair" class="padlet-flair-select">
+                      <option value="❓ Hỏi đáp newbie">❓ Hỏi đáp newbie</option>
+                      <option value="🖐️ Kỹ thuật ngón">🖐️ Kỹ thuật ngón</option>
+                      <option value="🪵 Chọn đàn &amp; Gỗ">🪵 Chọn đàn &amp; Gỗ</option>
+                      <option value="🎼 Bản nhạc &amp; Nốt số">🎼 Bản nhạc &amp; Nốt số</option>
+                      <option value="✨ Di sản văn hóa">✨ Di sản văn hóa</option>
+                      <option value="🎉 Giao lưu &amp; Thảo luận">🎉 Giao lưu &amp; Thảo luận</option>
+                    </select>
+
+                    <input type="hidden" id="inpPadletCardBg" value="#ffffff" />
+                    <input type="text" id="inpRedditPostAuthor" placeholder="Biệt danh..." style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; padding: 4px 10px; color: #ffea9f; font-size: 12px; width: 110px; outline: none;" />
+                  </div>
+
+                  <button type="submit" class="padlet-btn-publish" style="background: #f59e0b; color: #111827; border: none; font-weight: 800; border-radius: 999px; padding: 8px 24px; font-size: 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);">
+                    <span>+</span> <span>Đăng bài</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- MODAL PHÓNG TO XEM ẢNH BÀI VIẾT -->
+          <div id="mitImageViewerModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.92); z-index: 100001; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box;" onclick="closeImageViewerModal()">
+            <button type="button" onclick="closeImageViewerModal()" style="position: absolute; top: 20px; right: 24px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: #fff; font-size: 24px; border-radius: 50%; width: 42px; height: 42px; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
+            <img id="mitImageViewerImg" src="" alt="Ảnh phóng to" style="max-width: 95vw; max-height: 90vh; object-fit: contain; border-radius: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.9);" onclick="event.stopPropagation()" />
+          </div>
+
+          <!-- MODAL LỊCH ĐĂNG BÀI VIẾT DIỄN ĐÀN (YÊU CẦU 3) -->
+          <div id="mitPostingScheduleModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 100002; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box;" onclick="if(event.target === this) closeForumScheduleModal()">
+            <div style="background: rgba(26, 18, 14, 0.98); border: 1px solid rgba(239, 196, 123, 0.45); border-radius: 18px; width: 100%; max-width: 680px; max-height: 90vh; overflow-y: auto; padding: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); color: #fff;" onclick="event.stopPropagation()">
+              <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(239, 196, 123, 0.25); padding-bottom: 14px; margin-bottom: 16px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span style="font-size: 24px;">📅</span>
+                  <div>
+                    <h3 style="margin: 0; font-size: 18px; font-weight: 700; color: #ffea9f;">Lịch Đăng Bài &amp; Kế Hoạch Hoạt Động Diễn Đàn</h3>
+                    <p style="margin: 2px 0 0 0; font-size: 12px; color: #a1a1aa;">Theo dõi các mốc thảo luận, chuyên đề nhạc cụ theo tuần và lịch bài viết</p>
+                  </div>
+                </div>
+                <button type="button" onclick="closeForumScheduleModal()" style="background: none; border: none; color: #9ca3af; font-size: 20px; cursor: pointer;">✕</button>
+              </div>
+
+              <!-- Lịch hoạt động theo ngày trong tuần -->
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 10px; margin-bottom: 20px;">
+                <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(239,196,123,0.2); border-radius: 10px; padding: 10px; text-align: center;">
+                  <div style="font-size: 11px; color: #ffea9f; font-weight: 700;">THỨ HAI - THỨ BA</div>
+                  <div style="font-size: 13px; font-weight: 700; color: #fff; margin: 4px 0;">🖐️ Kỹ thuật ngón</div>
+                  <div style="font-size: 11px; color: #9ca3af;">Vê, phi, lia, rung nốt Fa &amp; Si</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(239,196,123,0.2); border-radius: 10px; padding: 10px; text-align: center;">
+                  <div style="font-size: 11px; color: #ffea9f; font-weight: 700;">THỨ TƯ - THỨ NĂM</div>
+                  <div style="font-size: 13px; font-weight: 700; color: #fff; margin: 4px 0;">🎼 Ký âm nốt số</div>
+                  <div style="font-size: 11px; color: #9ca3af;">Chia sẻ bản nhạc dân ca ngũ cung</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(239,196,123,0.2); border-radius: 10px; padding: 10px; text-align: center;">
+                  <div style="font-size: 11px; color: #ffea9f; font-weight: 700;">THỨ SÁU - CUỐI TUẦN</div>
+                  <div style="font-size: 13px; font-weight: 700; color: #fff; margin: 4px 0;">🎉 Hòa tấu &amp; Giao lưu</div>
+                  <div style="font-size: 11px; color: #9ca3af;">Đàm đạo nghệ nhân &amp; phòng thu</div>
+                </div>
+              </div>
+
+              <!-- Danh sách bài viết xếp theo dòng thời gian ngày tháng -->
+              <div style="font-size: 13.5px; font-weight: 700; color: #ffea9f; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
+                <span>⏰ Dòng Thời Gian Bài Viết Đã Đăng &amp; Lên Lịch:</span>
+                <button type="button" class="btn btn-primary btn-xs" onclick="closeForumScheduleModal(); openRedditComposer();" style="border-radius: 999px; font-weight: 700; padding: 4px 12px;">+ Đăng bài mới theo lịch</button>
+              </div>
+              <div id="forumScheduleTimelineContainer" style="display: flex; flex-direction: column; gap: 8px; max-height: 320px; overflow-y: auto;">
+                <!-- Rendered by JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- KHUNG KIỂM SOÁT VÀ GỘP CHỦ ĐỀ THÔNG MINH BẰNG AI (YÊU CẦU 10) -->
+          <div class="mit-ai-topic-cluster-panel" id="mitAiTopicClusterPanel" style="background: rgba(24, 18, 14, 0.95); border: 1px solid rgba(239, 196, 123, 0.35); border-radius: 14px; padding: 12px 16px; margin-bottom: 14px; box-shadow: 0 4px 16px rgba(0,0,0,0.4);">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 16px;">🤖</span>
+                <span style="font-size: 13px; font-weight: 700; color: #ffea9f; text-transform: uppercase; letter-spacing: 0.05em;">AI Phân Tích &amp; Gộp Cụm Chủ Đề:</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span id="lblAiClusteredActiveStatus" style="font-size: 11.5px; color: #6ee7b7; font-weight: 600;">(Đang hiển thị toàn bộ)</span>
+                <button type="button" class="btn btn-xs" onclick="resetAiTopicFilter()" id="btnResetAiTopicFilter" style="display: none; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; border-radius: 999px; padding: 2px 10px; font-size: 11px; cursor: pointer;">
+                  ✕ Bỏ lọc
+                </button>
+              </div>
+            </div>
+            <div class="mit-ai-topics-chips" id="mitAiTopicsChips" style="display: flex; flex-wrap: wrap; gap: 8px;">
+              <!-- Rendered dynamically by renderAiTopicClusterChips() -->
+            </div>
+          </div>
+
+          <!-- FEED CONTAINER (RENDER BỞI JAVASCRIPT) -->
+          <div id="redditFeedContainer" style="display: flex; flex-direction: column; gap: 14px;">
+            <!-- Dynamic MIT Post Cards -->
+          </div>
+
+        </section>
+
+        <!-- CỘT PHẢI: MIT RIGHT SIDEBAR -->
+        <aside class="reddit-right-sidebar">
+
+          <!-- CARD 1: BÀI VIẾT VỪA XEM -->
+          <div class="reddit-side-card" id="redditRecentPostsCard">
+            <div class="reddit-side-card-header">
+              <h3 class="reddit-side-card-title">BÀI VIẾT GẦN ĐÂY</h3>
+              <button type="button" class="reddit-side-clear-btn" onclick="clearRedditRecentPosts()">Xóa</button>
+            </div>
+            <div class="reddit-recent-posts-list" id="redditRecentPostsList">
+              <!-- Render by JS -->
+            </div>
+          </div>
+
+          <!-- CARD 2: GIỚI THIỆU CỘNG ĐỒNG MIT -->
+          <div class="reddit-side-card">
+            <div class="reddit-about-banner" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);"></div>
+            <div class="reddit-about-body">
+              <h3>
+                <span class="mit-brand-symbol" style="font-size: 12px; padding: 2px 7px;">MIT</span>
+                <span>Diễn Đàn MIT</span>
+              </h3>
+              <p>
+                Cộng đồng đàm đạo nhạc cụ cổ truyền Việt Nam lớn nhất trên không gian số. Cùng bảo tồn, học tập ngón đàn cha ông và kết nối đam mê.
+              </p>
+
+              <div class="reddit-about-stats-grid">
+                <div>
+                  <div class="reddit-stat-num" id="forumStatMembers">148</div>
+                  <div class="reddit-stat-lbl">Hội viên (Thành viên)</div>
+                </div>
+                <div>
+                  <div class="reddit-stat-num" id="forumStatOnline" style="color: #46d160;">🟢 3</div>
+                  <div class="reddit-stat-lbl">Đang trực tuyến (Online)</div>
+                </div>
+              </div>
+
+              <div style="font-size: 12px; color: #818384; margin-bottom: 14px;" id="forumStatDesc">
+                🌿 Không gian đàm đạo âm nhạc dân tộc Việt Nam
+              </div>
+
+              <button type="button" class="btn btn-primary btn-sm" onclick="openRedditComposer()" style="width: 100%; border-radius: 999px; background: linear-gradient(135deg, #ef4444, #f97316); border: none; color: #ffffff; font-weight: 700;">
+                + Tạo bài viết mới
+              </button>
+            </div>
+          </div>
+
+          <!-- CARD 3: NỘI QUY DIỄN ĐÀN MIT -->
+          <div class="reddit-side-card">
+            <div class="reddit-side-card-header">
+              <h3 class="reddit-side-card-title">NỘI QUY DIỄN ĐÀN MIT</h3>
+            </div>
+            <ol class="reddit-rules-list">
+              <li><strong>Tôn trọng đồng môn &amp; cổ nhạc:</strong> Giữ không khí đàm đạo lịch sự, văn minh và tinh thần học hỏi.</li>
+              <li><strong>Đăng đúng danh mục chủ đề:</strong> Chọn đúng chuyên mục nhạc cụ (Đàn Tranh, Đàn Bầu, Sáo Trúc...) để tiện thảo luận.</li>
+              <li><strong>Khuyến khích tư liệu tự gảy:</strong> Chia sẻ video, file ghi âm và bản ký âm nốt số tự soạn.</li>
+              <li><strong>Không quảng cáo lừa đảo:</strong> Nghiêm cấm mua bán đàn kém chất lượng hoặc nội dung spam.</li>
+            </ol>
+          </div>
+
+          <!-- FOOTER LINKS DIỄN ĐÀN MIT -->
+          <div class="reddit-side-footer">
+            <div>
+              <a href="javascript:void(0)" onclick="alert('Quy tắc Diễn đàn MIT')">Quy định MIT</a> · 
+              <a href="javascript:void(0)" onclick="alert('Chính sách bảo mật')">Chính sách bảo mật</a> · 
+              <a href="javascript:void(0)" onclick="alert('Thỏa thuận người dùng')">Thỏa thuận người dùng</a>
+            </div>
+            <div>MIT - Nền tảng Âm nhạc Di sản Cổ truyền © 2026. All rights reserved.</div>
+          </div>
+
+        </aside>
+
+      </div> <!-- /reddit-layout-grid -->
+
+    </main>
+  </div> <!-- /tabContentForum -->
 
 
 
@@ -3242,7 +3680,8 @@
     function setExclusiveTaskbar(activeBarId) {
       const bars = [
         { id: 'taskbarHome', el: document.getElementById('taskbarHome') },
-        { id: 'taskbarInstrument', el: document.getElementById('taskbarInstrument') }
+        { id: 'taskbarInstrument', el: document.getElementById('taskbarInstrument') },
+        { id: 'taskbarForum', el: document.getElementById('taskbarForum') }
       ];
 
       bars.forEach(item => {
@@ -3375,12 +3814,6 @@
         return;
       }
 
-      // BỎ DIỄN ĐÀN ĐI THEO YÊU CẦU (YÊU CẦU 1)
-      if (tabName === 'forum') {
-        tabName = 'encyclopedia';
-      }
-
-
       document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
       document.querySelectorAll('.lux-dock-item').forEach(item => item.classList.remove('active'));
       document.querySelectorAll('.lux-axis-node').forEach(node => node.classList.remove('active'));
@@ -3389,6 +3822,7 @@
         encyclopedia: document.getElementById('tabContentEncyclopedia'),
         lookup: document.getElementById('tabContentLookup'),
         dantranh: document.getElementById('tabContentDanTranh'),
+        forum: document.getElementById('tabContentForum'),
         gallery: document.getElementById('tabContentGallery'),
         demosongs: document.getElementById('tabContentDemoSongs'),
         heritage: document.getElementById('tabContentHeritage'),
@@ -3400,6 +3834,7 @@
         encyclopedia: document.getElementById('navTabEncyclopedia'),
         lookup: document.getElementById('navTabLookup'),
         dantranh: document.getElementById('navTabDanTranh'),
+        forum: document.getElementById('navTabForum'),
         gallery: document.getElementById('navTabGallery'),
         demosongs: document.getElementById('navTabDemoSongs'),
         heritage: document.getElementById('navTabHeritage'),
@@ -3423,6 +3858,11 @@
         const btnInfo = document.getElementById('btnInstModeInfo');
         if (btn3D) btn3D.classList.toggle('active', mode === '3d');
         if (btnInfo) btnInfo.classList.toggle('active', mode === 'info');
+      } else if (targetKey === 'forum') {
+        setExclusiveTaskbar('taskbarForum');
+        if (typeof filterBySubreddit === 'function') {
+          filterBySubreddit(window.redditCurrentSubreddit || 'all');
+        }
       } else {
         setExclusiveTaskbar('taskbarHome');
       }
@@ -9681,6 +10121,1351 @@
     }
     window.resetJam3DCamera = resetJam3DCamera;
 
+// =========================================================
+    // 14. TÍNH NĂNG DIỄN ĐÀN MIT (CỘNG ĐỒNG ÂM NHẠC TRUYỀN THỐNG)
+    // TUYỆT ĐỐI KHÔNG CÓ TIỀN TỐ r/, TÊN THỐNG NHẤT: DIỄN ĐÀN MIT
+    // =========================================================
+    window.redditCurrentSubreddit = 'all';
+    window.redditCurrentSort = 'best';
+    window.redditViewMode = 'card';
+    window.redditSearchQuery = '';
+
+    const MIT_COMMUNITY_CATEGORIES = {
+      all: { name: 'Tất cả chủ đề', icon: '🌐' },
+      dantranh: { name: 'Đàn Tranh', icon: '🪕' },
+      danbau: { name: 'Đàn Bầu', icon: '🎻' },
+      dannguyet: { name: 'Đàn Nguyệt', icon: '🌕' },
+      dannhi: { name: 'Đàn Nhị', icon: '🎻' },
+      saotruc: { name: 'Sáo Trúc & Tiêu', icon: '🎋' },
+      congchieng: { name: 'Cồng Chiêng & Trống', icon: '🔔' },
+      bannhaccotruyen: { name: 'Bản Nhạc & Nốt Số', icon: '🎼' },
+      tuvanchondan: { name: 'Tư Vấn Chọn Đàn', icon: '🪵' }
+    };
+
+    function normalizeSubredditKey(sub) {
+      if (!sub) return 'all';
+      return String(sub).replace(/^r\//i, '').trim();
+    }
+
+    function getSubredditDisplayName(sub) {
+      const key = normalizeSubredditKey(sub);
+      if (MIT_COMMUNITY_CATEGORIES[key]) {
+        return MIT_COMMUNITY_CATEGORIES[key].name;
+      }
+      return key;
+    }
+
+    function getSubredditIcon(sub) {
+      const key = normalizeSubredditKey(sub);
+      if (MIT_COMMUNITY_CATEGORIES[key]) {
+        return MIT_COMMUNITY_CATEGORIES[key].icon;
+      }
+      return '🪕';
+    }
+
+    function formatUserHandle(raw) {
+      if (!raw) return '@dongmon';
+      let s = String(raw).trim();
+      if (s.startsWith('u/')) s = '@' + s.slice(2);
+      if (!s.startsWith('@')) s = '@' + s;
+      return s;
+    }
+
+    function getRedditPostsStorageKey() {
+      return 'mit_forum_real_posts_v5';
+    }
+
+    function getInitialDefaultRedditPosts() {
+      // Diễn đàn thật: Không tải trước bài viết ảo/bài viết sẵn
+      return [];
+    }
+
+    function getAllRedditPosts() {
+      try {
+        // Dọn dẹp các bài seed ảo cũ nếu còn sót trong các phiên bản trước
+        const legacyKeys = ['mit_forum_community_posts_v4', 'mit_forum_posts_v3', 'mit_forum_posts_v2'];
+        legacyKeys.forEach(k => {
+          try {
+            const oldRaw = localStorage.getItem(k);
+            if (oldRaw) {
+              const oldParsed = JSON.parse(oldRaw);
+              if (Array.isArray(oldParsed)) {
+                // Thu gom các bài do người dùng thật đăng (không có id bắt đầu bằng post_seed_)
+                const realUserPosts = oldParsed.filter(p => p && p.id && !p.id.toString().startsWith('post_seed_'));
+                if (realUserPosts.length > 0) {
+                  const currentReal = localStorage.getItem(getRedditPostsStorageKey());
+                  if (!currentReal) {
+                    saveAllRedditPosts(realUserPosts);
+                  }
+                }
+              }
+              localStorage.removeItem(k);
+            }
+          } catch(err) {}
+        });
+
+        const raw = localStorage.getItem(getRedditPostsStorageKey());
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            // Lọc tuyệt đối loại bỏ bất kỳ bài viết sẵn giả lập nào
+            const realOnly = parsed.filter(p => p && p.id && !p.id.toString().startsWith('post_seed_'));
+            realOnly.forEach(p => {
+              p.subreddit = normalizeSubredditKey(p.subreddit);
+              p.author = formatUserHandle(p.author);
+              if (Array.isArray(p.comments)) {
+                p.comments.forEach(c => { c.author = formatUserHandle(c.author); });
+              }
+            });
+            return realOnly;
+          }
+        }
+      }
+ catch (e) {
+        console.warn('Lỗi đọc diễn đàn:', e);
+      }
+      return [];
+    }
+
+    function saveAllRedditPosts(posts) {
+      try {
+        localStorage.setItem(getRedditPostsStorageKey(), JSON.stringify(posts));
+      } catch (e) {}
+    }
+
+    /* Xóa bài viết khỏi diễn đàn thực tế */
+    function handleDeleteRedditPost(postId) {
+      if (!confirm('Bạn có chắc chắn muốn xóa bài viết này khỏi diễn đàn?')) return;
+      let posts = getAllRedditPosts();
+      posts = posts.filter(p => p.id !== postId);
+      saveAllRedditPosts(posts);
+      renderRedditFeed();
+      renderRedditRecentPosts();
+      if (typeof updateForumRealStats === 'function') updateForumRealStats();
+      if (typeof showActionToast === 'function') {
+        showActionToast('Đã xóa bài viết thành công.');
+      }
+    }
+    window.handleDeleteRedditPost = handleDeleteRedditPost;
+
+    /* Xóa bình luận */
+    function handleDeleteRedditComment(postId, cmtId) {
+      if (!confirm('Bạn có chắc chắn muốn xóa bình luận này?')) return;
+      const posts = getAllRedditPosts();
+      const post = posts.find(p => p.id === postId);
+      if (!post || !Array.isArray(post.comments)) return;
+      post.comments = post.comments.filter(c => c.id !== cmtId);
+      saveAllRedditPosts(posts);
+      renderRedditFeed();
+      if (typeof showActionToast === 'function') {
+        showActionToast('Đã xóa bình luận.');
+      }
+    }
+    window.handleDeleteRedditComment = handleDeleteRedditComment;
+
+    /* Tán thành bình luận */
+    function handleLikeRedditComment(postId, cmtId) {
+      const posts = getAllRedditPosts();
+      const post = posts.find(p => p.id === postId);
+      if (!post || !Array.isArray(post.comments)) return;
+      const cmt = post.comments.find(c => c.id === cmtId);
+      if (!cmt) return;
+      cmt.upvotes = (cmt.upvotes || 1) + 1;
+      saveAllRedditPosts(posts);
+      renderRedditFeed();
+      if (typeof showActionToast === 'function') {
+        showActionToast('Đã tán thành bình luận! 👍');
+      }
+    }
+    window.handleLikeRedditComment = handleLikeRedditComment;
+
+    /* Điền nhanh chủ đề mẫu vào khung đăng bài */
+    function prefillForumComposer(title, content, sub, flair) {
+      openRedditComposer();
+      const inpTitle = document.getElementById('inpRedditPostTitle');
+      const inpContent = document.getElementById('inpRedditPostContent');
+      const selSub = document.getElementById('selRedditSubreddit');
+      const selFlair = document.getElementById('selRedditFlair');
+      if (inpTitle) inpTitle.value = title || '';
+      if (inpContent) inpContent.value = content || '';
+      if (selSub && sub) selSub.value = sub;
+      if (selFlair && flair) selFlair.value = flair;
+      if (inpTitle) inpTitle.focus();
+    }
+    window.prefillForumComposer = prefillForumComposer;
+
+    function formatRedditTimeAgo(ts) {
+      if (!ts) return 'vừa xong';
+      const now = Date.now();
+      const diffSec = Math.max(0, Math.floor((now - ts) / 1000));
+      if (diffSec < 60) return 'vừa xong';
+      const diffMin = Math.floor(diffSec / 60);
+      if (diffMin < 60) return diffMin + ' phút trước';
+      const diffHour = Math.floor(diffMin / 60);
+      if (diffHour < 24) return diffHour + ' giờ trước';
+      const diffDay = Math.floor(diffHour / 24);
+      if (diffDay < 7) return diffDay + ' ngày trước';
+      const d = new Date(ts);
+      return d.getDate() + '/' + (d.getMonth() + 1);
+    }
+
+    function escapeRedditHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function highlightRedditContent(text) {
+      if (!text) return '';
+      var safe = escapeRedditHtml(text);
+      safe = safe.replace(/#([\p{L}\p{N}_]+)/gu, '<span class="reddit-hashtag">#$1</span>');
+      return safe;
+    }
+
+    /* Hiển thị avatar: nếu là URL hình ảnh thì render thẻ <img>, nếu là emoji thì render text */
+    function formatAvatarMediaHtml(avatar, fallback) {
+      fallback = fallback || '🪕';
+      if (!avatar) return fallback;
+      if (typeof avatar === 'string' && (avatar.startsWith('http://') || avatar.startsWith('https://') || avatar.startsWith('data:') || avatar.startsWith('./') || avatar.startsWith('/'))) {
+        return '<img src="' + escapeRedditHtml(avatar) + '" alt="Avatar" style="width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;" onerror="this.onerror=null;this.parentElement.textContent=\'' + fallback + '\';" />';
+      }
+      return escapeRedditHtml(avatar);
+    }
+
+    /* Cập nhật thông số thành viên và hoạt động thực tế cho Diễn Đàn MIT (Yêu Cầu 3) */
+    function updateForumRealStats() {
+      try {
+        const posts = getAllRedditPosts();
+        
+        // 1. Đếm bài viết theo từng chuyên mục thực tế
+        const counts = {
+          dantranh: 0,
+          danbau: 0,
+          dannguyet: 0,
+          saotruc: 0,
+          dannhi: 0,
+          congchieng: 0,
+          bannhaccotruyen: 0,
+          tuvanchondan: 0
+        };
+
+        const baseCounts = {
+          dantranh: 18,
+          danbau: 11,
+          dannguyet: 9,
+          saotruc: 14,
+          dannhi: 8,
+          congchieng: 6,
+          bannhaccotruyen: 22,
+          tuvanchondan: 10
+        };
+
+        posts.forEach(p => {
+          const k = normalizeSubredditKey(p.subreddit);
+          if (counts[k] !== undefined) {
+            counts[k]++;
+          }
+        });
+
+        // Cập nhật số lượng bài/thành viên từng sub không dùng 'k' ảo
+        Object.keys(baseCounts).forEach(k => {
+          const el = document.getElementById('subCount_' + k);
+          if (el) {
+            el.textContent = baseCounts[k] + (counts[k] || 0);
+          }
+        });
+
+        // 2. Tính số lượng hội viên thực tế
+        const accounts = (typeof getAllUserAccounts === 'function') ? getAllUserAccounts() : [];
+        const baseMembers = 126;
+        const totalMembers = baseMembers + (accounts.length || 1) * 3 + posts.length * 2;
+        const membersEl = document.getElementById('forumStatMembers');
+        if (membersEl) {
+          membersEl.textContent = totalMembers;
+        }
+
+        // 3. Số người trực tuyến thực tế (dao động chân thực từ 2 đến 6 người)
+        const onlineCount = Math.max(2, Math.min(8, 3 + (posts.length % 3)));
+        const onlineEl = document.getElementById('forumStatOnline');
+        if (onlineEl) {
+          onlineEl.innerHTML = `🟢 ${onlineCount}`;
+        }
+      }
+ catch (err) {
+        console.warn('updateForumRealStats error:', err);
+      }
+    }
+    window.updateForumRealStats = updateForumRealStats;
+
+    /* Khởi tạo Diễn Đàn MIT UI */
+    function initRedditForumUI() {
+      const activeUser = (typeof getActiveUserAccount === 'function') ? getActiveUserAccount() : null;
+      const topAvatarEl = document.getElementById('redditTopUserAvatar');
+      const taskbarAvatarEl = document.getElementById('mitTaskbarUserAvatar');
+      const quickAvatarEl = document.getElementById('redditQuickAvatar');
+
+      const avatarVal = (activeUser && activeUser.avatar) ? activeUser.avatar : '🪕';
+      if (topAvatarEl) {
+        topAvatarEl.innerHTML = formatAvatarMediaHtml(avatarVal, '🪕') + '<span class="reddit-online-dot"></span>';
+      }
+      if (taskbarAvatarEl) {
+        taskbarAvatarEl.innerHTML = formatAvatarMediaHtml(avatarVal, '🪕') + '<span class="reddit-online-dot"></span>';
+      }
+      if (quickAvatarEl) {
+        quickAvatarEl.innerHTML = formatAvatarMediaHtml(avatarVal, '🪕');
+      }
+
+      renderRedditRecentPosts();
+      if (typeof filterBySubreddit === 'function') {
+        filterBySubreddit(window.redditCurrentSubreddit || 'all');
+      }
+      renderRedditFeed();
+      updateForumRealStats();
+    }
+    window.initRedditForumUI = initRedditForumUI;
+    window.initCommunityForumUI = initRedditForumUI;
+
+    /* Chọn mục điều hướng diễn đàn (Home, Popular, News, Explore) */
+    function selectRedditNav(key) {
+      const navItems = ['home', 'popular', 'news', 'explore'];
+      navItems.forEach(k => {
+        const el = document.getElementById('redditNavItem' + k.charAt(0).toUpperCase() + k.slice(1));
+        if (el) {
+          if (k === key) el.classList.add('active');
+          else el.classList.remove('active');
+        }
+      }
+);
+
+      // Đồng bộ thanh taskbar MIT ở trên
+      const taskbarPills = {
+        home: document.getElementById('mitNavFeed'),
+        explore: document.getElementById('mitNavExplore'),
+        popular: document.getElementById('mitNavPopular')
+      };
+      Object.keys(taskbarPills).forEach(k => {
+        if (taskbarPills[k]) {
+          taskbarPills[k].classList.toggle('active', k === key);
+        }
+      }
+);
+
+      if (key === 'popular') {
+        setRedditSort('top');
+      } else if (key === 'news') {
+        filterBySubreddit('bannhaccotruyen');
+      } else {
+        filterBySubreddit('all');
+      }
+    }
+    window.selectRedditNav = selectRedditNav;
+
+    /* Lọc theo Danh mục chủ đề (Hoàn toàn không có r/ - Yêu Cầu 2 & Image 3) */
+    function filterBySubreddit(sub) {
+      const key = normalizeSubredditKey(sub);
+      window.redditCurrentSubreddit = key;
+
+      // 1. Cập nhật nút Pill bộ lọc ở Taskbar (Yêu Cầu 2 & Image 3: [🪕 Đàn tranh ▾])
+      const pillIcon = document.getElementById('mitForumFilterIcon');
+      const pillName = document.getElementById('mitForumFilterName');
+      const infoBtnText = document.getElementById('lblMitForumInstInfoText');
+      
+      const displayName = getSubredditDisplayName(key);
+      const icon = getSubredditIcon(key);
+
+      if (pillIcon) pillIcon.textContent = icon;
+      if (pillName) pillName.textContent = displayName;
+      if (infoBtnText) {
+        infoBtnText.textContent = (key === 'all') ? 'Thông tin nhạc cụ' : `Thông tin ${displayName}`;
+      }
+
+      // 2. Cập nhật danh sách community sidebar
+      const items = document.querySelectorAll('#redditCommunityList .reddit-community-item');
+      items.forEach(el => {
+        const itemSub = normalizeSubredditKey(el.getAttribute('data-sub'));
+        el.classList.toggle('active', itemSub === key);
+      });
+
+      // 3. Cập nhật active item trong dropdown menu
+      const dropItems = document.querySelectorAll('#mitFilterMenuList .mit-filter-item');
+      dropItems.forEach(el => {
+        el.classList.toggle('active', el.getAttribute('data-sub') === key);
+      });
+
+      renderRedditFeed();
+    }
+    window.filterBySubreddit = filterBySubreddit;
+    window.filterForumFeed = filterBySubreddit;
+
+    /* Mở/Đóng Dropdown Bộ Lọc Nhạc Cụ trên Diễn Đàn MIT (Yêu Cầu 2 & Image 3) */
+    function toggleMitForumFilterDropdown(force) {
+      const menu = document.getElementById('mitForumFilterMenu');
+      if (!menu) return;
+      const willShow = (force !== undefined) ? force : (menu.style.display === 'none');
+      if (willShow) {
+        renderMitForumFilterDropdown();
+        menu.style.display = 'flex';
+        const txt = document.getElementById('txtMitFilterSearch');
+        if (txt) { txt.value = ''; txt.focus(); }
+      } else {
+        menu.style.display = 'none';
+      }
+    }
+    window.toggleMitForumFilterDropdown = toggleMitForumFilterDropdown;
+
+    /* Render danh sách nhạc cụ & chủ đề trong Menu lọc (Yêu Cầu 2) */
+    function renderMitForumFilterDropdown() {
+      const listEl = document.getElementById('mitFilterMenuList');
+      if (!listEl) return;
+      const current = window.redditCurrentSubreddit || 'all';
+      let html = '';
+
+      // Mục Tất cả chủ đề
+      html += `
+        <div class="mit-filter-item ${current === 'all' ? 'active' : ''}" data-sub="all" onclick="selectMitFilterSub('all')">
+          <span style="font-size:18px;">🌐</span>
+          <div style="flex:1;">
+            <div style="font-weight:700;">Tất cả chủ đề</div>
+            <div style="font-size:11px; opacity:0.75;">Toàn bộ bài viết &amp; thảo luận trên MIT</div>
+          </div>
+          ${current === 'all' ? '<span style="color:#ffea9f; font-size:12px;">✓</span>' : ''}
+        </div>
+        <div style="height:1px; background:rgba(255,255,255,0.08); margin:4px 0;"></div>
+      `;
+
+      // Các chuyên mục nhạc cụ
+      const mainKeys = ['dantranh', 'danbau', 'dannguyet', 'dannhi', 'saotruc', 'congchieng', 'bannhaccotruyen', 'tuvanchondan'];
+      mainKeys.forEach(k => {
+        const cat = MIT_COMMUNITY_CATEGORIES[k];
+        if (!cat) return;
+        const isActive = (current === k);
+        html += `
+          <div class="mit-filter-item ${isActive ? 'active' : ''}" data-sub="${k}" onclick="selectMitFilterSub('${k}')">
+            <span style="font-size:18px;">${cat.icon}</span>
+            <div style="flex:1;">
+              <div style="font-weight:700;">${cat.name}</div>
+            </div>
+            ${isActive ? '<span style="color:#ffea9f; font-size:12px;">✓</span>' : ''}
+          </div>
+        `;
+      });
+
+      // Mở toàn bộ 38 nhạc cụ
+      html += `
+        <div style="height:1px; background:rgba(255,255,255,0.08); margin:4px 0;"></div>
+        <div class="mit-filter-item" onclick="toggleMitForumFilterDropdown(false); toggleMegaFilterPanel(true);" style="color:#ffea9f;">
+          <span style="font-size:18px;">☰</span>
+          <div style="flex:1; font-weight:700;">Xem toàn bộ 38 Nhạc cụ dân tộc...</div>
+        </div>
+      `;
+
+      listEl.innerHTML = html;
+    }
+    window.renderMitForumFilterDropdown = renderMitForumFilterDropdown;
+
+    function filterMitDropdownInstList(query) {
+      const q = (query || '').toLowerCase().trim();
+      const items = document.querySelectorAll('#mitFilterMenuList .mit-filter-item');
+      items.forEach(item => {
+        const txt = item.textContent.toLowerCase();
+        item.style.display = txt.includes(q) ? 'flex' : 'none';
+      });
+    }
+    window.filterMitDropdownInstList = filterMitDropdownInstList;
+
+    function selectMitFilterSub(subKey) {
+      toggleMitForumFilterDropdown(false);
+      filterBySubreddit(subKey);
+    }
+    window.selectMitFilterSub = selectMitFilterSub;
+
+    /* Mở hồ sơ thông tin nhạc cụ từ Diễn Đàn MIT (Yêu Cầu 3) */
+    function openCurrentForumInstrumentInfo() {
+      const sub = window.redditCurrentSubreddit || 'dantranh';
+      const targetInstId = (sub === 'all') ? (window.currentActiveInstrument || 'dantranh') : sub;
+
+      // Ưu tiên mở Modal Hồ sơ Di sản chuyên sâu để người dùng không bị rời khỏi diễn đàn
+      if (typeof openInstrumentDossier === 'function') {
+        openInstrumentDossier(targetInstId);
+      } else if (typeof openInstrumentResearchTab === 'function') {
+        openInstrumentResearchTab(targetInstId);
+      }
+    }
+    window.openCurrentForumInstrumentInfo = openCurrentForumInstrumentInfo;
+
+    /* Đổi chế độ sắp xếp Sort (Best, Hot, New, Top - Gộp lên Taskbar Yêu Cầu 1) */
+    function setRedditSort(sortKey) {
+      window.redditCurrentSort = sortKey || 'best';
+      ['best', 'hot', 'new', 'top'].forEach(s => {
+        const btnFeed = document.getElementById('btnSort' + s.charAt(0).toUpperCase() + s.slice(1));
+        const btnTb = document.getElementById('tbSort' + s.charAt(0).toUpperCase() + s.slice(1));
+        const isActive = (s === window.redditCurrentSort);
+        if (btnFeed) btnFeed.classList.toggle('active', isActive);
+        if (btnTb) btnTb.classList.toggle('active', isActive);
+      });
+      renderRedditFeed();
+    }
+    window.setRedditSort = setRedditSort;
+
+    /* Đổi chế độ xem Card / Compact (Gộp lên Taskbar Yêu Cầu 1) */
+    function setRedditViewMode(mode) {
+      window.redditViewMode = mode;
+      const isCard = (mode === 'card');
+      const btnCard1 = document.getElementById('btnViewCard');
+      const btnCard2 = document.getElementById('tbViewCard');
+      const btnComp1 = document.getElementById('btnViewCompact');
+      const btnComp2 = document.getElementById('tbViewCompact');
+      if (btnCard1) btnCard1.classList.toggle('active', isCard);
+      if (btnCard2) btnCard2.classList.toggle('active', isCard);
+      if (btnComp1) btnComp1.classList.toggle('active', !isCard);
+      if (btnComp2) btnComp2.classList.toggle('active', !isCard);
+      renderRedditFeed();
+    }
+    window.setRedditViewMode = setRedditViewMode;
+
+    /* Tìm kiếm trên Diễn Đàn MIT (đồng bộ ô tìm kiếm taskbar & trang bài) */
+    function handleRedditSearch(query) {
+      window.redditSearchQuery = (query || '').trim().toLowerCase();
+      const inp1 = document.getElementById('mitTaskbarSearchInput');
+      const inp2 = document.getElementById('redditSearchInput');
+      if (inp1 && inp1.value !== (query || '')) inp1.value = query || '';
+      if (inp2 && inp2.value !== (query || '')) inp2.value = query || '';
+      renderRedditFeed();
+    }
+    window.handleRedditSearch = handleRedditSearch;
+
+    /* =========================================================
+       XỬ LÝ ĐÍNH KÈM HÌNH ẢNH TRONG BÀI ĐĂNG DIỄN ĐÀN
+       ========================================================= */
+    window.currentRedditPostImage = null;
+
+    function handleRedditPostImageSelect(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      if (!file.type.startsWith('image/')) {
+        alert('Vui lòng chọn một file hình ảnh hợp lệ (JPG, PNG, WEBP, GIF, v.v.)');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const rawDataUrl = e.target.result;
+        // Tối ưu và nén ảnh về kích thước hợp lý để lưu localStorage mượt mà
+        compressPostImage(rawDataUrl, 1200, 1200, 0.82, function(compressedUrl) {
+          window.currentRedditPostImage = compressedUrl;
+          showRedditPostImagePreview(compressedUrl);
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+    window.handleRedditPostImageSelect = handleRedditPostImageSelect;
+
+    function compressPostImage(src, maxWidth, maxHeight, quality, callback) {
+      const img = new Image();
+      img.onload = function() {
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth || height > maxHeight) {
+          if (width / maxWidth > height / maxHeight) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          } else {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        try {
+          const dataUrl = canvas.toDataURL('image/jpeg', quality);
+          callback(dataUrl);
+        } catch (err) {
+          callback(src);
+        }
+      }
+;
+      img.onerror = function() {
+        callback(src);
+      };
+      img.src = src;
+    }
+
+    function showRedditPostImagePreview(imgSrc) {
+      const container = document.getElementById('redditPostImagePreviewContainer');
+      const imgEl = document.getElementById('redditPostImagePreview');
+      if (container && imgEl) {
+        imgEl.src = imgSrc;
+        container.style.display = 'block';
+      }
+    }
+    window.showRedditPostImagePreview = showRedditPostImagePreview;
+
+    function removeRedditPostImage() {
+      window.currentRedditPostImage = null;
+      const container = document.getElementById('redditPostImagePreviewContainer');
+      const imgEl = document.getElementById('redditPostImagePreview');
+      const fileInp = document.getElementById('inpRedditPostImageFile');
+      const urlInp = document.getElementById('inpRedditPostImageUrl');
+      if (container) container.style.display = 'none';
+      if (imgEl) imgEl.src = '';
+      if (fileInp) fileInp.value = '';
+      if (urlInp) urlInp.value = '';
+    }
+    window.removeRedditPostImage = removeRedditPostImage;
+
+    function toggleRedditPostImageUrlInput() {
+      const box = document.getElementById('redditPostImageUrlBox');
+      if (box) {
+        const isHidden = (box.style.display === 'none' || !box.style.display);
+        box.style.display = isHidden ? 'block' : 'none';
+        if (isHidden) {
+          const inp = document.getElementById('inpRedditPostImageUrl');
+          if (inp) inp.focus();
+        }
+      }
+
+    }
+    window.toggleRedditPostImageUrlInput = toggleRedditPostImageUrlInput;
+
+    function handleRedditPostImageUrlInput(val) {
+      const url = (val || '').trim();
+      if (url) {
+        window.currentRedditPostImage = url;
+        showRedditPostImagePreview(url);
+      } else {
+        removeRedditPostImage();
+      }
+    }
+    window.handleRedditPostImageUrlInput = handleRedditPostImageUrlInput;
+
+    /* Lightbox phóng to ảnh bài viết */
+    function openImageViewerModal(src) {
+      const modal = document.getElementById('mitImageViewerModal');
+      const img = document.getElementById('mitImageViewerImg');
+      if (modal && img) {
+        img.src = src;
+        modal.style.display = 'flex';
+      }
+    }
+    window.openImageViewerModal = openImageViewerModal;
+
+    function closeImageViewerModal() {
+      const modal = document.getElementById('mitImageViewerModal');
+      if (modal) modal.style.display = 'none';
+    }
+    window.closeImageViewerModal = closeImageViewerModal;
+
+    // Hỗ trợ phím Escape để đóng Modal hoặc Lightbox
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeRedditComposer();
+        closeImageViewerModal();
+      }
+    });
+
+    /* Đóng/Mở khung đăng bài dạng Modal Popup */
+    function openRedditComposer() {
+      const el = document.getElementById('redditComposerExpanded');
+      if (el) {
+        el.classList.add('open');
+        const inp = document.getElementById('inpRedditPostTitle');
+        if (inp) inp.focus();
+      }
+    }
+    window.openRedditComposer = openRedditComposer;
+
+    function closeRedditComposer() {
+      const el = document.getElementById('redditComposerExpanded');
+      if (el) el.classList.remove('open');
+      removeRedditPostImage();
+    }
+    window.closeRedditComposer = closeRedditComposer;
+
+    function toggleRedditComposer() {
+      const el = document.getElementById('redditComposerExpanded');
+      if (el) {
+        if (el.classList.contains('open')) closeRedditComposer();
+        else openRedditComposer();
+      }
+    }
+    window.toggleRedditComposer = toggleRedditComposer;
+
+    /* Render bài viết chính trên Main Feed */
+    function renderRedditFeed() {
+      const container = document.getElementById('redditFeedContainer');
+      if (!container) return;
+
+      if (typeof updateForumRealStats === 'function') {
+        updateForumRealStats();
+      }
+
+      let posts = getAllRedditPosts();
+
+      // 1. Lọc Danh mục chủ đề
+      if (window.redditCurrentSubreddit && window.redditCurrentSubreddit !== 'all') {
+        const curSub = normalizeSubredditKey(window.redditCurrentSubreddit);
+        posts = posts.filter(p => normalizeSubredditKey(p.subreddit) === curSub);
+      }
+
+      // 2. Lọc theo từ khóa tìm kiếm
+      if (window.redditSearchQuery) {
+        const q = window.redditSearchQuery;
+        posts = posts.filter(p => {
+          const catName = getSubredditDisplayName(p.subreddit).toLowerCase();
+          return (
+            (p.title && p.title.toLowerCase().includes(q)) ||
+            (p.content && p.content.toLowerCase().includes(q)) ||
+            catName.includes(q) ||
+            (p.flair && p.flair.toLowerCase().includes(q)) ||
+            (p.author && p.author.toLowerCase().includes(q)) ||
+            (p.authorName && p.authorName.toLowerCase().includes(q))
+          );
+        });
+      }
+
+      // 2B. Lọc theo cụm chủ đề thông minh bằng AI (Yêu cầu 10)
+      if (window.currentAiTopicCluster && window.currentAiTopicCluster !== 'all') {
+        const clusters = (typeof getAiTopicClusters === 'function') ? getAiTopicClusters() : [];
+        const activeCluster = clusters.find(c => c.id === window.currentAiTopicCluster);
+        if (activeCluster && typeof activeCluster.filter === 'function') {
+          posts = posts.filter(activeCluster.filter);
+        }
+      }
+
+
+      // 3. Sắp xếp Sort
+      if (window.redditCurrentSort === 'hot' || window.redditCurrentSort === 'best') {
+        posts.sort((a, b) => ((b.upvotes || 0) + (b.comments ? b.comments.length * 2 : 0)) - ((a.upvotes || 0) + (a.comments ? a.comments.length * 2 : 0)));
+      } else if (window.redditCurrentSort === 'new') {
+        posts.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+      } else if (window.redditCurrentSort === 'top') {
+        posts.sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0));
+      }
+
+      if (!posts.length) {
+        container.innerHTML = `
+          <div class="mit-forum-empty-state" style="text-align: center; padding: 48px 24px; background: rgba(24, 18, 14, 0.96); border: 1px dashed rgba(239, 196, 123, 0.35); border-radius: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.45);">
+            <div style="font-size: 52px; margin-bottom: 12px; filter: drop-shadow(0 4px 10px rgba(239, 196, 123, 0.3));">🪕</div>
+            <h3 style="color: #ffea9f; font-size: 22px; font-weight: 700; margin-bottom: 8px;">Diễn Đàn Đàn Tranh &amp; Nhạc Cụ Dân Tộc MIT</h3>
+            <p style="color: #d1d5db; font-size: 14px; max-width: 580px; margin: 0 auto 22px; line-height: 1.6;">
+              Diễn đàn trực tuyến dành riêng cho cộng đồng yêu âm nhạc dân tộc. Bạn có thể tự do đặt câu hỏi về kỹ thuật ngón, chỉnh dây đàn, chia sẻ bản nhạc nốt số hoặc thảo luận kinh nghiệm thực tế.
+            </p>
+            <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 26px;">
+              <button type="button" class="btn btn-primary" onclick="openRedditComposer()" style="background: linear-gradient(135deg, #ef4444, #f97316); border: none; border-radius: 999px; font-weight: 700; padding: 11px 26px; font-size: 14px; box-shadow: 0 4px 16px rgba(239, 68, 68, 0.4); cursor: pointer;">
+                ✍️ Tạo bài viết thảo luận ngay
+              </button>
+            </div>
+            <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 20px; max-width: 560px; margin: 0 auto; text-align: left;">
+              <div style="font-size: 12px; font-weight: 700; color: #ffea9f; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">💡 Gợi ý chủ đề thảo luận nhanh:</div>
+              <div style="display: flex; flex-direction: column; gap: 10px; font-size: 13px;">
+                <div style="cursor: pointer; padding: 10px 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'" onclick="prefillForumComposer('Hỏi về cách chỉnh dây Đàn Tranh ngũ cung Sol La Do Re Mi', 'Mình mới tập chơi Đàn Tranh, cho mình hỏi kinh nghiệm chỉnh hàng nhạn và căng dây thế nào cho chuẩn âm mà không bị đứt dây?', 'dantranh', '❓ Hỏi đáp newbie')">
+                  💬 <strong>Hỏi đáp kỹ thuật:</strong> Cách chỉnh dây Đàn Tranh ngũ cung chuẩn âm
+                </div>
+                <div style="cursor: pointer; padding: 10px 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'" onclick="prefillForumComposer('Chia sẻ bản ký âm nốt số Đàn Tranh', 'Mình có ghi chép bản nốt số cho bài dân ca, chia sẻ cùng các đồng môn luyện tập ngón gảy và ngón nhấn.', 'bannhaccotruyen', '🎼 Bản nhạc &amp; Nốt số')">
+                  🎼 <strong>Bản nhạc &amp; Nốt số:</strong> Chia sẻ ký âm bài bản cổ truyền
+                </div>
+                <div style="cursor: pointer; padding: 10px 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'" onclick="prefillForumComposer('Tư vấn chọn mua Đàn Tranh cho người mới', 'Nên mua đàn tranh bao nhiêu dây cho người mới bắt đầu học, và chọn loại gỗ nào thì âm ấm và bền?', 'tuvanchondan', '🪵 Chọn đàn &amp; Gỗ')">
+                  🪵 <strong>Tư vấn:</strong> Kinh nghiệm chọn đàn cho người mới bắt đầu
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      const activeUser = (typeof getActiveUserAccount === 'function') ? getActiveUserAccount() : null;
+      const currentUserName = (activeUser && activeUser.username !== 'guest') ? (activeUser.displayName || activeUser.username) : 'Bạn đọc';
+
+      container.innerHTML = posts.map(post => {
+        const timeAgo = formatRedditTimeAgo(post.timestamp);
+        const highlighted = highlightRedditContent(post.content);
+        const comments = Array.isArray(post.comments) ? post.comments : [];
+        const isUpvoted = post.myVote === 1;
+        const isDownvoted = post.myVote === -1;
+        const isJoined = !!post.isJoined;
+        const subKey = normalizeSubredditKey(post.subreddit);
+        const subName = getSubredditDisplayName(subKey);
+        const subIcon = getSubredditIcon(subKey);
+        const authorDisplay = post.authorName || formatUserHandle(post.author);
+        const cardBg = post.cardBg || '';
+        const cardBorder = (cardBg && cardBg !== '#ffffff') ? `border-left: 5px solid ${cardBg};` : '';
+
+        return `
+          <article class="reddit-post-card" id="redditPost_${post.id}" style="${cardBorder}">
+            <!-- Header hàng trên: Danh mục MIT, tác giả, thời gian, Theo dõi, Chia sẻ -->
+            <div class="reddit-post-header-row">
+              <div class="reddit-post-meta">
+                <div class="reddit-sub-avatar" style="width: 24px; height: 24px; font-size: 13px;">
+                  ${formatAvatarMediaHtml(post.subredditAvatar || subIcon, '🪕')}
+                </div>
+                <span class="reddit-sub-pill-link" onclick="filterBySubreddit('${escapeRedditHtml(subKey)}')">
+                  ${escapeRedditHtml(subName)}
+                </span>
+                <span>•</span>
+                <span class="reddit-author-link">${escapeRedditHtml(authorDisplay)}</span>
+                <span>•</span>
+                <span>${timeAgo}</span>
+                ${post.flair ? `<span class="reddit-flair-badge">${escapeRedditHtml(post.flair)}</span>` : ''}
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <button type="button" class="reddit-join-btn ${isJoined ? 'joined' : ''}" onclick="toggleRedditJoin('${post.id}', '${escapeRedditHtml(subKey)}')">
+                  ${isJoined ? 'Đang theo dõi' : '+ Theo dõi'}
+                </button>
+                <button type="button" class="reddit-icon-btn" style="width: 28px; height: 28px; font-size: 14px;" onclick="handleShareRedditPost('${post.id}')" title="Chia sẻ">•••</button>
+              </div>
+            </div>
+
+            <!-- Tiêu đề bài viết -->
+            <h2 class="reddit-post-title" onclick="toggleRedditComments('${post.id}')">
+              ${escapeRedditHtml(post.title || 'Bài viết thảo luận')}
+            </h2>
+
+            <!-- Nội dung bài viết -->
+            <div class="reddit-post-content" style="white-space: pre-line;">${highlighted}</div>
+
+            <!-- Hình ảnh đính kèm bài viết (nếu có) -->
+            ${post.image ? `
+              <div class="reddit-post-image-box" onclick="openImageViewerModal('${escapeRedditHtml(post.image)}')" title="Bấm để phóng to xem ảnh">
+                <img src="${escapeRedditHtml(post.image)}" alt="Ảnh bài viết" style="max-width: 100%; max-height: 480px; object-fit: contain; display: inline-block; vertical-align: middle; border-radius: 10px;" />
+                <span style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.7); color: #ffea9f; font-size: 11px; padding: 3px 8px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.2);">🔍 Bấm để phóng to</span>
+              </div>
+            ` : ''}
+
+            <!-- Thanh nút hành động (Upvote/Downvote, Bình luận, Chia sẻ) -->
+            <div class="reddit-actions-row">
+              <!-- Upvote / Downvote Pill -->
+              <div class="reddit-vote-pill">
+                <button type="button" class="reddit-vote-btn upvote ${isUpvoted ? 'active' : ''}" title="Tán thành" onclick="handleRedditVote('${post.id}', 1)">
+                  ⇧
+                </button>
+                <span class="reddit-vote-score ${isUpvoted ? 'upvoted' : isDownvoted ? 'downvoted' : ''}" id="scoreText_${post.id}">
+                  ${post.upvotes || 0}
+                </span>
+                <button type="button" class="reddit-vote-btn downvote ${isDownvoted ? 'active' : ''}" title="Không tán thành" onclick="handleRedditVote('${post.id}', -1)">
+                  ⇩
+                </button>
+              </div>
+
+              <!-- Comments Pill -->
+              <button type="button" class="reddit-action-pill" onclick="toggleRedditComments('${post.id}')" title="Xem bình luận">
+                <span>💬</span>
+                <span>${comments.length} bình luận</span>
+              </button>
+
+              <!-- Repost Pill -->
+              <button type="button" class="reddit-action-pill" onclick="if(typeof showActionToast==='function') showActionToast('Đã lưu bài viết vào mục Yêu thích!');" title="Lưu bài viết">
+                <span>🔖</span>
+                <span>Lưu</span>
+              </button>
+
+              <!-- Share Pill -->
+              <button type="button" class="reddit-action-pill" onclick="handleShareRedditPost('${post.id}')" title="Chia sẻ bài viết">
+                <span>↗️</span>
+                <span>Chia sẻ</span>
+              </button>
+            </div>
+
+            <!-- Khu vực bình luận dạng cây MIT Comments Drawer -->
+            <div class="reddit-comments-drawer" id="commentsDrawer_${post.id}">
+              <!-- Khung viết bình luận -->
+              <div class="reddit-comment-box-composer">
+                <div style="display: flex; gap: 8px; margin-bottom: 8px; align-items: center; flex-wrap: wrap;">
+                  <span style="font-size: 12px; color: #ffea9f; font-weight: 600;">Tên của bạn:</span>
+                  <input type="text" id="inpRedditCommentAuthor_${post.id}" placeholder="${escapeRedditHtml(currentUserName)}" style="background: rgba(14, 10, 8, 0.85); border: 1px solid rgba(239, 196, 123, 0.25); border-radius: 6px; padding: 4px 10px; color: #fff; font-size: 12px; width: 160px; outline: none;" />
+                </div>
+                <textarea id="inpRedditComment_${post.id}" class="reddit-comment-textarea" placeholder="Viết bình luận, trao đổi câu hỏi hoặc chia sẻ cảm nghĩ..."></textarea>
+                <div class="reddit-comment-submit-bar" style="display: flex; justify-content: flex-end;">
+                  <button type="button" class="btn btn-primary btn-xs" onclick="handleAddRedditComment(event, '${post.id}')" style="background: linear-gradient(135deg, #ef4444, #f97316); border: none; font-weight: 700; border-radius: 999px; padding: 6px 20px; cursor: pointer;">
+                    💬 Gửi bình luận
+                  </button>
+                </div>
+              </div>
+
+              <!-- Danh sách bình luận -->
+              <div id="commentsList_${post.id}">
+                ${comments.map(cmt => `
+                  <div class="reddit-comment-item">
+                    <div class="reddit-comment-avatar">${formatAvatarMediaHtml(cmt.authorAvatar, '🪕')}</div>
+                    <div class="reddit-comment-body">
+                      <div class="reddit-comment-author-row" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; gap: 6px; align-items: center;">
+                          <strong>${escapeRedditHtml(cmt.authorName || formatUserHandle(cmt.author))}</strong>
+                          <span>•</span>
+                          <span>${formatRedditTimeAgo(cmt.timestamp)}</span>
+                        </div>
+                        <button type="button" style="background: none; border: none; color: #f87171; font-size: 11px; cursor: pointer; opacity: 0.8;" onclick="handleDeleteRedditComment('${post.id}', '${cmt.id}')" title="Xóa bình luận">🗑️</button>
+                      </div>
+                      <div class="reddit-comment-text" style="white-space: pre-line;">${escapeRedditHtml(cmt.text)}</div>
+                      <div class="reddit-comment-actions">
+                        <span class="reddit-comment-action-link" onclick="handleLikeRedditComment('${post.id}', '${cmt.id}')">▲ ${cmt.upvotes || 1}</span>
+                        <span class="reddit-comment-action-link" onclick="document.getElementById('inpRedditComment_${post.id}').focus()">Trả lời</span>
+                        <span class="reddit-comment-action-link" onclick="handleShareRedditPost('${post.id}')">Chia sẻ</span>
+                      </div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+          </article>
+        `;
+      }).join('');
+    }
+    window.renderRedditFeed = renderRedditFeed;
+    window.renderForumFeed = renderRedditFeed;
+
+    /* Upvote / Downvote */
+    function handleRedditVote(postId, direction) {
+      const posts = getAllRedditPosts();
+      const post = posts.find(p => p.id === postId);
+      if (!post) return;
+
+      const currentVote = post.myVote || 0;
+      let newVote = 0;
+      if (currentVote === direction) {
+        newVote = 0; // Bỏ vote
+      } else {
+        newVote = direction; // Đổi vote
+      }
+
+      const diff = newVote - currentVote;
+      post.myVote = newVote;
+      post.upvotes = (post.upvotes || 0) + diff;
+
+      saveAllRedditPosts(posts);
+      renderRedditFeed();
+      renderRedditRecentPosts();
+    }
+    window.handleRedditVote = handleRedditVote;
+
+    /* Tham gia / Theo dõi chuyên mục */
+    function toggleRedditJoin(postId, subreddit) {
+      const posts = getAllRedditPosts();
+      const post = posts.find(p => p.id === postId);
+      if (!post) return;
+
+      post.isJoined = !post.isJoined;
+      saveAllRedditPosts(posts);
+      renderRedditFeed();
+
+      if (typeof showActionToast === 'function') {
+        const subDisplayName = getSubredditDisplayName(subreddit);
+        showActionToast(post.isJoined ? `Đã theo dõi chủ đề ${subDisplayName}! 🎉` : `Đã bỏ theo dõi chủ đề ${subDisplayName}.`);
+      }
+    }
+    window.toggleRedditJoin = toggleRedditJoin;
+
+    /* Đóng mở bình luận */
+    function toggleRedditComments(postId) {
+      const drawer = document.getElementById('commentsDrawer_' + postId);
+      if (drawer) {
+        drawer.classList.toggle('open');
+      }
+    }
+    window.toggleRedditComments = toggleRedditComments;
+
+    /* Đăng bài viết mới lên Diễn Đàn MIT */
+    function handleCreateRedditPost(e) {
+      if (e) e.preventDefault();
+      const inpTitle = document.getElementById('inpRedditPostTitle');
+      const inpContent = document.getElementById('inpRedditPostContent');
+      const inpAuthor = document.getElementById('inpRedditPostAuthor');
+      const selSub = document.getElementById('selRedditSubreddit');
+      const selFlair = document.getElementById('selRedditFlair');
+
+      if (!inpTitle || !inpTitle.value.trim()) return;
+
+      const activeUser = (typeof getActiveUserAccount === 'function') ? getActiveUserAccount() : null;
+      const inputAuthorVal = (inpAuthor && inpAuthor.value.trim()) ? inpAuthor.value.trim() : '';
+
+      let authorDisplayName = inputAuthorVal;
+      if (!authorDisplayName) {
+        if (activeUser && activeUser.username !== 'guest') {
+          authorDisplayName = activeUser.displayName || activeUser.username;
+        } else {
+          authorDisplayName = 'Thành viên Diễn đàn';
+        }
+      }
+
+
+      const authorHandle = formatUserHandle(authorDisplayName.replace(/\s+/g, '_').toLowerCase());
+      const authorAvatar = (activeUser && activeUser.avatar) ? activeUser.avatar : '🪕';
+      const authorBadge = 'Thành viên Diễn đàn';
+
+      const rawSub = selSub ? selSub.value : 'dantranh';
+      const subreddit = normalizeSubredditKey(rawSub);
+      const subIcon = getSubredditIcon(subreddit);
+      const cardBg = document.getElementById('inpPadletCardBg')?.value || '#ffffff';
+
+      const newPost = {
+        id: 'mit_real_post_' + Date.now(),
+        subreddit: subreddit,
+        subredditAvatar: subIcon,
+        author: authorHandle,
+        authorName: authorDisplayName,
+        authorRole: 'Thành viên Diễn đàn',
+        authorBadge: authorBadge,
+        authorAvatar: authorAvatar,
+        timestamp: Date.now(),
+        title: inpTitle.value.trim(),
+        content: inpContent ? inpContent.value.trim() : '',
+        image: window.currentRedditPostImage || null,
+        flair: selFlair ? selFlair.value : 'Giao lưu',
+        cardBg: cardBg,
+        upvotes: 1,
+        myVote: 1,
+        isJoined: true,
+        isUserCreated: true,
+        comments: []
+      };
+
+      const posts = getAllRedditPosts();
+      posts.unshift(newPost);
+      saveAllRedditPosts(posts);
+
+      inpTitle.value = '';
+      if (inpContent) inpContent.value = '';
+      if (inpAuthor) inpAuthor.value = '';
+      if (document.getElementById('inpPadletCardBg')) document.getElementById('inpPadletCardBg').value = '#ffffff';
+      closeRedditComposer();
+
+      renderRedditRecentPosts();
+      renderRedditFeed();
+      if (typeof updateForumRealStats === 'function') updateForumRealStats();
+
+      if (typeof showActionToast === 'function') {
+        showActionToast('Đã đăng bài viết lên Diễn đàn Đàn Tranh thành công! 🎉');
+      }
+    }
+    window.handleCreateRedditPost = handleCreateRedditPost;
+    window.handleCreateForumPost = handleCreateRedditPost;
+
+    /* Thêm bình luận */
+    function handleAddRedditComment(e, postId) {
+      if (e) e.preventDefault();
+      const inp = document.getElementById('inpRedditComment_' + postId);
+      const inpAuthor = document.getElementById('inpRedditCommentAuthor_' + postId);
+      if (!inp || !inp.value.trim()) return;
+
+      const activeUser = (typeof getActiveUserAccount === 'function') ? getActiveUserAccount() : null;
+      let authorDisplayName = (inpAuthor && inpAuthor.value.trim()) ? inpAuthor.value.trim() : '';
+      if (!authorDisplayName) {
+        if (activeUser && activeUser.username !== 'guest') {
+          authorDisplayName = activeUser.displayName || activeUser.username;
+        } else {
+          authorDisplayName = 'Bạn đọc';
+        }
+      }
+
+      const authorHandle = formatUserHandle(authorDisplayName.replace(/\s+/g, '_').toLowerCase());
+      const authorAvatar = (activeUser && activeUser.avatar) ? activeUser.avatar : '🪕';
+
+      const posts = getAllRedditPosts();
+      const post = posts.find(p => p.id === postId);
+      if (!post) return;
+
+      if (!Array.isArray(post.comments)) post.comments = [];
+      post.comments.push({
+        id: 'cmt_' + Date.now(),
+        author: authorHandle,
+        authorName: authorDisplayName,
+        authorAvatar: authorAvatar,
+        timestamp: Date.now(),
+        text: inp.value.trim(),
+        upvotes: 1
+      });
+
+      saveAllRedditPosts(posts);
+      inp.value = '';
+      renderRedditFeed();
+
+      // Mở lại comment drawer
+      const drawer = document.getElementById('commentsDrawer_' + postId);
+      if (drawer) drawer.classList.add('open');
+
+      if (typeof showActionToast === 'function') {
+        showActionToast('Đã gửi bình luận trên Diễn đàn! 💬');
+      }
+    }
+    window.handleAddRedditComment = handleAddRedditComment;
+    window.handleAddForumComment = handleAddRedditComment;
+
+    /* Chia sẻ bài viết Diễn Đàn MIT */
+    function handleShareRedditPost(postId) {
+      const shareUrl = window.location.origin + window.location.pathname + '#forum?post=' + postId;
+      try {
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(shareUrl);
+          if (typeof showActionToast === 'function') {
+            showActionToast('✓ Đã sao chép liên kết bài viết Diễn đàn MIT!');
+          } else {
+            alert('✓ Đã sao chép liên kết bài viết Diễn đàn MIT!');
+          }
+          return;
+        }
+      }
+ catch (e) {}
+      alert('Liên kết bài viết Diễn đàn MIT: ' + shareUrl);
+    }
+    window.handleShareRedditPost = handleShareRedditPost;
+    window.handleShareForumPost = handleShareRedditPost;
+
+    /* Render danh sách Recent Posts ở Cột Phải */
+    function renderRedditRecentPosts() {
+      const container = document.getElementById('redditRecentPostsList');
+      if (!container) return;
+
+      const posts = getAllRedditPosts().slice(0, 4);
+      if (!posts.length) {
+        container.innerHTML = '<div style="font-size: 13px; color: #818384; padding: 12px 0; text-align: center;">Chưa có bài viết gần đây.<br><span style="font-size: 12px; color: #efc47b; cursor: pointer; text-decoration: underline;" onclick="openRedditComposer()">+ Đăng bài đầu tiên</span></div>';
+        return;
+      }
+
+      container.innerHTML = posts.map(p => {
+        const timeAgo = formatRedditTimeAgo(p.timestamp);
+        const commentCount = p.comments ? p.comments.length : 0;
+        const subKey = normalizeSubredditKey(p.subreddit);
+        const subName = getSubredditDisplayName(subKey);
+        const subIcon = getSubredditIcon(subKey);
+        return `
+          <div class="reddit-recent-post-item" onclick="filterBySubreddit('${escapeRedditHtml(subKey)}'); toggleRedditComments('${p.id}');">
+            <div class="reddit-recent-thumb">${formatAvatarMediaHtml(p.subredditAvatar || subIcon, '🪕')}</div>
+            <div class="reddit-recent-content">
+              <div class="reddit-recent-meta">${escapeRedditHtml(subName)} • ${timeAgo}</div>
+              <div class="reddit-recent-title">${escapeRedditHtml(p.title)}</div>
+              <div class="reddit-recent-stats">${p.upvotes || 0} upvotes · ${commentCount} bình luận</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+    window.renderRedditRecentPosts = renderRedditRecentPosts;
+
+    /* Nút Clear xóa danh sách bài viết gần đây */
+    function clearRedditRecentPosts() {
+      const container = document.getElementById('redditRecentPostsList');
+      if (container) {
+        container.innerHTML = '<div style="font-size: 13px; color: #818384; padding: 8px 0;">Đã xóa bài viết gần đây.</div>';
+      }
+    }
+    window.clearRedditRecentPosts = clearRedditRecentPosts;
+
+    // =========================================================
+    // CÁC HÀM TIỆN ÍCH CHO KHUNG ĐĂNG BÀI PADLET (YÊU CẦU 9)
+    // =========================================================
+    function selectPadletCardColor(color, el) {
+      const inp = document.getElementById('inpPadletCardBg');
+      if (inp) inp.value = color;
+      document.querySelectorAll('.padlet-color-dot').forEach(d => d.classList.remove('active'));
+      if (el) el.classList.add('active');
+
+      const card = document.querySelector('.padlet-composer-card');
+      if (card) {
+        if (color !== '#ffffff') {
+          card.style.background = color;
+          card.style.color = '#111827';
+        } else {
+          card.style.background = '#ffffff';
+          card.style.color = '#111827';
+        }
+      }
+
+    }
+    window.selectPadletCardColor = selectPadletCardColor;
+
+    function togglePadletComposerFullscreen() {
+      const el = document.getElementById('redditComposerExpanded');
+      if (el) {
+        el.classList.toggle('padlet-fullscreen');
+      }
+    }
+    window.togglePadletComposerFullscreen = togglePadletComposerFullscreen;
+
+    function triggerPadletCameraUpload() {
+      const fileInp = document.getElementById('inpRedditPostImageFile');
+      if (fileInp) {
+        fileInp.setAttribute('capture', 'environment');
+        fileInp.click();
+      }
+    }
+    window.triggerPadletCameraUpload = triggerPadletCameraUpload;
+
+    function triggerPadletAiDraftHelper() {
+      const titleInp = document.getElementById('inpRedditPostTitle');
+      const contentInp = document.getElementById('inpRedditPostContent');
+      const flairSel = document.getElementById('selRedditFlair');
+
+      const drafts = [
+        {
+          title: 'Hỏi kinh nghiệm luyện ngón vê và ngón rung trên Đàn Tranh',
+          content: 'Chào các nghệ nhân và đồng âm trên diễn đàn MIT,\n\nMình mới học đàn tranh được 3 tháng, đang tập bài Lưu Thủy Kim Tiền. Khi chuyển từ nốt Xang sang nốt Xê ngón vê của mình vẫn chưa đều phách. Rất mong các bạn có kinh nghiệm chia sẻ bài tập bổ trợ giúp dẻo ngón tay phải!',
+          flair: '🖐️ Kỹ thuật ngón'
+        },
+        {
+          title: 'Chia sẻ bản ký âm nốt số ngũ cung bài Bèo Dạt Mây Trôi',
+          content: 'Thân gửi các bạn bản nốt số bài Bèo Dạt Mây Trôi mình đã ký âm chuẩn ngũ cung:\n\n[Dạo đầu]: 5 5 6 1 2 - 2 3 2 1 6\n[Câu 1]: 5 6 1 2 3 5 3 2... \n(Các bạn chú ý nốt Fa nhấn nhẹ trên dây Xang nhé!)',
+          flair: '🎼 Bản nhạc & Nốt số'
+        },
+        {
+          title: 'Kinh nghiệm chọn mặt gỗ ngô đồng và kiểm tra con nhạn',
+          content: 'Hôm nay mình xin đàm đạo chút về mặt đàn gỗ ngô đồng. Gỗ ngô đồng thớ phải thẳng, vân đều và xốp nhẹ thì tiếng đàn mới thanh thoát, không bị bí âm. Chân con nhạn cũng cần tiếp xúc phẳng khít với mặt đàn.',
+          flair: '🪵 Chọn đàn & Gỗ'
+        }
+      ];
+      const selected = drafts[Math.floor(Math.random() * drafts.length)];
+      if (titleInp) titleInp.value = selected.title;
+      if (contentInp) contentInp.value = selected.content;
+      if (flairSel) flairSel.value = selected.flair;
+    }
+    window.triggerPadletAiDraftHelper = triggerPadletAiDraftHelper;
+
+    function triggerPadletSearchSampleMusic() {
+      const contentInp = document.getElementById('inpRedditPostContent');
+      if (contentInp) {
+        const sampleMelody = "\n\n🎼 [Bản Nhạc Nốt Số Cổ Bản Ngũ Cung]:\n1 2 3 5 6 | 6 5 3 2 1 | 2 3 5 6 1' | 2' 1' 6 5 3\n(Hò - Xự - Xang - Xê - Cống - Liu)";
+        contentInp.value = (contentInp.value || '').trim() + sampleMelody;
+      }
+    }
+    window.triggerPadletSearchSampleMusic = triggerPadletSearchSampleMusic;
+
+    // =========================================================
+    // MODAL LỊCH ĐĂNG BÀI & KẾ HOẠCH DIỄN ĐÀN (YÊU CẦU 3)
+    // =========================================================
+    function openForumScheduleModal() {
+      const modal = document.getElementById('mitPostingScheduleModal');
+      if (modal) {
+        modal.style.display = 'flex';
+        renderForumScheduleTimeline();
+      }
+    }
+    window.openForumScheduleModal = openForumScheduleModal;
+
+    function closeForumScheduleModal() {
+      const modal = document.getElementById('mitPostingScheduleModal');
+      if (modal) modal.style.display = 'none';
+    }
+    window.closeForumScheduleModal = closeForumScheduleModal;
+
+    function renderForumScheduleTimeline() {
+      const container = document.getElementById('forumScheduleTimelineContainer');
+      if (!container) return;
+      const posts = (typeof getAllRedditPosts === 'function') ? getAllRedditPosts() : [];
+      const scheduledItems = [
+        { title: 'Chuyên đề: Phân loại kỹ thuật Vê, Phi, Lia & Vuốt trên 13 nhạc cụ dân tộc', time: 'Hôm nay • 20:00', badge: '🔥 Chuyên đề nóng', author: 'admin' },
+        { title: 'Hướng dẫn ký âm nốt số và cách nhấn nốt Fa & Si trên thang âm ngũ cung', time: 'Ngày mai • 09:30', badge: '📚 Bài giảng', author: 'khanhlam' },
+        { title: 'Giao lưu hòa tấu Trống Cơm & Đàn Tranh trực tuyến', time: 'Thứ Bảy • 19:30', badge: '🎉 Trực tiếp', author: 'Diễn đàn MIT' }
+      ];
+
+      posts.slice(0, 4).forEach(p => {
+        scheduledItems.push({
+          title: p.title || 'Bài viết thảo luận',
+          time: 'Đã xuất bản: ' + formatRedditTimeAgo(p.timestamp),
+          badge: p.flair || 'Bài thảo luận',
+          author: p.authorName || p.author || 'Thành viên'
+        });
+      });
+
+      container.innerHTML = scheduledItems.map(item => `
+        <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(239, 196, 123, 0.2); border-radius: 10px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 18px;">📌</span>
+            <div>
+              <div style="font-size: 13.5px; font-weight: 700; color: #ffea9f;">${escapeRedditHtml(item.title)}</div>
+              <div style="font-size: 11.5px; color: #a1a1aa;">Đăng bởi: <strong>@${escapeRedditHtml(item.author)}</strong> • ${escapeRedditHtml(item.time)}</div>
+            </div>
+          </div>
+          <span style="background: rgba(239, 196, 123, 0.15); border: 1px solid rgba(239, 196, 123, 0.35); color: #ffea9f; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px; white-space: nowrap;">
+            ${escapeRedditHtml(item.badge)}
+          </span>
+        </div>
+      `).join('');
+    }
+    window.renderForumScheduleTimeline = renderForumScheduleTimeline;
+
+    // =========================================================
+    // KIỂM SOÁT VÀ GỘP CỤM CHỦ ĐỀ THÔNG MINH BẰNG AI (YÊU CẦU 10)
+    // =========================================================
+    window.currentAiTopicCluster = 'all';
+
+    function getAiTopicClusters() {
+      return [
+        { id: 'all', icon: '🌐', label: 'Tất cả chủ đề', filter: () => true },
+        { id: 'technique', icon: '🖐️', label: 'Kỹ thuật vê, vuốt, rung nốt', filter: p => ((p.title||'') + ' ' + (p.content||'') + ' ' + (p.flair||'')).toLowerCase().match(/vê|vuốt|rung|nhấn|lia|phi|móng|tay trái|tay phải|kỹ thuật/) },
+        { id: 'dantranh_specific', icon: '🪕', label: 'Đàn Tranh & Thập Lục Cầm', filter: p => ((p.title||'') + ' ' + (p.content||'') + ' ' + (p.subreddit||'')).toLowerCase().match(/tranh|thập lục|16 dây|dantranh/) },
+        { id: 'danbau_nguyet', icon: '🎻', label: 'Đàn Bầu, Nguyệt & Đàn Đáy', filter: p => ((p.title||'') + ' ' + (p.content||'') + ' ' + (p.subreddit||'')).toLowerCase().match(/bầu|nguyệt|đáy|tứ|tỳ bà|kìm/) },
+        { id: 'sheet_pentatonic', icon: '🎼', label: 'Bản nhạc nốt số & Ngũ cung', filter: p => ((p.title||'') + ' ' + (p.content||'') + ' ' + (p.flair||'')).toLowerCase().match(/nốt số|ngũ cung|hò xự|bản nhạc|sheet|ký âm|bèo dạt|lưu thủy/) },
+        { id: 'craft_wood', icon: '🪵', label: 'Chọn đàn, Gỗ & Con nhạn', filter: p => ((p.title||'') + ' ' + (p.content||'') + ' ' + (p.flair||'')).toLowerCase().match(/chọn đàn|gỗ|ngô đồng|con nhạn|ngựa đàn|mua đàn|chỉnh dây|lên dây/) }
+      ];
+    }
+
+    function renderAiTopicClusterChips() {
+      const container = document.getElementById('mitAiTopicsChips');
+      if (!container) return;
+      const clusters = getAiTopicClusters();
+      const posts = (typeof getAllRedditPosts === 'function') ? getAllRedditPosts() : [];
+
+      container.innerHTML = clusters.map(c => {
+        const count = (c.id === 'all') ? posts.length : posts.filter(c.filter).length;
+        const isActive = window.currentAiTopicCluster === c.id;
+        const bg = isActive ? 'linear-gradient(135deg, #de194b, #f59e0b)' : 'rgba(255, 255, 255, 0.06)';
+        const border = isActive ? '1px solid #ffd166' : '1px solid rgba(239, 196, 123, 0.25)';
+        const color = isActive ? '#ffffff' : '#ffea9f';
+        const shadow = isActive ? 'box-shadow: 0 4px 14px rgba(222, 25, 75, 0.45);' : '';
+
+        return `
+          <button type="button" class="ai-cluster-chip-btn" onclick="filterByAiCluster('${c.id}')" style="background: ${bg}; border: ${border}; color: ${color}; ${shadow} border-radius: 999px; padding: 5px 14px; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease;">
+            <span>${c.icon}</span>
+            <span>${escapeRedditHtml(c.label)}</span>
+            <span style="background: rgba(0,0,0,0.3); padding: 1px 7px; border-radius: 999px; font-size: 10.5px;">${count}</span>
+          </button>
+        `;
+      }).join('');
+    }
+    window.renderAiTopicClusterChips = renderAiTopicClusterChips;
+
+    function filterByAiCluster(clusterId) {
+      window.currentAiTopicCluster = clusterId || 'all';
+      const statusLbl = document.getElementById('lblAiClusteredActiveStatus');
+      const resetBtn = document.getElementById('btnResetAiTopicFilter');
+      const clusters = getAiTopicClusters();
+      const current = clusters.find(c => c.id === window.currentAiTopicCluster);
+
+      if (statusLbl) {
+        if (window.currentAiTopicCluster === 'all') {
+          statusLbl.textContent = '(Đang hiển thị toàn bộ)';
+          statusLbl.style.color = '#6ee7b7';
+        } else {
+          statusLbl.textContent = `(Lọc theo: ${current ? current.label : ''})`;
+          statusLbl.style.color = '#ffd166';
+        }
+      }
+
+      if (resetBtn) {
+        resetBtn.style.display = (window.currentAiTopicCluster === 'all') ? 'none' : 'inline-flex';
+      }
+      renderAiTopicClusterChips();
+      renderRedditFeed();
+    }
+    window.filterByAiCluster = filterByAiCluster;
+
+    function resetAiTopicFilter() {
+      filterByAiCluster('all');
+    }
+    window.resetAiTopicFilter = resetAiTopicFilter;
+
     // =========================================================
     // TIEN ICH CHUNG (HTML ESCAPE)
     // =========================================================
@@ -9944,7 +11729,7 @@
       if (h === 'dantranh' || h === 'stage' || h === 'nhaccu') {
         switchNavTab('dantranh');
       } else if (h === 'forum' || h === 'diendan' || h === 'mit') {
-        switchNavTab('encyclopedia');
+        switchNavTab('forum');
       } else if (h === 'lookup' || h === 'thongtin') {
         switchNavTab('lookup');
       } else if (h === 'heritage' || h === 'nghiencuu') {
