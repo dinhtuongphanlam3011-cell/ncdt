@@ -1,4 +1,4 @@
-/* =========================================================
+﻿/* =========================================================
    DOHOA.CSS - ĐÀN TRANH ONLINE & 42 ĐẠI NHẠC CỤ DÂN TỘC
    Phong cách Cổ Điển Hoàng Gia: Màu Nâu Cũ Truyền Thống & Vàng Ánh Kim
    - Bố cục lưới thẻ từng ô hiện đại Pixel-Perfect theo chuẩn Design System
@@ -5004,48 +5004,255 @@ body.tttt-theme-body {
 }
 
 /* =========================================================
-   YÊU CẦU 2: CHẾ ĐỘ MÀN HÌNH SÁNG & TỐI (LIGHT / DARK THEME)
+   YÊU CẦU: CHẾ ĐỘ MÀN HÌNH SÁNG & TỐI HOÀN HẢO (COMPREHENSIVE LIGHT THEME)
+   TOÀN BỘ GIAO DIỆN CHUYỂN SANG BẠCH NGỌC - HOÀNG KIM - LỤA SÁNG
+   KHÔNG BỎ SÓT BẤT KỲ MỘT THÀNH PHẦN NÀO TRÊN TOÀN BỘ WEBSITE
    ========================================================= */
+
+body.light-theme,
 body.tttt-theme-body.light-theme {
-  background-color: #f6f1e8 !important;
-  background-image: radial-gradient(ellipse at top, #ffffff 0%, #f6efe4 55%, #eae0d0 100%) !important;
+  --tttt-bg-deep: #f6f0e4 !important;
+  --tttt-bg-mid: #faf5eb !important;
+  --tttt-bg-top: #ffffff !important;
+  --tttt-card-bg: rgba(255, 255, 255, 0.96) !important;
+  --tttt-card-border: rgba(184, 138, 78, 0.35) !important;
+  --tttt-ruby-start: #de194b !important;
+  --tttt-ruby-end: #a30e32 !important;
+  --tttt-gold: #9a6218 !important;
+  --tttt-cream-1: #2a1f14 !important;
+  --tttt-cream-2: #4a3826 !important;
+
+  --bg-page: #f7f3ec !important;
+  --bg-gradient: radial-gradient(ellipse at 50% 0%, #ffffff 0%, #f7f1e6 55%, #eae0d0 100%) !important;
+  --bg-card: rgba(255, 255, 255, 0.96) !important;
+  --bg-card-hover: #ffffff !important;
+  --bg-surface: rgba(246, 240, 230, 0.92) !important;
+  --bg-input: #ffffff !important;
+
+  --wood-dark: #f0e6d6 !important;
+  --wood-mid: #fbf7f0 !important;
+  --wood-light: #6a4c28 !important;
+
+  --primary-gold: #9a6218 !important;
+  --primary-amber: #9a6218 !important;
+  --primary-hover: #b87b28 !important;
+  --primary-light: rgba(154, 98, 24, 0.1) !important;
+  --primary-border: rgba(154, 98, 24, 0.3) !important;
+  --primary-blue: #9a6218 !important;
+
+  --text-main: #1f160e !important;
+  --text-sub: #453423 !important;
+  --text-dim: #705b46 !important;
+  --text-muted: #8c7660 !important;
+
+  --border-color: rgba(154, 98, 24, 0.28) !important;
+  --border-light: rgba(154, 98, 24, 0.16) !important;
+  --border-hover: rgba(154, 98, 24, 0.6) !important;
+
+  background-color: #f7f3ec !important;
+  background-image: radial-gradient(ellipse at 50% 0%, #ffffff 0%, #f7f1e6 55%, #eae0d0 100%) !important;
   color: #1f160e !important;
 }
 
+/* 1. HIỆU ỨNG ÁNH SÁNG NỀN & TYPOGRAPHY TỔNG QUAN */
 body.tttt-theme-body.light-theme .tttt-mouse-spotlight {
   background: radial-gradient(circle 800px at 50% 20%, rgba(222, 25, 75, 0.05), transparent 80%) !important;
 }
 
-body.tttt-theme-body.light-theme .site-header.tttt-navbar {
-  background: rgba(255, 253, 250, 0.95) !important;
+body.tttt-theme-body.light-theme h1,
+body.tttt-theme-body.light-theme h2,
+body.tttt-theme-body.light-theme h3,
+body.tttt-theme-body.light-theme h4,
+body.tttt-theme-body.light-theme h5,
+body.tttt-theme-body.light-theme h6 {
+  color: #633912 !important;
+}
+
+body.tttt-theme-body.light-theme p,
+body.tttt-theme-body.light-theme label,
+body.tttt-theme-body.light-theme span {
+  color: inherit;
+}
+
+/* 2. THANH HEADER, NAVBAR & TASKBAR */
+body.tttt-theme-body.light-theme .site-header.tttt-navbar,
+body.tttt-theme-body.light-theme .site-header {
+  background: rgba(255, 253, 250, 0.96) !important;
   border-bottom: 1.5px solid rgba(184, 138, 78, 0.3) !important;
   box-shadow: 0 4px 20px rgba(100, 70, 30, 0.08) !important;
 }
 
-body.tttt-theme-body.light-theme .nav-link {
+body.tttt-theme-body.light-theme .contextual-taskbar {
+  background: rgba(255, 254, 250, 0.97) !important;
+  border-bottom: 1px solid rgba(184, 138, 78, 0.28) !important;
+}
+
+body.tttt-theme-body.light-theme .home-brand-pill {
+  background: rgba(184, 138, 78, 0.1) !important;
+  border: 1px solid rgba(184, 138, 78, 0.3) !important;
+}
+
+body.tttt-theme-body.light-theme .home-brand-title {
+  color: #7a1532 !important;
+  -webkit-text-fill-color: #7a1532 !important;
+}
+
+body.tttt-theme-body.light-theme .nav-link,
+body.tttt-theme-body.light-theme .tttt-plain-tab {
   color: #4a3826 !important;
+  background: transparent !important;
 }
 
 body.tttt-theme-body.light-theme .nav-link:hover,
-body.tttt-theme-body.light-theme .nav-link.active {
+body.tttt-theme-body.light-theme .tttt-plain-tab:hover {
   color: #c9103c !important;
   background: rgba(222, 25, 75, 0.08) !important;
 }
 
-body.tttt-theme-body.light-theme .stage-card,
-body.tttt-theme-body.light-theme .lux-explore-dossier-card,
-body.tttt-theme-body.light-theme .lux-research-dossier-box,
-body.tttt-theme-body.light-theme .lux-play-keyboard-card,
-body.tttt-theme-body.light-theme .lookup-header-bar,
-body.tttt-theme-body.light-theme .modal-content {
-  background: rgba(255, 255, 255, 0.97) !important;
-  border: 1px solid rgba(184, 138, 78, 0.3) !important;
-  box-shadow: 0 16px 40px rgba(120, 80, 30, 0.08) !important;
+body.tttt-theme-body.light-theme .nav-link.active,
+body.tttt-theme-body.light-theme .tttt-plain-tab.active {
+  color: #c9103c !important;
+  background: rgba(222, 25, 75, 0.1) !important;
+  border-color: rgba(222, 25, 75, 0.35) !important;
+  box-shadow: 0 2px 8px rgba(222, 25, 75, 0.15) !important;
+}
+
+body.tttt-theme-body.light-theme .nav-account-badge {
+  background: rgba(184, 138, 78, 0.12) !important;
+  border-color: rgba(184, 138, 78, 0.4) !important;
+}
+
+body.tttt-theme-body.light-theme .nav-account-name {
+  color: #633912 !important;
+}
+
+body.tttt-theme-body.light-theme #btnThemeToggle {
+  background: rgba(246, 239, 228, 0.95) !important;
+  border: 1px solid rgba(184, 138, 78, 0.4) !important;
+  color: #633912 !important;
+}
+
+body.tttt-theme-body.light-theme #btnThemeToggle:hover {
+  background: #ffffff !important;
+  border-color: #de194b !important;
+  color: #de194b !important;
+}
+
+/* 3. HERO SECTION (HERITUNE TITLE & CALLIGRAPHY) */
+body.tttt-theme-body.light-theme .hero-brand-title {
+  color: #7a1532 !important;
+  -webkit-text-fill-color: #7a1532 !important;
+  text-shadow: 0 4px 18px rgba(122, 21, 50, 0.18) !important;
+}
+
+body.tttt-theme-body.light-theme .hero-title-phrase {
+  color: #7a1532 !important;
+  -webkit-text-fill-color: #7a1532 !important;
+}
+
+body.tttt-theme-body.light-theme .hero-split-section,
+body.tttt-theme-body.light-theme .hero-left-col,
+body.tttt-theme-body.light-theme .hero-right-col {
   color: #1f160e !important;
 }
 
+body.tttt-theme-body.light-theme .hero-badge-pill {
+  background: rgba(184, 138, 78, 0.12) !important;
+  border: 1px solid rgba(184, 138, 78, 0.35) !important;
+  color: #633912 !important;
+}
+
+body.tttt-theme-body.light-theme .hero-lead-text,
+body.tttt-theme-body.light-theme .hero-intro-text {
+  color: #453423 !important;
+}
+
+/* 4. COVERFLOW 3D & THẺ SHOWCASE (TAB 1) */
+body.tttt-theme-body.light-theme .tttt-stage-showcase-card,
+body.tttt-theme-body.light-theme .tttt-roadmap-card,
+body.tttt-theme-body.light-theme .tttt-gallery-card,
+body.tttt-theme-body.light-theme .stage-mini-inst-card {
+  background: rgba(255, 255, 255, 0.96) !important;
+  border: 1.5px solid rgba(184, 138, 78, 0.28) !important;
+  box-shadow: 0 12px 32px rgba(120, 80, 30, 0.1) !important;
+  color: #1f160e !important;
+}
+
+body.tttt-theme-body.light-theme .tttt-cf-card {
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 242, 232, 0.96) 100%) !important;
+  border: 1.5px solid rgba(184, 138, 78, 0.35) !important;
+  box-shadow: 0 16px 40px rgba(120, 80, 30, 0.14) !important;
+}
+
+body.tttt-theme-body.light-theme .tttt-cf-content {
+  background: linear-gradient(0deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.88) 60%, transparent 100%) !important;
+}
+
+body.tttt-theme-body.light-theme .tttt-cf-title,
+body.tttt-theme-body.light-theme .stage-mini-title,
+body.tttt-theme-body.light-theme .inst-card-title {
+  color: #633912 !important;
+  text-shadow: none !important;
+}
+
+body.tttt-theme-body.light-theme .tttt-cf-desc,
+body.tttt-theme-body.light-theme .stage-mini-desc {
+  color: #4a3826 !important;
+}
+
+/* 5. MEGA FILTER DROPDOWN & DANH MỤC TÌM KIẾM */
+body.tttt-theme-body.light-theme .mega-filter-dropdown-panel,
+body.tttt-theme-body.light-theme .mega-filter-panel,
+body.tttt-theme-body.light-theme .mega-filter-body {
+  background: rgba(255, 254, 250, 0.98) !important;
+  border: 1.5px solid rgba(184, 138, 78, 0.38) !important;
+  color: #1f160e !important;
+  box-shadow: 0 20px 50px rgba(100, 70, 30, 0.16) !important;
+}
+
+body.tttt-theme-body.light-theme .mega-filter-input,
+body.tttt-theme-body.light-theme .form-input,
+body.tttt-theme-body.light-theme .form-select,
+body.tttt-theme-body.light-theme input[type="text"],
+body.tttt-theme-body.light-theme input[type="search"],
+body.tttt-theme-body.light-theme select {
+  background: #ffffff !important;
+  border: 1.5px solid rgba(184, 138, 78, 0.35) !important;
+  color: #1f160e !important;
+}
+
+/* 6. TAB TRA CỨU HỒ SƠ 38 NHẠC CỤ (LOOKUP & DOSSIER) */
+body.tttt-theme-body.light-theme .lookup-header-bar,
+body.tttt-theme-body.light-theme .lux-research-dossier-box,
+body.tttt-theme-body.light-theme .lux-research-card,
+body.tttt-theme-body.light-theme .lux-explore-dossier-card {
+  background: rgba(255, 255, 255, 0.97) !important;
+  border: 1px solid rgba(184, 138, 78, 0.3) !important;
+  box-shadow: 0 12px 36px rgba(120, 80, 30, 0.08) !important;
+  color: #1f160e !important;
+}
+
+body.tttt-theme-body.light-theme .lux-detail-item {
+  background: rgba(246, 239, 228, 0.75) !important;
+  border: 1px solid rgba(184, 138, 78, 0.25) !important;
+  color: #1f160e !important;
+}
+
+body.tttt-theme-body.light-theme .lux-detail-item strong {
+  color: #633912 !important;
+}
+
+/* 7. TAB SÂN KHẤU 3D & BÀN PHÍM DIỄN TẤU */
+body.tttt-theme-body.light-theme .stage-card,
+body.tttt-theme-body.light-theme .main-stage-container .stage-card {
+  background: rgba(255, 255, 255, 0.98) !important;
+  border: 1.5px solid rgba(184, 138, 78, 0.28) !important;
+  color: #1f160e !important;
+  box-shadow: 0 16px 44px rgba(120, 80, 30, 0.1) !important;
+}
+
 body.tttt-theme-body.light-theme .u-stage-header {
-  background: rgba(246, 239, 228, 0.85) !important;
+  background: rgba(248, 243, 234, 0.88) !important;
   border: 1px solid rgba(184, 138, 78, 0.3) !important;
 }
 
@@ -5053,11 +5260,108 @@ body.tttt-theme-body.light-theme .u-stage-title {
   color: #6d3810 !important;
 }
 
-body.tttt-theme-body.light-theme .u-info-section-title span,
-body.tttt-theme-body.light-theme .u-stage-badges span {
-  color: #2b1f14 !important;
+body.tttt-theme-body.light-theme .u-stage-badge.badge-cat {
+  background: rgba(222, 25, 75, 0.1) !important;
+  color: #de194b !important;
+  border: 1px solid rgba(222, 25, 75, 0.3) !important;
 }
 
+body.tttt-theme-body.light-theme .u-stage-badge.badge-origin {
+  background: rgba(184, 138, 78, 0.12) !important;
+  color: #633912 !important;
+  border: 1px solid rgba(184, 138, 78, 0.3) !important;
+}
+
+body.tttt-theme-body.light-theme .u-stage-big-icon {
+  background: rgba(184, 138, 78, 0.15) !important;
+  border: 1px solid rgba(184, 138, 78, 0.35) !important;
+}
+
+body.tttt-theme-body.light-theme .dan-3d-wrap {
+  border: 1.5px solid rgba(184, 138, 78, 0.3) !important;
+  box-shadow: inset 0 2px 14px rgba(100, 70, 30, 0.08) !important;
+}
+
+body.tttt-theme-body.light-theme .view-mode-bar button,
+body.tttt-theme-body.light-theme .btn-secondary {
+  background: rgba(248, 242, 233, 0.95) !important;
+  color: #4a341e !important;
+  border: 1px solid rgba(184, 138, 78, 0.35) !important;
+}
+
+body.tttt-theme-body.light-theme .view-mode-bar button:hover,
+body.tttt-theme-body.light-theme .btn-secondary:hover {
+  background: #ffffff !important;
+  color: #c9103c !important;
+  border-color: rgba(222, 25, 75, 0.5) !important;
+}
+
+/* THANH NỐT VỪA ĐÁNH (NOW PLAYING BAR & NỐT ĐANG TẤU) */
+body.tttt-theme-body.light-theme .now-playing-bar {
+  background: rgba(246, 239, 228, 0.95) !important;
+  border: 1px solid rgba(184, 138, 78, 0.4) !important;
+  color: #1f160e !important;
+  box-shadow: 0 4px 14px rgba(100, 70, 30, 0.08) !important;
+}
+
+body.tttt-theme-body.light-theme .now-playing-bar span,
+body.tttt-theme-body.light-theme .now-playing-bar strong {
+  color: #633912 !important;
+}
+
+body.tttt-theme-body.light-theme .demo-tempo-bar button {
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #4a3826 !important;
+  border: 1px solid rgba(184, 138, 78, 0.3) !important;
+}
+
+body.tttt-theme-body.light-theme .demo-tempo-bar button.active {
+  background: #de194b !important;
+  color: #ffffff !important;
+  border-color: #de194b !important;
+}
+
+/* BÀN PHÍM 16 DÂY TRÊN SÂN KHẤU 3D */
+body.tttt-theme-body.light-theme .lux-play-keyboard-card {
+  background: rgba(255, 255, 255, 0.98) !important;
+  border: 1.5px solid rgba(184, 138, 78, 0.32) !important;
+  box-shadow: 0 16px 44px rgba(120, 80, 30, 0.1) !important;
+}
+
+body.tttt-theme-body.light-theme .u-info-section-title span {
+  color: #633912 !important;
+}
+
+body.tttt-theme-body.light-theme .u-key {
+  background: linear-gradient(180deg, #ffffff 0%, #f6efe3 100%) !important;
+  color: #23180d !important;
+  border: 1.5px solid rgba(184, 138, 78, 0.45) !important;
+  box-shadow: 0 4px 10px rgba(100, 70, 30, 0.12) !important;
+}
+
+body.tttt-theme-body.light-theme .u-key .key-note {
+  color: #633912 !important;
+  font-weight: 800;
+}
+
+body.tttt-theme-body.light-theme .u-key .key-pitch {
+  color: #705b46 !important;
+}
+
+body.tttt-theme-body.light-theme .u-key .key-bind {
+  background: rgba(184, 138, 78, 0.15) !important;
+  color: #633912 !important;
+  border: 1px solid rgba(184, 138, 78, 0.35) !important;
+}
+
+body.tttt-theme-body.light-theme .u-key.playing,
+body.tttt-theme-body.light-theme .u-key:active {
+  background: linear-gradient(180deg, #ffe4c7 0%, #ffd09c 100%) !important;
+  border-color: #de194b !important;
+  box-shadow: 0 0 16px rgba(222, 25, 75, 0.4) !important;
+}
+
+/* 8. HÔNG BÊN PHẢI: LỊCH SỬ ĐÁNH NỐT (STICKY CARD BÁM THEO MÀN HÌNH) */
 body.tttt-theme-body.light-theme .wf-stage-history-card-sticky {
   background: linear-gradient(165deg, rgba(255, 254, 252, 0.98) 0%, rgba(246, 240, 230, 0.96) 100%) !important;
   border: 1.5px solid rgba(184, 138, 78, 0.38) !important;
@@ -5070,20 +5374,223 @@ body.tttt-theme-body.light-theme .wf-stage-history-card-sticky span {
   color: #2b1f14;
 }
 
-body.tttt-theme-body.light-theme .btn-secondary {
-  background: rgba(248, 242, 233, 0.95) !important;
-  color: #4a341e !important;
-  border: 1px solid rgba(184, 138, 78, 0.35) !important;
+body.tttt-theme-body.light-theme #sideNoteHistoryList {
+  scrollbar-color: rgba(184, 138, 78, 0.4) transparent !important;
 }
 
-body.tttt-theme-body.light-theme .btn-secondary:hover {
+/* 9. TAB TRIỂN LÃM 4 BỘ NHẠC CỤ & SLIDER BANNER */
+body.tttt-theme-body.light-theme .wf-slider-banner,
+body.tttt-theme-body.light-theme .wf-slider-content {
+  background: linear-gradient(135deg, rgba(255, 254, 250, 0.98) 0%, rgba(245, 238, 227, 0.96) 100%) !important;
+  border: 1.5px solid rgba(184, 138, 78, 0.35) !important;
+  color: #1f160e !important;
+  box-shadow: 0 16px 40px rgba(120, 80, 30, 0.1) !important;
+}
+
+body.tttt-theme-body.light-theme .wf-slide-badge {
+  color: #de194b !important;
+  background: rgba(222, 25, 75, 0.08) !important;
+  border: 1px solid rgba(222, 25, 75, 0.25) !important;
+}
+
+body.tttt-theme-body.light-theme .wf-slide-title {
+  color: #6d3810 !important;
+}
+
+body.tttt-theme-body.light-theme .wf-slide-desc {
+  color: #453423 !important;
+}
+
+/* 10. TẤT CẢ CÁC MODAL DIALOG (CÀI ĐẶT, ĐĂNG NHẬP, THÔNG BÁO) */
+body.tttt-theme-body.light-theme .modal-content,
+body.tttt-theme-body.light-theme .modal-dialog .modal-content {
+  background: rgba(255, 255, 255, 0.99) !important;
+  border: 1.5px solid rgba(184, 138, 78, 0.38) !important;
+  color: #1f160e !important;
+  box-shadow: 0 24px 64px rgba(100, 70, 30, 0.18) !important;
+}
+
+body.tttt-theme-body.light-theme .modal-header {
+  background: linear-gradient(135deg, #f7efe4 0%, #eee3d1 100%) !important;
+  border-bottom: 1.5px solid rgba(184, 138, 78, 0.3) !important;
+  color: #633912 !important;
+}
+
+body.tttt-theme-body.light-theme .modal-header h2,
+body.tttt-theme-body.light-theme .modal-header h3,
+body.tttt-theme-body.light-theme .modal-header h4 {
+  color: #633912 !important;
+  text-shadow: none !important;
+}
+
+body.tttt-theme-body.light-theme .modal-close {
+  color: #633912 !important;
+}
+
+body.tttt-theme-body.light-theme .modal-close:hover {
+  color: #de194b !important;
+}
+
+body.tttt-theme-body.light-theme .wf-panel-box,
+body.tttt-theme-body.light-theme .modal-body .panel-box {
+  background: rgba(246, 239, 228, 0.75) !important;
+  border: 1px solid rgba(184, 138, 78, 0.25) !important;
+  color: #1c160e !important;
+}
+
+body.tttt-theme-body.light-theme .auth-form-card,
+body.tttt-theme-body.light-theme .auth-card {
   background: #ffffff !important;
-  color: #c9103c !important;
-  border-color: rgba(222, 25, 75, 0.5) !important;
+  border: 1px solid rgba(184, 138, 78, 0.3) !important;
+  color: #1f160e !important;
 }
 
+body.tttt-theme-body.light-theme .auth-form-card input,
+body.tttt-theme-body.light-theme .auth-input {
+  background: #ffffff !important;
+  border: 1.5px solid rgba(184, 138, 78, 0.35) !important;
+  color: #1f160e !important;
+}
+
+/* 11. BẢNG ĐIỀU KHIỂN QUẢN TRỊ ADMIN (WORDPRESS FLOATING WINDOW) */
+body.tttt-theme-body.light-theme .owner-floating-window {
+  background: linear-gradient(165deg, rgba(255, 254, 252, 0.99) 0%, rgba(248, 243, 234, 0.99) 100%) !important;
+  border: 1.5px solid rgba(184, 138, 78, 0.45) !important;
+  color: #1f160e !important;
+  box-shadow: 0 24px 64px rgba(100, 70, 30, 0.2) !important;
+}
+
+body.tttt-theme-body.light-theme .wp-admin-topbar {
+  background: linear-gradient(90deg, #f7efe4 0%, #eee3d1 100%) !important;
+  border-bottom: 1px solid rgba(184, 138, 78, 0.35) !important;
+  color: #1f160e !important;
+}
+
+body.tttt-theme-body.light-theme .wp-bar-site-badge strong,
+body.tttt-theme-body.light-theme .wp-bar-user-greeting,
+body.tttt-theme-body.light-theme .wp-bar-actions button {
+  color: #633912 !important;
+}
+
+body.tttt-theme-body.light-theme .wp-admin-sidebar {
+  background: rgba(245, 238, 227, 0.95) !important;
+  border-right: 1px solid rgba(184, 138, 78, 0.3) !important;
+}
+
+body.tttt-theme-body.light-theme .wp-menu-item-link {
+  color: #4a3826 !important;
+}
+
+body.tttt-theme-body.light-theme .wp-menu-item-link:hover,
+body.tttt-theme-body.light-theme .wp-menu-item-wrap.active .wp-menu-item-link {
+  background: rgba(184, 138, 78, 0.15) !important;
+  color: #de194b !important;
+}
+
+body.tttt-theme-body.light-theme .wp-content-area {
+  background: #ffffff !important;
+  color: #1f160e !important;
+}
+
+body.tttt-theme-body.light-theme .wp-content-area input,
+body.tttt-theme-body.light-theme .wp-content-area select,
+body.tttt-theme-body.light-theme .wp-content-area textarea {
+  background: #ffffff !important;
+  border: 1.5px solid rgba(184, 138, 78, 0.35) !important;
+  color: #1f160e !important;
+}
+
+body.tttt-theme-body.light-theme thead th,
+body.tttt-theme-body.light-theme th {
+  background: #f7efe4 !important;
+  color: #6d3810 !important;
+  border-bottom: 1.5px solid rgba(184, 138, 78, 0.3) !important;
+}
+
+body.tttt-theme-body.light-theme tbody tr {
+  background: #ffffff !important;
+  border-bottom: 1px solid rgba(184, 138, 78, 0.18) !important;
+}
+
+body.tttt-theme-body.light-theme tbody tr:hover {
+  background: rgba(246, 239, 228, 0.45) !important;
+}
+
+body.tttt-theme-body.light-theme td {
+  color: #1f160e !important;
+  border-bottom: 1px solid rgba(184, 138, 78, 0.18) !important;
+}
+
+/* Đảm bảo toàn bộ bảng Quản lý User Admin trong chế độ Sáng luôn rõ nét, không bị chìm màu */
+body.tttt-theme-body.light-theme #wpUsersTableBody td,
+body.tttt-theme-body.light-theme #wpUsersTableBody td * {
+  color: #1f160e !important;
+}
+
+body.tttt-theme-body.light-theme #wpUsersTableBody strong {
+  color: #633912 !important;
+}
+
+body.tttt-theme-body.light-theme #wpUsersTableBody .btn-secondary {
+  background: #f7efe4 !important;
+  color: #633912 !important;
+  border-color: rgba(184, 138, 78, 0.4) !important;
+}
+
+/* Cột vai trò không bị ngắt đôi dòng */
+body.tttt-theme-body.light-theme #wpUsersTableBody td:nth-child(4) span {
+  white-space: nowrap !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+/* 12. PHÒNG THU ẢO (STUDIO WINDOW) & CỬA SỔ AI CHAT */
+body.tttt-theme-body.light-theme .dt-studio-window,
+body.tttt-theme-body.light-theme .ai-chat-window {
+  background: linear-gradient(165deg, rgba(255, 254, 252, 0.99) 0%, rgba(248, 243, 234, 0.99) 100%) !important;
+  border: 1.5px solid rgba(184, 138, 78, 0.4) !important;
+  color: #1f160e !important;
+  box-shadow: 0 20px 50px rgba(100, 70, 30, 0.18) !important;
+}
+
+body.tttt-theme-body.light-theme .dt-studio-topbar,
+body.tttt-theme-body.light-theme .ai-chat-topbar {
+  background: linear-gradient(90deg, #f7efe4 0%, #eee3d1 100%) !important;
+  color: #633912 !important;
+  border-bottom: 1px solid rgba(184, 138, 78, 0.35) !important;
+}
+
+body.tttt-theme-body.light-theme .dt-studio-content-body,
+body.tttt-theme-body.light-theme .chat-messages-area {
+  background: #faf6f0 !important;
+  color: #1f160e !important;
+}
+
+body.tttt-theme-body.light-theme .chat-msg-bot {
+  background: #ffffff !important;
+  color: #1f160e !important;
+  border: 1px solid rgba(184, 138, 78, 0.25) !important;
+}
+
+body.tttt-theme-body.light-theme #ownerInstStringsAudioTableBody tr {
+  background: #ffffff !important;
+  border-bottom: 1px solid rgba(184, 138, 78, 0.18) !important;
+}
+
+body.tttt-theme-body.light-theme #ownerInstStringsAudioTableBody td,
+body.tttt-theme-body.light-theme #ownerInstStringsAudioTableBody td * {
+  color: #1f160e !important;
+}
+
+body.tttt-theme-body.light-theme #ownerInstStringsAudioTableBody input {
+  background: #ffffff !important;
+  color: #1f160e !important;
+  border: 1.5px solid rgba(184, 138, 78, 0.35) !important;
+}
+
+/* 13. THANH DOCK PHÍA DƯỚI & FOOTER CHÂN TRANG */
 body.tttt-theme-body.light-theme .lux-dock-bar {
-  background: rgba(255, 253, 248, 0.95) !important;
+  background: rgba(255, 253, 248, 0.96) !important;
   border: 1.5px solid rgba(184, 138, 78, 0.32) !important;
   box-shadow: 0 12px 36px rgba(120, 80, 30, 0.16) !important;
 }
@@ -5097,20 +5604,23 @@ body.tttt-theme-body.light-theme .lux-dock-item.active {
   color: #de194b !important;
 }
 
-body.tttt-theme-body.light-theme .nav-account-badge {
-  background: rgba(184, 138, 78, 0.12) !important;
-  border-color: rgba(184, 138, 78, 0.4) !important;
-}
-
-body.tttt-theme-body.light-theme .nav-account-name {
-  color: #633912 !important;
-}
-
 body.tttt-theme-body.light-theme .footer,
-body.tttt-theme-body.light-theme footer {
+body.tttt-theme-body.light-theme footer,
+body.tttt-theme-body.light-theme .site-footer {
   background: rgba(248, 242, 233, 0.98) !important;
   color: #4a3826 !important;
   border-top: 1px solid rgba(184, 138, 78, 0.25) !important;
+}
+
+body.tttt-theme-body.light-theme .footer a,
+body.tttt-theme-body.light-theme footer a {
+  color: #633912 !important;
+}
+
+/* NÚT LIÊN HỆ & NÚT TIỆN ÍCH TRÔI DƯỚI GÓC PHẢI */
+body.tttt-theme-body.light-theme .floating-action-group,
+body.tttt-theme-body.light-theme .fixed-action-buttons {
+  filter: drop-shadow(0 4px 12px rgba(100, 70, 30, 0.18));
 }
 
 .tttt-mouse-spotlight {
