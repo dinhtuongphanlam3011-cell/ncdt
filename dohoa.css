@@ -801,6 +801,7 @@ body {
   max-width: 1400px;
   margin: 28px auto 64px;
   padding: 0 28px;
+  overflow: visible !important;
 }
 
 .stage-card {
@@ -811,6 +812,7 @@ body {
   padding: 32px 34px;
   box-shadow: var(--shadow-xl);
   transition: all 0.2s;
+  overflow: visible !important;
 }
 
 /* Header thông tin nhạc cụ */
@@ -1522,6 +1524,16 @@ body {
   display: flex !important;
 }
 
+/* YÊU CẦU 1: KHI MỞ BẢNG QUYỀN ADMIN THÌ KHÔNG LÀM MỜ HAY TỐI MÀN HÌNH PHÍA SAU */
+#ownerAdminBackdrop,
+div#ownerAdminBackdrop.modal-overlay {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  pointer-events: none !important;
+  box-shadow: none !important;
+}
+
 .modal-content {
   position: relative !important;
   z-index: 100001 !important;
@@ -2182,12 +2194,13 @@ body {
   }
 }
 
-/* --- TAB 2: SÂN KHẤU 3D & HÔNG PHẢI LỊCH SỬ ĐÁNH NỐT (YÊU CẦU 3) --- */
+/* --- TAB 2: SÂN KHẤU 3D & HÔNG PHẢI LỊCH SỬ ĐÁNH NỐT (YÊU CẦU 3 & CUỘN TRANG DI THEO) --- */
 .wf-stage-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 300px;
+  grid-template-columns: minmax(0, 1fr) 310px;
   gap: 20px;
-  align-items: start;
+  align-items: stretch !important;
+  position: relative;
 }
 
 .wf-stage-layout-single {
@@ -2198,6 +2211,20 @@ body {
 }
 
 .wf-stage-history-right-flank {
+  align-self: stretch !important;
+  position: relative !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.wf-stage-history-card-sticky {
+  position: -webkit-sticky !important;
+  position: sticky !important;
+  top: 76px !important;
   background: linear-gradient(165deg, rgba(32, 6, 18, 0.95) 0%, rgba(16, 2, 8, 0.98) 100%);
   border: 1.5px solid rgba(239, 196, 123, 0.35);
   border-radius: 16px;
@@ -2207,11 +2234,11 @@ body {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  position: sticky;
-  top: 76px;
   max-height: calc(100vh - 96px);
   overflow: hidden;
   box-sizing: border-box;
+  z-index: 95;
+  transition: box-shadow 0.2s ease, transform 0.15s ease;
 }
 
 @media (max-width: 1100px) {
@@ -2219,8 +2246,13 @@ body {
     grid-template-columns: 1fr;
   }
   .wf-stage-history-right-flank {
-    position: static;
+    position: relative;
     max-height: none;
+  }
+  .wf-stage-history-card-sticky {
+    position: relative !important;
+    top: 0 !important;
+    max-height: none !important;
   }
 }
 
@@ -4969,6 +5001,116 @@ body.tttt-theme-body {
   width: 100% !important;
   max-width: 100% !important;
   overflow-x: clip !important; /* Không làm hỏng position: sticky */
+}
+
+/* =========================================================
+   YÊU CẦU 2: CHẾ ĐỘ MÀN HÌNH SÁNG & TỐI (LIGHT / DARK THEME)
+   ========================================================= */
+body.tttt-theme-body.light-theme {
+  background-color: #f6f1e8 !important;
+  background-image: radial-gradient(ellipse at top, #ffffff 0%, #f6efe4 55%, #eae0d0 100%) !important;
+  color: #1f160e !important;
+}
+
+body.tttt-theme-body.light-theme .tttt-mouse-spotlight {
+  background: radial-gradient(circle 800px at 50% 20%, rgba(222, 25, 75, 0.05), transparent 80%) !important;
+}
+
+body.tttt-theme-body.light-theme .site-header.tttt-navbar {
+  background: rgba(255, 253, 250, 0.95) !important;
+  border-bottom: 1.5px solid rgba(184, 138, 78, 0.3) !important;
+  box-shadow: 0 4px 20px rgba(100, 70, 30, 0.08) !important;
+}
+
+body.tttt-theme-body.light-theme .nav-link {
+  color: #4a3826 !important;
+}
+
+body.tttt-theme-body.light-theme .nav-link:hover,
+body.tttt-theme-body.light-theme .nav-link.active {
+  color: #c9103c !important;
+  background: rgba(222, 25, 75, 0.08) !important;
+}
+
+body.tttt-theme-body.light-theme .stage-card,
+body.tttt-theme-body.light-theme .lux-explore-dossier-card,
+body.tttt-theme-body.light-theme .lux-research-dossier-box,
+body.tttt-theme-body.light-theme .lux-play-keyboard-card,
+body.tttt-theme-body.light-theme .lookup-header-bar,
+body.tttt-theme-body.light-theme .modal-content {
+  background: rgba(255, 255, 255, 0.97) !important;
+  border: 1px solid rgba(184, 138, 78, 0.3) !important;
+  box-shadow: 0 16px 40px rgba(120, 80, 30, 0.08) !important;
+  color: #1f160e !important;
+}
+
+body.tttt-theme-body.light-theme .u-stage-header {
+  background: rgba(246, 239, 228, 0.85) !important;
+  border: 1px solid rgba(184, 138, 78, 0.3) !important;
+}
+
+body.tttt-theme-body.light-theme .u-stage-title {
+  color: #6d3810 !important;
+}
+
+body.tttt-theme-body.light-theme .u-info-section-title span,
+body.tttt-theme-body.light-theme .u-stage-badges span {
+  color: #2b1f14 !important;
+}
+
+body.tttt-theme-body.light-theme .wf-stage-history-card-sticky {
+  background: linear-gradient(165deg, rgba(255, 254, 252, 0.98) 0%, rgba(246, 240, 230, 0.96) 100%) !important;
+  border: 1.5px solid rgba(184, 138, 78, 0.38) !important;
+  box-shadow: 0 8px 24px rgba(100, 70, 30, 0.1) !important;
+  color: #1f160e !important;
+}
+
+body.tttt-theme-body.light-theme .wf-stage-history-card-sticky div,
+body.tttt-theme-body.light-theme .wf-stage-history-card-sticky span {
+  color: #2b1f14;
+}
+
+body.tttt-theme-body.light-theme .btn-secondary {
+  background: rgba(248, 242, 233, 0.95) !important;
+  color: #4a341e !important;
+  border: 1px solid rgba(184, 138, 78, 0.35) !important;
+}
+
+body.tttt-theme-body.light-theme .btn-secondary:hover {
+  background: #ffffff !important;
+  color: #c9103c !important;
+  border-color: rgba(222, 25, 75, 0.5) !important;
+}
+
+body.tttt-theme-body.light-theme .lux-dock-bar {
+  background: rgba(255, 253, 248, 0.95) !important;
+  border: 1.5px solid rgba(184, 138, 78, 0.32) !important;
+  box-shadow: 0 12px 36px rgba(120, 80, 30, 0.16) !important;
+}
+
+body.tttt-theme-body.light-theme .lux-dock-item {
+  color: #5d4a36 !important;
+}
+
+body.tttt-theme-body.light-theme .lux-dock-item.active {
+  background: linear-gradient(135deg, rgba(222, 25, 75, 0.15), rgba(245, 158, 11, 0.2)) !important;
+  color: #de194b !important;
+}
+
+body.tttt-theme-body.light-theme .nav-account-badge {
+  background: rgba(184, 138, 78, 0.12) !important;
+  border-color: rgba(184, 138, 78, 0.4) !important;
+}
+
+body.tttt-theme-body.light-theme .nav-account-name {
+  color: #633912 !important;
+}
+
+body.tttt-theme-body.light-theme .footer,
+body.tttt-theme-body.light-theme footer {
+  background: rgba(248, 242, 233, 0.98) !important;
+  color: #4a3826 !important;
+  border-top: 1px solid rgba(184, 138, 78, 0.25) !important;
 }
 
 .tttt-mouse-spotlight {
@@ -8369,6 +8511,19 @@ body.tttt-theme-body .floating-account-trigger.is-admin-dock,
 /* =========================================================
    YÊU CẦU 2: GIỮ NGUYÊN PHÔNG CHỮ & KÍCH THƯỚC TIÊU ĐỀ WEB NHƯ CŨ
    ========================================================= */
+.hero-brand-title,
+h1.hero-brand-title,
+.tich-tich-title-font,
+.hero-title-phrase,
+.hero-brand-title-wrap,
+.tttt-hero-eyebrow {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  cursor: default;
+}
+
 .hero-brand-title,
 h1.hero-brand-title,
 .tich-tich-title-font {

@@ -154,6 +154,11 @@
         <button type="button" id="btnReportBell" onclick="openModal('modalReportAdmin')" class="btn btn-secondary btn-xs" title="Thông báo hệ thống, góp ý &amp; báo cáo" style="height: 36px; padding: 0 14px; font-size: 13px; font-weight: 700; border-radius: 999px; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;">
           🔔 Thông báo <span id="bellBadgeCount" style="display: none; background: #ef4444; color: #fff; font-size: 10.5px; font-weight: 800; padding: 1px 6px; border-radius: 999px; line-height: 1.3;"></span>
         </button>
+
+        <!-- Chế độ màn hình Sáng & Tối (Yêu cầu 2) -->
+        <button type="button" id="btnThemeToggle" onclick="toggleAppTheme()" class="btn btn-secondary btn-xs" title="Chuyển đổi giao diện Sáng / Tối" style="height: 36px; padding: 0 14px; font-size: 13px; font-weight: 700; border-radius: 999px; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;">
+          <span id="themeToggleIcon">🌙</span> <span id="themeToggleLabel">Tối</span>
+        </button>
       </div>
     </div>
 
@@ -293,13 +298,13 @@
       <div class="tttt-hero-grid" id="luxIntroHeroCard">
         <!-- Cột Trái: Dòng phụ đề, Tiêu đề Heritune & 2 Nút CTA -->
         <div class="tttt-hero-left">
-          <p class="tttt-hero-eyebrow" style="font-family: 'Be Vietnam Pro', sans-serif; font-size: 1000 ; font-weight: 5000; letter-spacing: 0.5em; color: rgba(255, 255, 255, 0.9); text-transform: uppercase; margin-bottom: 6px;">
+          <p class="tttt-hero-eyebrow" style="font-family: 'Be Vietnam Pro', sans-serif; font-size: 15px; font-weight: 600; letter-spacing: 0.5em; color: rgba(255, 255, 255, 0.9); text-transform: uppercase; margin-bottom: 6px; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; cursor: default;">
             Không gian Bảo tàng Số
           </p>
 
-          <div class="hero-brand-title-wrap" style="margin: 12px 0 20px 0;">
-            <h1 class="hero-brand-title tich-tich-title-font" style="font-family: 'ThuPhapThienAn', 'ThuPhap', 'UTM ThuPhap Thien An', 'Charm', 'Charmonman', 'MTD AlFresco', cursive, serif !important; font-size: clamp(54px, 7.8vw, 100px) !important; font-weight: normal; color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; text-shadow: 0 4px 28px rgba(0, 0, 0, 0.9), 0 2px 10px rgba(0, 0, 0, 0.95), 0 0 40px rgba(239, 196, 123, 0.35); line-height: 1.25; letter-spacing: 0.04em; margin: 0;">
-              <span class="hero-title-phrase" style="display: inline-block; white-space: nowrap; text-transform: uppercase;">HERITUNE</span>
+          <div class="hero-brand-title-wrap" style="margin: 12px 0 20px 0; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; cursor: default;">
+            <h1 class="hero-brand-title tich-tich-title-font" style="font-family: 'ThuPhapThienAn', 'ThuPhap', 'UTM ThuPhap Thien An', 'Charm', 'Charmonman', 'MTD AlFresco', cursive, serif !important; font-size: clamp(54px, 7.8vw, 100px) !important; font-weight: normal; color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; text-shadow: 0 4px 28px rgba(0, 0, 0, 0.9), 0 2px 10px rgba(0, 0, 0, 0.95), 0 0 40px rgba(239, 196, 123, 0.35); line-height: 1.25; letter-spacing: 0.04em; margin: 0; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; cursor: default;">
+              <span class="hero-title-phrase" style="display: inline-block; white-space: nowrap; text-transform: uppercase; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; cursor: default;">HERITUNE</span>
             </h1>
           </div>
           <div class="lux-search-hint-text" id="luxSearchHintText" style="display:none;"></div>
@@ -575,40 +580,42 @@
 
           </div> <!-- /.wf-stage-main-right -->
 
-          <!-- HÔNG BÊN PHẢI: LỊCH SỬ ĐÁNH NỐT (YÊU CẦU 3: ĐỂ PHẦN LỊCH SỬ ĐÁNH MỘT BÊN PHẢI) -->
+          <!-- HÔNG BÊN PHẢI: LỊCH SỬ ĐÁNH NỐT (YÊU CẦU 3: KHI DI CHUỘT / CUỘN TRANG XUỐNG DƯỚI THÌ NÓ CŨNG DI THEO) -->
           <aside class="wf-stage-history-right-flank" id="stagePlayHistorySidebar" aria-label="Lịch sử đánh nốt nhạc">
-            <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid rgba(239, 196, 123, 0.25); margin-bottom: 4px;">
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <span style="font-size: 18px;">📜</span>
-                <div>
-                  <div style="font-weight: 800; font-size: 13px; color: #ffea9f; letter-spacing: 0.02em;">LỊCH SỬ ĐÁNH NỐT</div>
-                  <div id="sideHistorySubBadge" style="font-size: 10.5px; color: #a1a1aa;">0 nốt trong phiên</div>
+            <div class="wf-stage-history-card-sticky" id="stagePlayHistoryStickyCard">
+              <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid rgba(239, 196, 123, 0.25); margin-bottom: 4px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-size: 18px;">📜</span>
+                  <div>
+                    <div style="font-weight: 800; font-size: 13px; color: #ffea9f; letter-spacing: 0.02em;">LỊCH SỬ ĐÁNH NỐT</div>
+                    <div id="sideHistorySubBadge" style="font-size: 10.5px; color: #a1a1aa;">0 nốt trong phiên</div>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-xs" onclick="clearUserNoteHistory()" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18); color: #cbd5e1; border-radius: 6px; padding: 2px 8px; font-size: 11px; cursor: pointer;" title="Xóa lịch sử đánh">✕ Xóa</button>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 6px;">
+                <div style="background: rgba(239, 196, 123, 0.08); border: 1px solid rgba(239, 196, 123, 0.22); border-radius: 8px; padding: 6px 8px; text-align: center;">
+                  <div style="font-size: 9.5px; color: #d4d4d8; text-transform: uppercase;">Phiên này</div>
+                  <div id="sideHistorySessionCount" style="font-size: 16px; font-weight: 800; color: #6ee7b7;">0</div>
+                </div>
+                <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.22); border-radius: 8px; padding: 6px 8px; text-align: center;">
+                  <div style="font-size: 9.5px; color: #d4d4d8; text-transform: uppercase;">Hôm nay</div>
+                  <div id="sideHistoryTodayCount" style="font-size: 16px; font-weight: 800; color: #38bdf8;">0</div>
                 </div>
               </div>
-              <button type="button" class="btn btn-xs" onclick="clearUserNoteHistory()" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18); color: #cbd5e1; border-radius: 6px; padding: 2px 8px; font-size: 11px; cursor: pointer;" title="Xóa lịch sử đánh">✕ Xóa</button>
-            </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 6px;">
-              <div style="background: rgba(239, 196, 123, 0.08); border: 1px solid rgba(239, 196, 123, 0.22); border-radius: 8px; padding: 6px 8px; text-align: center;">
-                <div style="font-size: 9.5px; color: #d4d4d8; text-transform: uppercase;">Phiên này</div>
-                <div id="sideHistorySessionCount" style="font-size: 16px; font-weight: 800; color: #6ee7b7;">0</div>
+              <div id="sideNoteHistoryList" style="flex: 1; max-height: calc(100vh - 270px); min-height: 420px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; padding-right: 4px; scrollbar-width: thin;">
+                <div style="text-align: center; padding: 36px 12px; color: #71717a; font-size: 12px; font-style: italic;">
+                  <div style="font-size: 24px; margin-bottom: 6px; opacity: 0.6;">🎶</div>
+                  Chưa có nốt gảy nào trong phiên.<br>Bấm phím để bắt đầu diễn tấu!
+                </div>
               </div>
-              <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.22); border-radius: 8px; padding: 6px 8px; text-align: center;">
-                <div style="font-size: 9.5px; color: #d4d4d8; text-transform: uppercase;">Hôm nay</div>
-                <div id="sideHistoryTodayCount" style="font-size: 16px; font-weight: 800; color: #38bdf8;">0</div>
-              </div>
-            </div>
 
-            <div id="sideNoteHistoryList" style="flex: 1; max-height: calc(100vh - 270px); min-height: 420px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; padding-right: 4px; scrollbar-width: thin;">
-              <div style="text-align: center; padding: 36px 12px; color: #71717a; font-size: 12px; font-style: italic;">
-                <div style="font-size: 24px; margin-bottom: 6px; opacity: 0.6;">🎶</div>
-                Chưa có nốt gảy nào trong phiên.<br>Bấm phím để bắt đầu diễn tấu!
+              <div style="margin-top: auto; padding-top: 8px; border-top: 1px solid rgba(239, 196, 123, 0.15); display: flex; justify-content: space-between; align-items: center; font-size: 10.5px; color: #94a3b8;">
+                <span>Tự động đồng bộ</span>
+                <span style="color: #6ee7b7; font-weight: 600;">🟢 Sẵn sàng</span>
               </div>
-            </div>
-
-            <div style="margin-top: auto; padding-top: 8px; border-top: 1px solid rgba(239, 196, 123, 0.15); display: flex; justify-content: space-between; align-items: center; font-size: 10.5px; color: #94a3b8;">
-              <span>Tự động đồng bộ</span>
-              <span style="color: #6ee7b7; font-weight: 600;">🟢 Sẵn sàng</span>
             </div>
           </aside>
 
@@ -1879,9 +1886,6 @@
           <h2 id="unifiedModalTitle" style="font-size: 18px; font-weight: 800; color: #ffea9f; display: flex; align-items: center; gap: 8px; margin: 0;">
             🔑 Log In / Sign In — Tài Khoản &amp; Owner
           </h2>
-          <p style="margin: 4px 0 0; font-size: 12px; color: #c8baa6;">
-            Đăng nhập hoặc tạo tài khoản mới để lưu bài đã đánh, tự setting nút bấm, hoặc đăng nhập quyền Owner.
-          </p>
         </div>
         <button type="button" class="modal-close" data-close="modalOwnerLogin" onclick="closeModal('modalOwnerLogin')">✕</button>
       </div>
@@ -1963,8 +1967,8 @@
     </div>
   </div>
 
-  <!-- LỚP PHỦ BACKDROP TOÀN MÀN HÌNH ĐÈ LÊN THANH CÔNG CỤ KHI MỞ BẢNG OWNER -->
-  <div id="ownerAdminBackdrop" class="modal-overlay" style="display: none; z-index: 100004 !important;" onclick="toggleOwnerFloatingWindow(false)"></div>
+  <!-- LỚP PHỦ BACKDROP TOÀN MÀN HÌNH (YÊU CẦU 1: TRONG SUỐT, KHÔNG LÀM MỜ VÀ KHÔNG TỐI MÀN HÌNH PHÍA SAU) -->
+  <div id="ownerAdminBackdrop" style="display: none; position: fixed; inset: 0; z-index: 100004 !important; background: transparent !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; pointer-events: none !important;" onclick="toggleOwnerFloatingWindow(false)"></div>
 
   <!-- MÀN HÌNH BẢNG ADMIN / OWNER THEO BỐ CỤC WORDPRESS (CHUẨN HÌNH ẢNH MEDIA_1791288934544.PNG) -->
   <div class="owner-floating-window" id="modalAdmin" style="display: none;">
@@ -4707,16 +4711,52 @@
       syncSongSheetPreview(sel.value);
     }
 
-    function setLuxuryThemeMode(mode) {
-      document.querySelectorAll('.lux-theme-option').forEach(el => el.classList.remove('active'));
-      if (mode === 'light') {
+    // =========================================================
+    // YÊU CẦU 2: CHẾ ĐỘ MÀN HÌNH SÁNG & TỐI (LIGHT / DARK THEME)
+    // =========================================================
+    function setAppTheme(theme) {
+      const isLight = theme === 'light';
+      if (isLight) {
         document.body.classList.add('light-theme');
-        document.getElementById('optThemeLight')?.classList.add('active');
+        try { localStorage.setItem('dan_tranh_theme', 'light'); } catch(e) {}
       } else {
         document.body.classList.remove('light-theme');
+        try { localStorage.setItem('dan_tranh_theme', 'dark'); } catch(e) {}
+      }
+      const icon = document.getElementById('themeToggleIcon');
+      const label = document.getElementById('themeToggleLabel');
+      if (icon) icon.textContent = isLight ? '☀️' : '🌙';
+      if (label) label.textContent = isLight ? 'Sáng' : 'Tối';
+      document.querySelectorAll('.lux-theme-option').forEach(el => el.classList.remove('active'));
+      if (isLight) {
+        document.getElementById('optThemeLight')?.classList.add('active');
+      } else {
         document.getElementById('optThemeDark')?.classList.add('active');
       }
     }
+    window.setAppTheme = setAppTheme;
+
+    function toggleAppTheme() {
+      const isCurrentlyLight = document.body.classList.contains('light-theme');
+      setAppTheme(isCurrentlyLight ? 'dark' : 'light');
+    }
+    window.toggleAppTheme = toggleAppTheme;
+
+    function setLuxuryThemeMode(mode) {
+      setAppTheme(mode);
+    }
+    window.setLuxuryThemeMode = setLuxuryThemeMode;
+
+    function initAppTheme() {
+      try {
+        const saved = localStorage.getItem('dan_tranh_theme') || 'dark';
+        setAppTheme(saved);
+      } catch(e) {
+        setAppTheme('dark');
+      }
+    }
+    window.initAppTheme = initAppTheme;
+    initAppTheme();
 
     // =========================================================
     // HỆ THỐNG BẢNG THÔNG BÁO & GỬI LỜI KHUYÊN CHO OWNER
@@ -4977,6 +5017,18 @@
 
     // Mở / Đóng Modal
     function openModal(modalId) {
+      if (modalId === 'modalAdmin') {
+        const u = typeof getActiveUserAccount === 'function' ? getActiveUserAccount() : null;
+        const isAdmin = u && !['guest'].includes(u.role) && (u.role === 'admin' || (u.username || '').toLowerCase() === 'owner' || (u.username || '').toLowerCase() === 'admin');
+        if (!isAdmin) {
+          alert('🔒 Bạn cần đăng nhập tài khoản Quản trị viên (Admin) để mở Bảng Quản trị!');
+          if (typeof openUnifiedAuthModal === 'function') {
+            openUnifiedAuthModal('login');
+          }
+          return;
+        }
+      }
+
       if (modalId === 'picker') {
         const u = typeof getActiveUserAccount === 'function' ? getActiveUserAccount() : null;
         const isAdmin = u && (u.role === 'admin' || u.username === 'admin' || u.username === 'owner');
@@ -5284,13 +5336,7 @@
       localStorage.setItem('dan_tranh_users', JSON.stringify(list));
     }
 
-    // Lúc mở màn hình lên luôn ở trạng thái CHƯA ĐĂNG NHẬP (Guest)
-    try {
-      localStorage.removeItem('dan_tranh_user_session');
-      localStorage.removeItem('dan_tranh_owner_session');
-      localStorage.removeItem('dan_tranh_current_user');
-    } catch (e) {}
-
+    // Giữ nguyên phiên đăng nhập của máy đã từng đăng nhập tài khoản. Máy chưa từng đăng nhập sẽ mặc định là Guest.
     function renderUserAvatarHelper(container, avatarVal, fallbackEmoji, borderRadius) {
       if (!container) return;
       var av = avatarVal || fallbackEmoji || '👤';
@@ -6722,6 +6768,8 @@
         if (ownerLoggedHeader) ownerLoggedHeader.style.display = 'none';
         const ownerWin = document.getElementById('modalAdmin');
         if (ownerWin) ownerWin.style.display = 'none';
+        const ownerBackdrop = document.getElementById('ownerAdminBackdrop');
+        if (ownerBackdrop) ownerBackdrop.style.display = 'none';
       } else {
         // Đã đăng nhập -> Ẩn nút "Log In", hiện cụm tài khoản + cài đặt + đăng xuất ở góc phải
         if (btnOpenOwnerLogin) btnOpenOwnerLogin.style.display = 'none';
@@ -6729,6 +6777,8 @@
         if (!isOwner) {
           const ownerWin = document.getElementById('modalAdmin');
           if (ownerWin) ownerWin.style.display = 'none';
+          const ownerBackdrop = document.getElementById('ownerAdminBackdrop');
+          if (ownerBackdrop) ownerBackdrop.style.display = 'none';
         }
       }
 
@@ -7441,6 +7491,18 @@
       if (!win) return;
       const isCurrentlyOpen = win.style.display !== 'none';
       const willOpen = typeof forceOpen === 'boolean' ? forceOpen : !isCurrentlyOpen;
+
+      if (willOpen) {
+        const u = typeof getActiveUserAccount === 'function' ? getActiveUserAccount() : null;
+        const isOwner = u && !['guest'].includes(u.role) && (u.role === 'admin' || (u.username || '').toLowerCase() === 'owner' || (u.username || '').toLowerCase() === 'admin');
+        if (!isOwner) {
+          alert('🔒 Bạn cần đăng nhập tài khoản Quản trị viên (Admin) để mở bảng điều khiển này!');
+          if (typeof openUnifiedAuthModal === 'function') {
+            openUnifiedAuthModal('login');
+          }
+          return;
+        }
+      }
 
       const backdrop = document.getElementById('ownerAdminBackdrop');
       if (backdrop) backdrop.style.display = willOpen ? 'flex' : 'none';
@@ -9642,28 +9704,28 @@
       const listContainer = document.getElementById('googleAutofillItemsList');
       if (!popup || !listContainer) return;
 
+      // Chỉ hiển thị gợi ý mật khẩu nếu máy này ĐÃ TỪNG đăng nhập và BẬT tự động lưu mật khẩu
+      const isAutoSave = localStorage.getItem('dan_tranh_auto_save_password') === 'true';
+      if (!isAutoSave) {
+        popup.style.display = 'none';
+        return;
+      }
+
       const credsRaw = localStorage.getItem('dan_tranh_saved_credentials');
       let savedCred = null;
       try {
         if (credsRaw) savedCred = JSON.parse(credsRaw);
       } catch(e) {}
 
-      const users = (typeof getRegisteredUsersList === 'function') ? getRegisteredUsersList() : [];
       let candidates = [];
-
-      if (savedCred && savedCred.username) {
-        candidates.push({ username: savedCred.username, password: savedCred.password || '••••••••', isSaved: true });
+      if (savedCred && savedCred.username && savedCred.password) {
+        candidates.push({ username: savedCred.username, password: savedCred.password, isSaved: true });
       }
 
-      users.forEach(u => {
-        if (!candidates.some(c => c.username.toLowerCase() === u.username.toLowerCase())) {
-          candidates.push({ username: u.username, password: u.password, displayName: u.displayName });
-        }
-      }
-);
-
+      // Không tự động điền sẵn tài khoản admin cho máy khác chưa từng đăng nhập
       if (candidates.length === 0) {
-        candidates.push({ username: 'admin', password: 'admin123', displayName: 'Quản Trị Viên (Admin)' });
+        popup.style.display = 'none';
+        return;
       }
 
       listContainer.innerHTML = candidates.map(item => `
@@ -9896,6 +9958,7 @@
 
 
     window.addEventListener('DOMContentLoaded', function() {
+      if (typeof initAppTheme === 'function') initAppTheme();
       initDraggableOwnerWindow();
       initDraggableAndResizableAiChatWindow();
       initDraggableAndResizableStudioWindow();

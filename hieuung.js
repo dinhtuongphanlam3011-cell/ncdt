@@ -549,12 +549,16 @@
   window.isAudioRecording = function () { return isRecording; };
 
   // =========================================================
-  // 4. GIAO DIỆN MẶC ĐỊNH (ĐÃ BỎ NÚT CHỈNH SÁNG / TỐI)
+  // 4. QUẢN LÝ CHẾ ĐỘ MÀN HÌNH SÁNG / TỐI (THEME SÁNG & TỐI)
   // =========================================================
   function initTheme() {
-    document.body.classList.remove("light-theme");
     try {
-      localStorage.removeItem("dan_tranh_theme");
+      var saved = localStorage.getItem("dan_tranh_theme") || "dark";
+      if (saved === "light") {
+        document.body.classList.add("light-theme");
+      } else {
+        document.body.classList.remove("light-theme");
+      }
     } catch (e) {}
   }
 
@@ -768,13 +772,21 @@
     updateReportBadges();
   }
 
-  // Lúc mở màn hình lên luôn bắt đầu ở màn hình khi chưa đăng nhập (Guest)
+  // Khôi phục phiên tài khoản đã từng đăng nhập trên máy này; máy mới mở chưa từng đăng nhập sẽ là Khách (Guest)
   try {
-    localStorage.removeItem("dan_tranh_user_session");
-    localStorage.removeItem("dan_tranh_owner_session");
-    localStorage.removeItem("dan_tranh_current_user");
-  } catch (e) {}
-  currentUser = { username: "guest", displayName: "Khách", role: "guest" };
+    var savedOwner = localStorage.getItem("dan_tranh_owner_session");
+    var savedUser = localStorage.getItem("dan_tranh_user_session");
+    var parsedSession = null;
+    if (savedUser) parsedSession = JSON.parse(savedUser);
+    else if (savedOwner) parsedSession = JSON.parse(savedOwner);
+    if (parsedSession && parsedSession.username && parsedSession.username !== "guest") {
+      currentUser = parsedSession;
+    } else {
+      currentUser = { username: "guest", displayName: "Khách", role: "guest" };
+    }
+  } catch (e) {
+    currentUser = { username: "guest", displayName: "Khách", role: "guest" };
+  }
   updateUIForUser();
 
 
@@ -938,6 +950,17 @@
   // 6. POPUP / MODAL MANAGEMENT (THANH DOCK SQUIRCLE)
   // =========================================================
   function openModal(modalId) {
+    if (modalId === "modalAdmin") {
+      var activeU = (typeof window.getActiveUserAccount === "function") ? window.getActiveUserAccount() : currentUser;
+      var isAdm = activeU && activeU.role === "admin";
+      if (!isAdm) {
+        alert("🔒 Chỉ có Quản trị viên (Admin) mới có quyền truy cập Bảng Quản trị!");
+        if (typeof window.openUnifiedAuthModal === "function") {
+          window.openUnifiedAuthModal("login");
+        }
+        return;
+      }
+    }
     if (modalId === "modalStudio") {
       if (typeof window.toggleStudioFloatingWindow === "function") {
         window.toggleStudioFloatingWindow(true);
