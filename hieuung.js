@@ -704,8 +704,12 @@
     }
 
     if (adminNewReportsBadge) {
-      adminNewReportsBadge.textContent = unreadAdminCount > 0 ? (unreadAdminCount + " mới") : reports.length;
-      adminNewReportsBadge.style.display = reports.length > 0 ? "inline-block" : "none";
+      if (unreadAdminCount > 0) {
+        adminNewReportsBadge.textContent = unreadAdminCount + " mới";
+        adminNewReportsBadge.style.display = "inline-block";
+      } else {
+        adminNewReportsBadge.style.display = "none";
+      }
     }
 
     if (dockReportDot) {

@@ -82,6 +82,232 @@
         transform: translateY(0);
       }
     }
+    /* Đảm bảo nút đóng trong thanh minimized không bị tràn chữ 'Đóng' xuống dòng dưới (Ảnh 2) */
+    .owner-floating-window.minimized .wp-bar-actions .wp-bar-close-btn,
+    .owner-floating-window.minimized .wp-bar-close-btn {
+      width: auto !important;
+      min-width: 26px !important;
+      height: 26px !important;
+      padding: 0 10px !important;
+      border-radius: 999px !important;
+      white-space: nowrap !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 4px !important;
+      font-size: 11px !important;
+      line-height: 1 !important;
+    }
+
+    /* Yêu cầu 4: Bỏ làm mờ màn hình khi tạo bài viết diễn đàn và làm tab nổi di chuyển được */
+    .reddit-composer-expanded.padlet-composer-modal {
+      position: fixed !important;
+      inset: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      background: transparent !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      z-index: 100000 !important;
+      pointer-events: none !important;
+      display: none !important;
+    }
+    .reddit-composer-expanded.padlet-composer-modal.open {
+      display: block !important;
+    }
+    .padlet-composer-card {
+      pointer-events: auto !important;
+      position: fixed !important;
+      top: 90px;
+      left: calc(50% - 330px);
+      width: 660px;
+      max-width: calc(100vw - 32px);
+      max-height: calc(100vh - 110px);
+      overflow-y: auto;
+      background: linear-gradient(155deg, rgba(32, 22, 17, 0.98) 0%, rgba(18, 12, 10, 0.99) 100%) !important;
+      border: 1.5px solid rgba(239, 196, 123, 0.45) !important;
+      border-radius: 18px !important;
+      padding: 20px 24px !important;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85), 0 0 35px rgba(239, 196, 123, 0.2) !important;
+      box-sizing: border-box !important;
+      z-index: 100001 !important;
+    }
+    .padlet-composer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(239, 196, 123, 0.25);
+      cursor: grab;
+      user-select: none;
+    }
+    .padlet-composer-header:active {
+      cursor: grabbing;
+    }
+    .padlet-header-window-btns {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .padlet-win-btn {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 1px solid rgba(239, 196, 123, 0.35);
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 11px;
+      transition: all 0.16s ease;
+    }
+    .padlet-win-btn:hover {
+      background: rgba(222, 25, 75, 0.6);
+      transform: scale(1.08);
+    }
+    .padlet-top-submit-btn {
+      background: rgba(239, 196, 123, 0.15);
+      color: #ffea9f;
+      border: 1px solid rgba(239, 196, 123, 0.4);
+      border-radius: 999px;
+      padding: 4px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .padlet-top-submit-btn:hover {
+      background: #efc47b;
+      color: #111;
+    }
+    .padlet-subject-input {
+      width: 100%;
+      height: 42px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1.5px solid rgba(239, 196, 123, 0.35);
+      border-radius: 10px;
+      color: #fff8eb;
+      font-size: 15px;
+      font-weight: 700;
+      padding: 0 14px;
+      box-sizing: border-box;
+      outline: none;
+      margin-bottom: 12px;
+    }
+    .padlet-subject-input:focus {
+      border-color: #efc47b;
+      box-shadow: 0 0 10px rgba(239, 196, 123, 0.3);
+    }
+    .padlet-media-toolbar {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(239, 196, 123, 0.2);
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+    }
+    .padlet-media-bar-inner {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+    .padlet-tool-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(239, 196, 123, 0.3);
+      border-radius: 8px;
+      color: #ffea9f;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .padlet-tool-btn:hover {
+      background: rgba(239, 196, 123, 0.2);
+      border-color: #efc47b;
+    }
+    .padlet-tool-hint {
+      font-size: 11.5px;
+      color: #a1a1aa;
+    }
+    .padlet-body-textarea {
+      width: 100%;
+      min-height: 120px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1.5px solid rgba(239, 196, 123, 0.35);
+      border-radius: 10px;
+      color: #fff5e4;
+      font-size: 13.5px;
+      line-height: 1.6;
+      padding: 12px 14px;
+      box-sizing: border-box;
+      outline: none;
+      resize: vertical;
+      margin-bottom: 14px;
+      font-family: inherit;
+    }
+    .padlet-body-textarea:focus {
+      border-color: #efc47b;
+      box-shadow: 0 0 10px rgba(239, 196, 123, 0.3);
+    }
+    .padlet-composer-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .padlet-footer-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .padlet-section-selector, .padlet-section-select, .padlet-flair-select {
+      background: rgba(20, 10, 15, 0.9);
+      border: 1px solid rgba(239, 196, 123, 0.35);
+      color: #ffea9f;
+      border-radius: 8px;
+      height: 34px;
+      padding: 0 10px;
+      font-size: 12px;
+      outline: none;
+    }
+    .padlet-color-picker {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .padlet-color-dot {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: transform 0.15s;
+    }
+    .padlet-color-dot.active {
+      border-color: #efc47b;
+      transform: scale(1.15);
+    }
+    .padlet-link-input {
+      width: 100%;
+      height: 36px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(239, 196, 123, 0.35);
+      border-radius: 8px;
+      color: #fff8eb;
+      font-size: 12.5px;
+      padding: 0 12px;
+      box-sizing: border-box;
+      outline: none;
+    }
   </style>
 </head>
 <body class="tttt-theme-body">
@@ -144,9 +370,9 @@
 
         <!-- Khi ĐÃ đăng nhập: Đặt nút Thông tin tài khoản + Cài đặt + Tên tài khoản sang góc bên phải màn hình -->
         <div id="ownerLoggedHeader" class="owner-toolbar-pill" style="display: none; align-items: center; gap: 8px;">
-          <button type="button" id="navAccountInfoBadge" class="nav-account-badge" onclick="openAccountSettingsModal()" title="Cài đặt tài khoản &amp; phím bấm" style="border: 1px solid rgba(239, 196, 123, 0.45); background: rgba(239, 196, 123, 0.15); border-radius: 999px; padding: 6px 16px; display: inline-flex; align-items: center; gap: 8px; color: #ffea9f; cursor: pointer; text-decoration: none;">
+          <button type="button" id="navAccountInfoBadge" class="nav-account-badge" onclick="openAccountSettingsModal()" title="Cài đặt tài khoản &amp; phím bấm" style="border: 1px solid rgba(239, 196, 123, 0.45); background: rgba(239, 196, 123, 0.15); border-radius: 999px; padding: 4px 14px 4px 6px; display: inline-flex; align-items: center; gap: 8px; color: #ffea9f; cursor: pointer; text-decoration: none;">
+            <div id="navAccountAvatar" class="nav-account-avatar" style="width: 26px; height: 26px; border-radius: 50%; overflow: hidden; display: inline-flex; align-items: center; justify-content: center; background: rgba(239, 196, 123, 0.25); border: 1.5px solid rgba(239, 196, 123, 0.6); font-size: 13px; flex-shrink: 0;">👤</div>
             <span class="nav-account-name" id="navAccountName" style="font-size: 13.5px; font-weight: 700; color: #ffea9f; max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Tài khoản</span>
-            <span class="nav-account-gear" style="font-size: 13px; opacity: 0.85; margin-left: 2px;" title="Cài đặt tài khoản &amp; phím bấm">⚙️</span>
           </button>
           <button type="button" class="btn btn-secondary btn-xs" id="btnOwnerLogout" onclick="handleUnifiedLogout()" title="Đăng xuất tài khoản" style="height: 36px; padding: 0 14px; font-size: 13px; font-weight: 700; border-radius: 999px; display: inline-flex; align-items: center; gap: 4px;">
             🚪 Đăng xuất
@@ -170,10 +396,9 @@
           <span class="taskbar-back-text">Quay về</span>
         </button>
 
-        <div class="taskbar-inst-badge" onclick="toggleMegaFilterPanel(undefined, event)" title="Nhấn để đổi sang nhạc cụ khác ngay trong tab nhạc cụ">
+        <div class="taskbar-inst-badge" title="Nhạc cụ đang diễn tấu" style="cursor: default; pointer-events: none;">
           <span class="inst-pill-icon" id="instTaskbarIcon">🪕</span>
           <span class="inst-pill-name" id="instTaskbarName">Đàn Tranh</span>
-          <span class="inst-pill-caret">▾</span>
         </div>
       </div>
 
@@ -187,8 +412,8 @@
         </button>
       </div>
 
-      <!-- Góc phải: Nút Đổi nhạc cụ nhanh -->
-      <div class="contextual-taskbar-right">
+      <!-- Góc phải: Nút Đổi nhạc cụ nhanh (Đã ẩn theo yêu cầu người dùng) -->
+      <div class="contextual-taskbar-right" style="display: none !important;">
         <button type="button" class="btn btn-primary btn-xs" onclick="toggleMegaFilterPanel(undefined, event)" style="border-radius: 999px; font-weight: 700; height: 36px; padding: 0 16px;">
           ☰ Đổi nhạc cụ
         </button>
@@ -957,7 +1182,7 @@
           </div>
 
           <!-- KHUNG KIỂM SOÁT VÀ GỘP CHỦ ĐỀ THÔNG MINH BẰNG AI (YÊU CẦU 10) -->
-          <div class="mit-ai-topic-cluster-panel" id="mitAiTopicClusterPanel" style="background: rgba(24, 18, 14, 0.95); border: 1px solid rgba(239, 196, 123, 0.35); border-radius: 14px; padding: 12px 16px; margin-bottom: 14px; box-shadow: 0 4px 16px rgba(0,0,0,0.4);">
+          <div class="mit-ai-topic-cluster-panel" id="mitAiTopicClusterPanel" style="display: none !important; border: 1px solid rgba(239, 196, 123, 0.35); border-radius: 14px; padding: 12px 16px; margin-bottom: 14px; box-shadow: 0 4px 16px rgba(0,0,0,0.4);">
             <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;">
               <div style="display: flex; align-items: center; gap: 8px;">
                 <span style="font-size: 16px;">🤖</span>
@@ -1738,7 +1963,13 @@
           <div class="wf-panel-box" style="margin-bottom: 18px; background: linear-gradient(145deg, rgba(48, 12, 18, 0.92), rgba(24, 8, 12, 0.96)); border: 1px solid rgba(239, 196, 123, 0.35);">
             <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 18px;">
               <div style="display: flex; align-items: center; gap: 16px;">
-                <div class="lux-profile-avatar" id="accProfileAvatar" style="display: none !important;"></div>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                  <div class="lux-profile-avatar" id="accProfileAvatar" style="width: 68px; height: 68px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; background: rgba(239, 196, 123, 0.2); border: 2px solid rgba(239, 196, 123, 0.6); font-size: 32px; box-shadow: 0 4px 16px rgba(0,0,0,0.5);">👤</div>
+                  <label class="btn btn-secondary btn-xs" style="cursor: pointer; border-radius: 999px; padding: 3px 10px; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; border-color: rgba(239,196,123,0.4);" title="Tải ảnh avatar từ máy tính">
+                    <input type="file" id="inpUploadUserAvatar" accept="image/*" style="display: none;" onchange="handleUserAvatarUpload(event)">
+                    📷 Đổi avatar
+                  </label>
+                </div>
                 <div>
                   <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                     <h2 class="lux-profile-name" id="accProfileDisplayName" style="font-size: 22px; margin: 0; color: #fff8eb;">Khách (Chưa đăng nhập)</h2>
@@ -2438,7 +2669,7 @@
           <button type="button" class="wp-bar-action-btn" onclick="resetOwnerWindowPosition()" title="Căn giữa màn hình">
             🎯 Căn giữa
           </button>
-          <button type="button" class="wp-bar-action-btn wp-bar-close-btn" onclick="toggleOwnerFloatingWindow(false)" title="Đóng bảng Admin">
+          <button type="button" class="wp-bar-action-btn wp-bar-close-btn" onclick="toggleOwnerFloatingWindow(false)" title="Đóng bảng Admin" style="white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; gap: 4px;">
             ✕ Đóng
           </button>
         </div>
@@ -2885,16 +3116,14 @@
              VIEW 8: CLOUD (ĐỒNG BỘ CLOUD & REALTIME CHO TOÀN BỘ SERVER)
              ========================================================= -->
         <div id="wpViewCloud" class="wp-view-section" style="display: none;">
-          <div class="wp-posts-topbar">
-            <div>
-              <h1 class="wp-posts-title" style="margin: 0 0 4px 0;">⚡ Đồng Bộ Cloud, Realtime &amp; Âm Thanh Dùng Chung</h1>
-              <p style="margin: 0; font-size: 12.5px; color: #a1a1aa;">Đồng bộ dữ liệu file âm thanh, thông báo hệ thống và trạng thái đọc giữa tất cả các tài khoản và thiết bị theo thời gian thực</p>
-            </div>
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <span id="cloudStatusBadge" style="background: rgba(34, 197, 94, 0.18); border: 1px solid rgba(34, 197, 94, 0.45); color: #86efac; font-size: 12px; font-weight: 700; padding: 5px 14px; border-radius: 999px; display: inline-flex; align-items: center; gap: 6px;">
+          <div style="margin-bottom: 22px;">
+            <h1 class="wp-posts-title" style="margin: 0 0 8px 0; font-size: 21px; letter-spacing: 0.02em;">⚡ Đồng Bộ Cloud, Realtime &amp; Âm Thanh Dùng Chung</h1>
+            <p style="margin: 0 0 14px 0; font-size: 13px; color: #d8cbb8; line-height: 1.5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Đồng bộ dữ liệu file âm thanh, thông báo hệ thống và trạng thái đọc giữa tất cả các tài khoản và thiết bị theo thời gian thực</p>
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: nowrap;">
+              <span id="cloudStatusBadge" style="background: rgba(34, 197, 94, 0.18); border: 1px solid rgba(34, 197, 94, 0.45); color: #86efac; font-size: 12.5px; font-weight: 700; padding: 6px 16px; border-radius: 999px; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;">
                 <span>🟢</span> <span>Realtime Cloud Đang Hoạt Động</span>
               </span>
-              <button type="button" class="wp-btn-primary" onclick="adminTriggerManualCloudSync()" style="height: 34px; padding: 0 16px; border-radius: 999px; font-size: 12.5px; font-weight: 700;">
+              <button type="button" class="wp-btn-primary" onclick="adminTriggerManualCloudSync()" style="height: 36px; padding: 0 18px; border-radius: 999px; font-size: 13px; font-weight: 700; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px;">
                 🔄 Đồng bộ ngay
               </button>
             </div>
@@ -5306,7 +5535,7 @@
         if (panelAdvice) panelAdvice.style.display = 'block';
         if (panelAnnounce) panelAnnounce.style.display = 'none';
         if (typeof renderUserSentReportsHistory === 'function') renderUserSentReportsHistory();
-        if (typeof renderOwnerFeedbackInbox === 'function') renderOwnerFeedbackInbox();
+        if (typeof renderOwnerFeedbackInbox === 'function') renderOwnerFeedbackInbox(true);
       } else {
         if (btnAdvice) btnAdvice.classList.remove('active');
         if (btnAnnounce) btnAnnounce.classList.add('active');
@@ -5592,7 +5821,7 @@
         if (typeof renderOwnerAnnouncements === 'function') renderOwnerAnnouncements();
         if (typeof syncAdminAnnounceComposerUI === 'function') syncAdminAnnounceComposerUI();
         if (typeof renderUserSentReportsHistory === 'function') renderUserSentReportsHistory();
-        if (typeof renderOwnerFeedbackInbox === 'function') renderOwnerFeedbackInbox();
+        if (typeof renderOwnerFeedbackInbox === 'function') renderOwnerFeedbackInbox(true);
         if (typeof syncHeaderAndAccountUI === 'function') syncHeaderAndAccountUI();
         if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.onModalOpened === 'function') {
           window.DanTranhCloudSync.onModalOpened();
@@ -7094,6 +7323,46 @@
     }
     window.logoutUserAccount = logoutUserAccount;
 
+    // Tải lên ảnh avatar người dùng & đổi avatar toàn hệ thống (Yêu cầu 6)
+    function handleUserAvatarUpload(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        alert('Vui lòng chọn một tệp hình ảnh hợp lệ (PNG, JPG, WEBP, GIF)!');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const dataUrl = evt.target.result;
+        let u = getActiveUserAccount();
+        if (!u || u.username === 'guest') {
+          u = { username: 'guest', displayName: 'Khách', role: 'guest', avatar: dataUrl };
+        } else {
+          u.avatar = dataUrl;
+          try {
+            const rawUsers = localStorage.getItem('dan_tranh_users');
+            if (rawUsers) {
+              const users = JSON.parse(rawUsers);
+              const found = users.find(x => x.username.toLowerCase() === u.username.toLowerCase());
+              if (found) {
+                found.avatar = dataUrl;
+                localStorage.setItem('dan_tranh_users', JSON.stringify(users));
+              }
+            }
+          } catch(err) {}
+        }
+        localStorage.setItem('dan_tranh_active_user', JSON.stringify(u));
+        syncHeaderAndAccountUI();
+        if (typeof showActionToast === 'function') {
+          showActionToast('Đã tải lên và đổi ảnh đại diện thành công! ✨');
+        } else {
+          alert('Đã cập nhật ảnh đại diện thành công!');
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+    window.handleUserAvatarUpload = handleUserAvatarUpload;
+
     // =========================================================
     // 11B. GỘP CHUNG LOG IN / SIGN UP (TÀI KHOẢN NGƯỜI DÙNG & OWNER) TRÊN NÚT HEADER
     // =========================================================
@@ -7266,7 +7535,21 @@
       const btnOpenOwnerLogin = document.getElementById('btnOpenOwnerLogin');
       const ownerLoggedHeader = document.getElementById('ownerLoggedHeader');
 
-      // 1. Đồng bộ Badge thông tin tài khoản cạnh Nhạc Mẫu (Chỉ hiện tên tài khoản khi đã đăng nhập, bỏ hoàn toàn avatar)
+      function renderUserAvatarPill(targetEl, avVal) {
+        if (!targetEl) return;
+        targetEl.innerHTML = '';
+        if (avVal && (avVal.startsWith('data:image/') || avVal.startsWith('http://') || avVal.startsWith('https://'))) {
+          const img = document.createElement('img');
+          img.src = avVal;
+          img.alt = 'Avatar';
+          img.style.cssText = 'width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block;';
+          targetEl.appendChild(img);
+        } else {
+          targetEl.textContent = avVal || '👤';
+        }
+      }
+
+      // 1. Đồng bộ Badge thông tin tài khoản: Hiển thị avatar người dùng thay thế logo cài đặt (Yêu cầu 6)
       const navAccountInfoBadge = document.getElementById('navAccountInfoBadge');
       const navAccountAvatar = document.getElementById('navAccountAvatar');
       const navAccountName = document.getElementById('navAccountName');
@@ -7275,14 +7558,17 @@
           navAccountInfoBadge.style.display = 'none';
         } else {
           navAccountInfoBadge.style.display = 'inline-flex';
-          if (navAccountAvatar) navAccountAvatar.style.display = 'none';
+          if (navAccountAvatar) {
+            navAccountAvatar.style.display = 'inline-flex';
+            renderUserAvatarPill(navAccountAvatar, u.avatar || '👤');
+          }
           if (navAccountName) navAccountName.textContent = u.displayName || u.username;
           navAccountInfoBadge.classList.toggle('is-owner', isOwner);
         }
       }
 
 
-      // 2. Đồng bộ Nút Admin nổi & Nút Cài đặt Tài khoản nổi ở góc màn hình
+      // 2. Đồng bộ Nút Admin nổi & Nút Cài đặt Tài khoản nổi ở góc màn hình: Thay logo cài đặt bằng avatar
       const dockBtnAdminFloating = document.getElementById('dockBtnAdminFloating');
       const dockBtnAccountFloating = document.getElementById('dockBtnAccountFloating');
       const dockBtnAccountEmoji = document.getElementById('dockBtnAccountEmoji');
@@ -7299,13 +7585,20 @@
           // Khi là Admin: Nằm bên cạnh nút quyền admin (right: 246px)
           dockBtnAccountFloating.classList.add('is-admin-dock');
           dockBtnAccountFloating.title = isPrimary ? 'Cài đặt tài khoản & phím bấm (Admin Chính)' : 'Cài đặt tài khoản & phím bấm (Admin Sửa Web)';
-          if (dockBtnAccountEmoji) dockBtnAccountEmoji.textContent = '⚙️';
         } else {
           // Khi là người bình thường (khách hoặc user thường): Nằm ở vị trí nút bảng admin cũ (right: 172px)
           dockBtnAccountFloating.classList.remove('is-admin-dock');
           dockBtnAccountFloating.title = 'Cài đặt tài khoản & phím bấm';
-          if (dockBtnAccountEmoji) dockBtnAccountEmoji.textContent = '⚙️';
         }
+        if (dockBtnAccountEmoji) {
+          renderUserAvatarPill(dockBtnAccountEmoji, u ? u.avatar : '👤');
+        }
+      }
+
+      // Cập nhật avatar lớn trong tab hồ sơ cài đặt
+      const accProfileAvatar = document.getElementById('accProfileAvatar');
+      if (accProfileAvatar) {
+        renderUserAvatarPill(accProfileAvatar, u ? u.avatar : '👤');
       }
 
 
@@ -8212,6 +8505,75 @@
       window.addEventListener('touchend', stopDrag);
     }
 
+    // Yêu cầu 4: Khung tạo bài viết diễn đàn di chuyển tự do như tab cài đặt
+    function initDraggableForumComposerWindow() {
+      const card = document.querySelector('.padlet-composer-card');
+      const header = document.querySelector('.padlet-composer-header');
+      if (!card || !header) return;
+
+      let isDragging = false;
+      let startX = 0;
+      let startY = 0;
+      let origLeft = 0;
+      let origTop = 0;
+
+      function startDrag(clientX, clientY) {
+        isDragging = true;
+        const rect = card.getBoundingClientRect();
+        startX = clientX;
+        startY = clientY;
+        origLeft = rect.left;
+        origTop = rect.top;
+        card.style.left = origLeft + 'px';
+        card.style.top = origTop + 'px';
+        card.style.transform = 'none';
+      }
+
+      function onMove(clientX, clientY) {
+        if (!isDragging) return;
+        const dx = clientX - startX;
+        const dy = clientY - startY;
+        const maxLeft = Math.max(12, window.innerWidth - 120);
+        const maxTop = Math.max(12, window.innerHeight - 64);
+        const nextLeft = Math.min(Math.max(8, origLeft + dx), maxLeft);
+        const nextTop = Math.min(Math.max(8, origTop + dy), maxTop);
+        card.style.left = nextLeft + 'px';
+        card.style.top = nextTop + 'px';
+      }
+
+      function stopDrag() {
+        isDragging = false;
+      }
+
+      header.addEventListener('mousedown', function(e) {
+        if (e.target && (e.target.tagName === 'BUTTON' || e.target.closest('button'))) return;
+        e.preventDefault();
+        startDrag(e.clientX, e.clientY);
+      });
+
+      window.addEventListener('mousemove', function(e) {
+        if (!isDragging) return;
+        onMove(e.clientX, e.clientY);
+      });
+
+      window.addEventListener('mouseup', stopDrag);
+
+      header.addEventListener('touchstart', function(e) {
+        if (e.target && (e.target.tagName === 'BUTTON' || e.target.closest('button'))) return;
+        if (e.touches && e.touches[0]) {
+          startDrag(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: true });
+
+      window.addEventListener('touchmove', function(e) {
+        if (!isDragging || !e.touches || !e.touches[0]) return;
+        onMove(e.touches[0].clientX, e.touches[0].clientY);
+      }, { passive: true });
+
+      window.addEventListener('touchend', stopDrag);
+    }
+    window.initDraggableForumComposerWindow = initDraggableForumComposerWindow;
+
     function initDraggableAndResizableAiChatWindow() {
       const win = document.getElementById('chatWindow');
       const header = document.getElementById('aiChatDragHeader');
@@ -8835,7 +9197,7 @@
       } else if (window.currentWpAdminView === 'announcements') {
         renderWpAnnouncementsList();
       } else if (window.currentWpAdminView === 'feedback') {
-        renderOwnerFeedbackInbox();
+        renderOwnerFeedbackInbox(true);
       } else if (window.currentWpAdminView === 'users') {
         if (typeof renderWpUsersManagementTable === 'function') {
           renderWpUsersManagementTable();
@@ -9944,7 +10306,7 @@
 
     function syncOwnerHeaderFeedbackBadge() {
       const list = getOwnerFeedbackList();
-      const unreadCount = list.filter(r => r.status === 'unread').length;
+      const unreadCount = list.filter(r => (r.status === 'unread' || r.unread === true)).length;
       const totalCount = list.length;
 
       const hdrCount = document.getElementById('hdrOwnerFeedbackCount');
@@ -9953,20 +10315,31 @@
       const unreadEl = document.getElementById('statOwnerUnreadFeedback');
       const repliedEl = document.getElementById('statOwnerRepliedFeedback');
 
-      if (hdrCount) hdrCount.textContent = unreadCount > 0 ? unreadCount : totalCount;
-      if (tabBadge) tabBadge.textContent = unreadCount > 0 ? `${unreadCount} mới / ${totalCount}` : totalCount;
+      if (hdrCount) {
+        hdrCount.textContent = unreadCount;
+        hdrCount.style.display = unreadCount > 0 ? 'inline-block' : 'none';
+      }
+      if (tabBadge) {
+        tabBadge.textContent = unreadCount > 0 ? `${unreadCount} mới / ${totalCount}` : totalCount;
+      }
       if (totalEl) totalEl.textContent = totalCount;
       if (unreadEl) unreadEl.textContent = unreadCount;
-      if (repliedEl) repliedEl.textContent = list.filter(r => r.status === 'replied' || r.reply).length;
+      if (repliedEl) repliedEl.textContent = list.filter(r => r.status === 'replied' || r.reply || r.adminReply).length;
 
-      // Đồng bộ WordPress Topbar badge, Sidebar menu badge & Nút Admin nổi
+      // Đồng bộ WordPress Topbar badge, Sidebar menu badge & Nút Admin nổi (Chỉ hiện khi có tin mới chưa đọc)
       const wpAdminBarBadge = document.getElementById('wpAdminBarFeedbackBadge');
       const wpMenuBadge = document.getElementById('wpMenuFeedbackBadge');
       const dockNotifBadge = document.getElementById('adminDockNotifBadge');
       const statDashFb = document.getElementById('statDashboardFeedbackCount');
 
-      if (wpAdminBarBadge) wpAdminBarBadge.textContent = unreadCount > 0 ? unreadCount : totalCount;
-      if (wpMenuBadge) wpMenuBadge.textContent = unreadCount > 0 ? unreadCount : totalCount;
+      if (wpAdminBarBadge) {
+        wpAdminBarBadge.textContent = unreadCount;
+        wpAdminBarBadge.style.display = unreadCount > 0 ? 'inline-flex' : 'none';
+      }
+      if (wpMenuBadge) {
+        wpMenuBadge.textContent = unreadCount;
+        wpMenuBadge.style.display = unreadCount > 0 ? 'inline-block' : 'none';
+      }
       if (statDashFb) statDashFb.textContent = totalCount;
       if (dockNotifBadge) {
         if (unreadCount > 0) {
@@ -9976,9 +10349,35 @@
           dockNotifBadge.style.display = 'none';
         }
       }
-
+      const adminNewReportsBadge = document.getElementById('adminNewReportsBadge');
+      if (adminNewReportsBadge) {
+        if (unreadCount > 0) {
+          adminNewReportsBadge.textContent = unreadCount + ' mới';
+          adminNewReportsBadge.style.display = 'inline-block';
+        } else {
+          adminNewReportsBadge.style.display = 'none';
+        }
+      }
     }
     window.syncOwnerHeaderFeedbackBadge = syncOwnerHeaderFeedbackBadge;
+
+    function markAllOwnerFeedbackAsRead() {
+      const list = getOwnerFeedbackList();
+      let changed = false;
+      list.forEach(r => {
+        if (r.status === 'unread' || r.unread === true) {
+          r.status = (r.reply || r.adminReply) ? 'replied' : 'read';
+          r.unread = false;
+          changed = true;
+        }
+      });
+      if (changed) {
+        localStorage.setItem('dan_tranh_reports', JSON.stringify(list));
+        syncOwnerHeaderFeedbackBadge();
+        if (typeof updateReportBadges === 'function') updateReportBadges();
+      }
+    }
+    window.markAllOwnerFeedbackAsRead = markAllOwnerFeedbackAsRead;
 
     function filterOwnerFeedbackList(typeKey, btnEl) {
       window.currentOwnerFeedbackFilter = typeKey || 'all';
@@ -10025,7 +10424,7 @@
               <div style="display:flex; align-items:center; gap:8px;">
                 <span style="font-size:11.5px; color:#c8baa6;">🕒 ${r.time || ''}</span>
                 ${statusHtml}
-                <button type="button" class="btn btn-secondary btn-xs" onclick="deleteOwnerFeedbackItem(${r.id})" title="Xóa báo cáo này">✕</button>
+                <button type="button" class="btn btn-secondary btn-xs" onclick="deleteOwnerFeedbackItem('${r.id}')" title="Xóa báo cáo này">✕</button>
               </div>
             </div>
 
@@ -10033,15 +10432,15 @@
               ${r.content}
             </div>
 
-            ${r.reply ? `
+            ${(r.reply || r.adminReply) ? `
               <div style="font-size:12.5px; color:#d3f9d8; background:rgba(16,185,129,0.1); padding:8px 12px; border-radius:8px; border:1px solid rgba(16,185,129,0.3); margin-bottom:8px;">
-                <strong>👑 Phản hồi của Owner:</strong> ${r.reply}
+                <strong>👑 Phản hồi của Owner:</strong> ${r.reply || r.adminReply}
               </div>
             ` : ''}
 
             <div style="display:flex; gap:8px; align-items:center;">
-              <input type="text" id="${inpId}" class="form-input" value="${(r.reply || '').replace(/"/g, '&quot;')}" placeholder="Nhập câu trả lời của Owner cho người dùng này..." style="flex:1; height:34px; font-size:12.5px; padding:0 10px;" />
-              <button type="button" class="btn btn-primary btn-xs" style="height:34px; padding:0 14px;" onclick="submitOwnerReplyToFeedback(${r.id}, '${inpId}')">
+              <input type="text" id="${inpId}" class="form-input" value="${(r.reply || r.adminReply || '').replace(/"/g, '&quot;')}" placeholder="Nhập câu trả lời của Owner cho người dùng này..." style="flex:1; height:34px; font-size:12.5px; padding:0 10px;" />
+              <button type="button" class="btn btn-primary btn-xs" style="height:34px; padding:0 14px;" onclick="submitOwnerReplyToFeedback('${r.id}', '${inpId}')">
                 📤 Gửi trả lời
               </button>
             </div>
@@ -10050,7 +10449,10 @@
       }).join('');
     }
 
-    function renderOwnerFeedbackInbox() {
+    function renderOwnerFeedbackInbox(shouldMarkRead) {
+      if (shouldMarkRead) {
+        markAllOwnerFeedbackAsRead();
+      }
       syncOwnerHeaderFeedbackBadge();
       const allReports = getOwnerFeedbackList();
       const f = window.currentOwnerFeedbackFilter || 'all';
@@ -10076,18 +10478,34 @@
         return;
       }
       const list = getOwnerFeedbackList();
-      const item = list.find(r => r.id === reportId);
+      const item = list.find(r => String(r.id) === String(reportId));
       if (item) {
         item.reply = replyText;
+        item.adminReply = replyText;
+        item.replyTime = new Date().toLocaleString('vi-VN');
         item.status = 'replied';
+        item.unreadUserReply = true;
+        item.unread = false;
         saveOwnerFeedbackList(list);
         renderOwnerFeedbackInbox();
+        if (typeof renderUserReplies === 'function') renderUserReplies();
+        if (typeof renderUserSentReportsHistory === 'function') renderUserSentReportsHistory();
+        if (window.DanTranhCloudSync && window.DanTranhCloudSync.broadcastChannel) {
+          window.DanTranhCloudSync.broadcastChannel.postMessage({
+            type: 'FEEDBACK_REPLY_SYNC',
+            reportId: String(reportId),
+            reply: replyText
+          });
+        }
+        alert('✅ Đã gửi phản hồi thành công tới người dùng!');
+      } else {
+        alert('Không tìm thấy bản ghi góp ý này!');
       }
     }
     window.submitOwnerReplyToFeedback = submitOwnerReplyToFeedback;
 
     function deleteOwnerFeedbackItem(reportId) {
-      const list = getOwnerFeedbackList().filter(r => r.id !== reportId);
+      const list = getOwnerFeedbackList().filter(r => String(r.id) !== String(reportId));
       saveOwnerFeedbackList(list);
       renderOwnerFeedbackInbox();
     }
@@ -11027,6 +11445,12 @@
 
     /* Đóng/Mở khung đăng bài dạng Modal Popup */
     function openRedditComposer() {
+      const card = document.querySelector('.padlet-composer-card');
+      if (card) {
+        const w = Math.min(660, window.innerWidth - 32);
+        card.style.left = Math.max(16, Math.round((window.innerWidth - w) / 2)) + 'px';
+        card.style.top = '80px';
+      }
       const el = document.getElementById('redditComposerExpanded');
       if (el) {
         el.classList.add('open');
@@ -12059,6 +12483,7 @@
     window.addEventListener('DOMContentLoaded', function() {
       if (typeof initAppTheme === 'function') initAppTheme();
       initDraggableOwnerWindow();
+      initDraggableForumComposerWindow();
       initDraggableAndResizableAiChatWindow();
       initDraggableAndResizableStudioWindow();
       syncHeaderAndAccountUI();

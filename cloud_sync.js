@@ -654,6 +654,12 @@
           var targetId = window.currentOwnerSelectedInstId || 'dantranh';
           window.renderOwnerInstStringsAudioTable(targetId);
         }
+      } else if (data.type === 'FEEDBACK_REPORTS_UPDATED' || data.type === 'FEEDBACK_REPLY_SYNC') {
+        if (typeof window.syncOwnerHeaderFeedbackBadge === 'function') window.syncOwnerHeaderFeedbackBadge();
+        if (typeof window.renderOwnerFeedbackInbox === 'function') window.renderOwnerFeedbackInbox();
+        if (typeof window.renderUserReplies === 'function') window.renderUserReplies();
+        if (typeof window.renderUserSentReportsHistory === 'function') window.renderUserSentReportsHistory();
+        if (typeof window.updateReportBadges === 'function') window.updateReportBadges();
       }
     };
   }
@@ -675,6 +681,12 @@
         var targetId = window.currentOwnerSelectedInstId || 'dantranh';
         window.renderOwnerInstStringsAudioTable(targetId);
       }
+    } else if (e.key === 'dan_tranh_reports') {
+      if (typeof window.syncOwnerHeaderFeedbackBadge === 'function') window.syncOwnerHeaderFeedbackBadge();
+      if (typeof window.renderOwnerFeedbackInbox === 'function') window.renderOwnerFeedbackInbox();
+      if (typeof window.renderUserReplies === 'function') window.renderUserReplies();
+      if (typeof window.renderUserSentReportsHistory === 'function') window.renderUserSentReportsHistory();
+      if (typeof window.updateReportBadges === 'function') window.updateReportBadges();
     }
   });
 

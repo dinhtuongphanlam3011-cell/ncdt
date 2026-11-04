@@ -1,4 +1,4 @@
-﻿/* =========================================================
+/* =========================================================
    DOHOA.CSS - ĐÀN TRANH ONLINE & 42 ĐẠI NHẠC CỤ DÂN TỘC
    Phong cách Cổ Điển Hoàng Gia: Màu Nâu Cũ Truyền Thống & Vàng Ánh Kim
    - Bố cục lưới thẻ từng ô hiện đại Pixel-Perfect theo chuẩn Design System
@@ -8347,7 +8347,7 @@ body.tttt-theme-body .floating-account-trigger.is-admin-dock,
 .dt-chat-window.minimized .dt-close-chat-btn:hover,
 .owner-floating-window.minimized .wp-bar-close-btn:hover {
   background: rgba(220, 38, 38, 0.8) !important;
-  border-color: #f87171 !important;
+  border-color: #f87171 !important; } .owner-floating-window.minimized .wp-bar-close-btn { width: auto !important; min-width: 26px !important; height: 26px !important; padding: 0 10px !important; border-radius: 999px !important; white-space: nowrap !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; gap: 4px !important; font-size: 11px !important; line-height: 1 !important;
 }
 
 .dt-studio-content-body {
