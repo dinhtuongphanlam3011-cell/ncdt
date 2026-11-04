@@ -148,6 +148,9 @@
   var _serverAudioPool = {};
 
   function getServerAudioConfig() {
+    if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.getAudioConfig === "function") {
+      return window.DanTranhCloudSync.getAudioConfig();
+    }
     if (_serverAudioConfigCache) return _serverAudioConfigCache;
     try {
       var raw = localStorage.getItem(SERVER_AUDIO_CONFIG_KEY);
@@ -164,6 +167,10 @@
   }
 
   function saveServerAudioConfig(cfg) {
+    if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.saveAudioConfig === "function") {
+      window.DanTranhCloudSync.saveAudioConfig(cfg);
+      return;
+    }
     if (cfg) _serverAudioConfigCache = cfg;
     var toSave = _serverAudioConfigCache || {};
     try {
@@ -174,6 +181,9 @@
   }
 
   function getServerAudioForNote(instId, noteIdx) {
+    if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.getAudioForNote === "function") {
+      return window.DanTranhCloudSync.getAudioForNote(instId, noteIdx);
+    }
     var cfg = getServerAudioConfig();
     var instCfg = cfg[instId];
     if (instCfg && instCfg.strings && instCfg.strings[noteIdx]) {
@@ -183,6 +193,12 @@
   }
 
   function setServerAudioForNote(instId, noteIdx, data) {
+    if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.setAudioForNote === "function") {
+      window.DanTranhCloudSync.setAudioForNote(instId, noteIdx, data);
+      var poolKey = instId + "_" + noteIdx;
+      if (_serverAudioPool[poolKey]) delete _serverAudioPool[poolKey];
+      return;
+    }
     var cfg = getServerAudioConfig();
     if (!cfg[instId]) cfg[instId] = { strings: {} };
     if (!cfg[instId].strings) cfg[instId].strings = {};
@@ -198,6 +214,12 @@
   }
 
   function removeServerAudioForNote(instId, noteIdx) {
+    if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.removeAudioForNote === "function") {
+      window.DanTranhCloudSync.removeAudioForNote(instId, noteIdx);
+      var poolKey = instId + "_" + noteIdx;
+      if (_serverAudioPool[poolKey]) delete _serverAudioPool[poolKey];
+      return;
+    }
     var cfg = getServerAudioConfig();
     if (cfg[instId] && cfg[instId].strings && cfg[instId].strings[noteIdx]) {
       delete cfg[instId].strings[noteIdx];
@@ -210,6 +232,13 @@
   }
 
   function clearServerAudioForInstrument(instId) {
+    if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.clearAudioForInstrument === "function") {
+      window.DanTranhCloudSync.clearAudioForInstrument(instId);
+      Object.keys(_serverAudioPool).forEach(function(k) {
+        if (k.indexOf(instId + "_") === 0) delete _serverAudioPool[k];
+      });
+      return;
+    }
     var cfg = getServerAudioConfig();
     if (cfg[instId]) {
       delete cfg[instId];
@@ -221,6 +250,9 @@
   }
 
   function playServerCustomAudioForNote(instId, noteIdx) {
+    if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.playCustomAudioForNote === "function") {
+      return window.DanTranhCloudSync.playCustomAudioForNote(instId, noteIdx);
+    }
     var noteCustom = getServerAudioForNote(instId, noteIdx);
     if (!noteCustom || !noteCustom.fileUrl) return false;
 
@@ -667,14 +699,8 @@
     var dockReportDot = document.getElementById("dockReportDot");
     var dockAdminBadgeDot = document.getElementById("dockAdminBadgeDot");
 
-    if (bellBadgeCount) {
-      if (isCurrentUserAdmin) {
-        bellBadgeCount.textContent = reports.length;
-        bellBadgeCount.style.display = reports.length > 0 ? "inline-block" : "none";
-      } else {
-        bellBadgeCount.textContent = unreadUserRepliesCount > 0 ? (unreadUserRepliesCount + " mới") : (reports.length > 0 ? reports.length : "");
-        bellBadgeCount.style.display = (unreadUserRepliesCount > 0 || reports.length > 0) ? "inline-block" : "none";
-      }
+    if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.updateBadgeUI === "function") {
+      window.DanTranhCloudSync.updateBadgeUI();
     }
 
     if (adminNewReportsBadge) {
@@ -986,6 +1012,9 @@
       if (typeof window.renderOwnerFeedbackInbox === "function") window.renderOwnerFeedbackInbox();
       if (typeof window.renderUserSentReportsHistory === "function") window.renderUserSentReportsHistory();
       if (typeof window.renderOwnerAnnouncements === "function") window.renderOwnerAnnouncements();
+      if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.onModalOpened === "function") {
+        window.DanTranhCloudSync.onModalOpened();
+      }
     }
   }
 
@@ -993,6 +1022,11 @@
     var modal = document.getElementById(modalId);
     if (modal) {
       modal.classList.remove("active");
+    }
+    if (modalId === "modalReportAdmin") {
+      if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.onModalClosed === "function") {
+        window.DanTranhCloudSync.onModalClosed();
+      }
     }
     if (modalId === "modalAdmin" && typeof window.syncHeaderAndAccountUI === "function") {
       window.syncHeaderAndAccountUI();

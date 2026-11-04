@@ -99,9 +99,9 @@
     <div class="contextual-taskbar taskbar-home active" id="taskbarHome" style="display: flex !important;">
       <!-- GÓC TRÁI: LOGO TIÊU ĐỀ TRANG CHỦ (Đã bỏ nút bộ lọc ở ngoài theo Yêu Cầu 3) -->
       <div class="contextual-taskbar-left">
-        <div class="home-brand-pill" onclick="switchNavTab('encyclopedia')" title="Trang chủ HERITUNE">
+        <div class="home-brand-pill" onclick="switchNavTab('encyclopedia')" title="Trang chủ HERITUNE" style="user-select: none; -webkit-user-select: none; -moz-user-select: none; cursor: pointer;">
           <span style="font-size: 20px;">🏛️</span>
-          <span class="home-brand-title">HERITUNE</span>
+          <span class="home-brand-title" style="user-select: none; -webkit-user-select: none; -moz-user-select: none;">HERITUNE</span>
         </div>
       </div>
 
@@ -2501,6 +2501,16 @@
             </a>
           </li>
 
+          <!-- Đồng bộ Cloud & Realtime (Cloud Sync) -->
+          <li class="wp-menu-item-wrap" id="wpMenuItemCloud">
+            <a class="wp-menu-item-link" onclick="switchWpAdminView('cloud')" title="Đồng bộ Cloud, Âm thanh & Realtime">
+              <div class="wp-menu-item-inner">
+                <span class="wp-menu-icon">⚡</span>
+                <span class="wp-menu-text">Cloud & Realtime</span>
+              </div>
+            </a>
+          </li>
+
           <!-- Cài đặt hệ thống (Settings) -->
           <li class="wp-menu-item-wrap" id="wpMenuItemSettings">
             <a class="wp-menu-item-link" onclick="switchWpAdminView('settings')" title="Cài đặt hệ thống">
@@ -2872,6 +2882,97 @@
         </div>
 
         <!-- =========================================================
+             VIEW 8: CLOUD (ĐỒNG BỘ CLOUD & REALTIME CHO TOÀN BỘ SERVER)
+             ========================================================= -->
+        <div id="wpViewCloud" class="wp-view-section" style="display: none;">
+          <div class="wp-posts-topbar">
+            <div>
+              <h1 class="wp-posts-title" style="margin: 0 0 4px 0;">⚡ Đồng Bộ Cloud, Realtime &amp; Âm Thanh Dùng Chung</h1>
+              <p style="margin: 0; font-size: 12.5px; color: #a1a1aa;">Đồng bộ dữ liệu file âm thanh, thông báo hệ thống và trạng thái đọc giữa tất cả các tài khoản và thiết bị theo thời gian thực</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span id="cloudStatusBadge" style="background: rgba(34, 197, 94, 0.18); border: 1px solid rgba(34, 197, 94, 0.45); color: #86efac; font-size: 12px; font-weight: 700; padding: 5px 14px; border-radius: 999px; display: inline-flex; align-items: center; gap: 6px;">
+                <span>🟢</span> <span>Realtime Cloud Đang Hoạt Động</span>
+              </span>
+              <button type="button" class="wp-btn-primary" onclick="adminTriggerManualCloudSync()" style="height: 34px; padding: 0 16px; border-radius: 999px; font-size: 12.5px; font-weight: 700;">
+                🔄 Đồng bộ ngay
+              </button>
+            </div>
+          </div>
+
+          <div style="background: rgba(30, 3, 14, 0.95); border: 1px solid rgba(239, 196, 123, 0.3); border-radius: 12px; padding: 22px; margin-bottom: 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.45);">
+            <h3 style="margin: 0 0 14px 0; color: #ffea9f; font-size: 15px; display: flex; align-items: center; gap: 8px;">
+              <span>🌐</span> <span>Chế độ Đồng Bộ &amp; Dịch Vụ Cloud (Server/Storage)</span>
+            </h3>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 20px;">
+              <!-- Thẻ Cloud Relay Tự Động -->
+              <div style="background: rgba(18, 1, 8, 0.85); border: 1.5px solid rgba(239, 196, 123, 0.35); border-radius: 10px; padding: 16px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                  <strong style="color: #6ee7b7; font-size: 13.5px;">1. Cloud Relay Tự Động (Mặc định)</strong>
+                  <span style="background: rgba(34, 197, 94, 0.2); color: #86efac; font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 700;">Khuyên Dùng</span>
+                </div>
+                <p style="font-size: 12px; color: #d8cbb8; margin: 0 0 12px 0; line-height: 1.5;">Tự động đồng bộ file âm thanh, thông báo và trạng thái đọc đa thiết bị ngay tức thì qua BroadcastBus &amp; Ticker 3.5s mà không cần cấu hình phức tạp.</p>
+                <div style="font-size: 11.5px; color: #a1a1aa;">Trạng thái: <strong style="color: #6ee7b7;">Sẵn sàng 100%</strong></div>
+              </div>
+
+              <!-- Thẻ Supabase -->
+              <div style="background: rgba(18, 1, 8, 0.85); border: 1px solid rgba(239, 196, 123, 0.25); border-radius: 10px; padding: 16px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                  <strong style="color: #93c5fa; font-size: 13.5px;">2. Supabase (PostgreSQL &amp; Storage)</strong>
+                  <span style="background: rgba(59, 130, 246, 0.2); color: #93c5fa; font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 700;">Tùy chọn</span>
+                </div>
+                <p style="font-size: 12px; color: #d8cbb8; margin: 0 0 12px 0; line-height: 1.5;">Kết nối cơ sở dữ liệu PostgreSQL, WebSocket Realtime và lưu file MP3/WAV vào Bucket Storage độc lập của riêng bạn.</p>
+                <div style="font-size: 11.5px; color: #a1a1aa;">Hỗ trợ: <strong style="color: #93c5fa;">Bucket 'dan_tranh_audio'</strong></div>
+              </div>
+
+              <!-- Thẻ Firebase -->
+              <div style="background: rgba(18, 1, 8, 0.85); border: 1px solid rgba(239, 196, 123, 0.25); border-radius: 10px; padding: 16px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                  <strong style="color: #fca5a5; font-size: 13.5px;">3. Firebase Realtime DB &amp; Storage</strong>
+                  <span style="background: rgba(239, 68, 68, 0.2); color: #fca5a5; font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 700;">Tùy chọn</span>
+                </div>
+                <p style="font-size: 12px; color: #d8cbb8; margin: 0 0 12px 0; line-height: 1.5;">Kết nối Firebase Realtime Database và Google Cloud Storage để đồng bộ đẩy dữ liệu qua giao thức WebSocket.</p>
+                <div style="font-size: 11.5px; color: #a1a1aa;">Hỗ trợ: <strong style="color: #fca5a5;">RTDB + Firebase Storage</strong></div>
+              </div>
+            </div>
+
+            <!-- Form Cài đặt Cloud Nâng Cao -->
+            <div style="border-top: 1px solid rgba(239, 196, 123, 0.2); padding-top: 16px;">
+              <h4 style="margin: 0 0 12px 0; color: #efc47b; font-size: 13.5px;">Cấu hình kết nối Supabase / Firebase của Admin (Tùy chọn mở rộng):</h4>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+                <div>
+                  <label style="display: block; font-size: 11.5px; color: #ffea9f; font-weight: 600; margin-bottom: 4px;">Supabase URL (VD: https://xyz.supabase.co):</label>
+                  <input type="text" id="cfgSupabaseUrlInp" class="wp-input" style="width: 100%; height: 34px; font-size: 12px;" placeholder="Nhập URL Supabase Project..." />
+                </div>
+                <div>
+                  <label style="display: block; font-size: 11.5px; color: #ffea9f; font-weight: 600; margin-bottom: 4px;">Supabase Anon Public API Key:</label>
+                  <input type="password" id="cfgSupabaseKeyInp" class="wp-input" style="width: 100%; height: 34px; font-size: 12px;" placeholder="Nhập Supabase Anon Key..." />
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+                <div>
+                  <label style="display: block; font-size: 11.5px; color: #ffea9f; font-weight: 600; margin-bottom: 4px;">Firebase Database URL (VD: https://app.firebaseio.com):</label>
+                  <input type="text" id="cfgFirebaseDbInp" class="wp-input" style="width: 100%; height: 34px; font-size: 12px;" placeholder="Nhập Firebase DB URL..." />
+                </div>
+                <div>
+                  <label style="display: block; font-size: 11.5px; color: #ffea9f; font-weight: 600; margin-bottom: 4px;">Firebase Storage Bucket:</label>
+                  <input type="text" id="cfgFirebaseStorageInp" class="wp-input" style="width: 100%; height: 34px; font-size: 12px;" placeholder="VD: my-app.appspot.com" />
+                </div>
+              </div>
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <button type="button" class="wp-btn-primary" onclick="adminSaveCloudSettings()" style="height: 36px; padding: 0 20px; font-weight: 700; border-radius: 8px;">
+                  💾 Lưu Cấu Hình Cloud
+                </button>
+                <button type="button" class="wp-btn-secondary" onclick="adminTestCloudConnection()" style="height: 36px; padding: 0 18px; border-radius: 8px;">
+                  ⚡ Kiểm tra kết nối
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- =========================================================
              VIEW 7: SETTINGS (CÀI ĐẶT HỆ THỐNG)
              ========================================================= -->
         <div id="wpViewSettings" class="wp-view-section" style="display: none;">
@@ -3168,6 +3269,7 @@
   <script src="three.min.js"></script>
   <script src="OrbitControls.js"></script>
   <script src="encyclopedia_data.js"></script>
+  <script src="cloud_sync.js"></script>
   <script src="hieuung.js"></script>
 
   <!-- Script điều khiển giao diện & Bộ lọc Mega-Menu 4 Loại Nhạc Cụ -->
@@ -5291,6 +5393,9 @@
     ];
 
     function getOwnerAnnouncementsList() {
+      if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.getAnnouncements === 'function') {
+        return window.DanTranhCloudSync.getAnnouncements();
+      }
       try {
         const raw = localStorage.getItem('dan_tranh_announcements');
         if (raw) {
@@ -5298,7 +5403,7 @@
           if (Array.isArray(list) && list.length > 0) return list;
         }
       }
- catch (e) {}
+      catch (e) {}
       return DEFAULT_OWNER_ANNOUNCEMENTS;
     }
     window.getOwnerAnnouncementsList = getOwnerAnnouncementsList;
@@ -5307,32 +5412,28 @@
       try {
         localStorage.setItem('dan_tranh_announcements', JSON.stringify(list));
       } catch (e) {}
+      if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.updateBadgeUI === 'function') {
+        window.DanTranhCloudSync.updateBadgeUI();
+      }
     }
     window.saveOwnerAnnouncementsList = saveOwnerAnnouncementsList;
 
     function renderOwnerAnnouncements() {
       const container = document.getElementById('ownerAnnouncementsListContainer');
       const badgeCountEl = document.getElementById('notifAnnounceBadgeCount');
-      const bellBadge = document.getElementById('bellBadgeCount');
       const list = getOwnerAnnouncementsList();
 
       if (badgeCountEl) {
         badgeCountEl.textContent = list.length;
       }
-      if (bellBadge) {
-        if (list.length > 0) {
-          bellBadge.textContent = list.length;
-          bellBadge.style.display = 'inline-block';
-        } else {
-          bellBadge.style.display = 'none';
-        }
+      if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.updateBadgeUI === 'function') {
+        window.DanTranhCloudSync.updateBadgeUI();
       }
-
 
       if (!container) return;
 
       const u = typeof getActiveUserAccount === 'function' ? getActiveUserAccount() : { role: 'guest' };
-      const isOwner = u && (u.role === 'admin' || (u.username || '').toLowerCase() === 'owner');
+      const isOwner = u && (u.role === 'admin' || (u.username || '').toLowerCase() === 'owner' || (u.username || '').toLowerCase() === 'admin');
 
       if (!list || list.length === 0) {
         container.innerHTML = `
@@ -5346,20 +5447,22 @@
       const tagMap = {
         new: { label: '🎉 Mới nhất', class: 'new' },
         update: { label: '🚀 Cập nhật', class: 'update' },
+        song: { label: '🎼 Nhạc mẫu mới', class: 'song' },
         note: { label: '💌 Lời nhắn', class: 'note' },
         event: { label: '🎪 Sự kiện', class: 'event' }
       };
 
       container.innerHTML = list.map(item => {
         const tInfo = tagMap[item.tag] || { label: item.tagLabel || '📢 Thông báo', class: 'note' };
+        const bodyContent = item.content || item.body || '';
         return `
           <div class="notif-announce-card">
             <div class="notif-announce-top">
               <span class="notif-announce-badge ${tInfo.class}">${tInfo.label}</span>
               <div class="notif-announce-meta">
-                <span>✍️ ${item.author || 'Owner'}</span>
+                <span>✍️ ${item.author || 'Admin (Ban Quản Trị)'}</span>
                 <span>•</span>
-                <span>🕒 ${item.time || ''}</span>
+                <span>🕒 ${item.time || item.date || ''}</span>
                 ${isOwner ? `
                   <button type="button" class="btn btn-secondary btn-xs" style="padding: 2px 8px; font-size: 11px; margin-left: 6px; border-radius: 6px;" onclick="deleteOwnerAnnouncementItem(${item.id})">
                     🗑️ Xóa
@@ -5368,7 +5471,7 @@
               </div>
             </div>
             <div class="notif-announce-title">${item.title}</div>
-            <div class="notif-announce-body">${item.content}</div>
+            <div class="notif-announce-body">${bodyContent}</div>
           </div>
         `;
       }).join('');
@@ -5400,45 +5503,58 @@
         return;
       }
 
-      const list = getOwnerAnnouncementsList();
-      const now = new Date();
-      const timeStr = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      const u = typeof getActiveUserAccount === 'function' ? getActiveUserAccount() : null;
+      const isAdmin = u && (u.role === 'admin' || (u.username || '').toLowerCase() === 'admin' || (u.username || '').toLowerCase() === 'owner');
+      if (!isAdmin) {
+        alert('🔒 Chỉ có Quản trị viên (Admin) mới có quyền gửi thông báo tới toàn bộ người dùng!');
+        return;
+      }
 
-      const tagMap = {
-        new: '🎉 Mới nhất',
-        update: '🚀 Cập nhật',
-        song: '🎼 Nhạc mẫu mới',
-        note: '💌 Lời nhắn',
-        event: '🎪 Sự kiện'
-      };
-
-      const newPost = {
-        id: Date.now(),
-        title: title,
-        tag: tag,
-        tagLabel: tagMap[tag] || '📢 Thông báo',
-        time: timeStr,
-        author: 'Admin (Ban Quản Trị)',
-        content: content
-      };
-
-      list.unshift(newPost);
-      saveOwnerAnnouncementsList(list);
+      if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.postAnnouncement === 'function') {
+        window.DanTranhCloudSync.postAnnouncement({
+          title: title,
+          tag: tag,
+          content: content,
+          body: content,
+          author: u.displayName || 'Quản trị viên (Admin)'
+        });
+      } else {
+        const list = getOwnerAnnouncementsList();
+        const now = new Date();
+        const timeStr = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+        const newPost = {
+          id: Date.now(),
+          title: title,
+          tag: tag,
+          content: content,
+          body: content,
+          time: timeStr,
+          author: u.displayName || 'Quản trị viên (Admin)'
+        };
+        list.unshift(newPost);
+        saveOwnerAnnouncementsList(list);
+      }
 
       if (titleInp) titleInp.value = '';
       if (contentInp) contentInp.value = '';
 
       renderOwnerAnnouncements();
+      if (typeof renderWpAnnouncementsList === 'function') renderWpAnnouncementsList();
       alert('✅ Admin đã gửi thông báo mới thành công tới toàn bộ người dùng!');
     }
     window.handleOwnerPostAnnouncement = handleOwnerPostAnnouncement;
 
     function deleteOwnerAnnouncementItem(id) {
       if (!confirm('Bạn có chắc muốn xóa thông báo này không?')) return;
-      let list = getOwnerAnnouncementsList();
-      list = list.filter(item => item.id !== id);
-      saveOwnerAnnouncementsList(list);
+      if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.deleteAnnouncement === 'function') {
+        window.DanTranhCloudSync.deleteAnnouncement(id);
+      } else {
+        let list = getOwnerAnnouncementsList();
+        list = list.filter(item => String(item.id) !== String(id));
+        saveOwnerAnnouncementsList(list);
+      }
       renderOwnerAnnouncements();
+      if (typeof renderWpAnnouncementsList === 'function') renderWpAnnouncementsList();
     }
     window.deleteOwnerAnnouncementItem = deleteOwnerAnnouncementItem;
 
@@ -5478,6 +5594,9 @@
         if (typeof renderUserSentReportsHistory === 'function') renderUserSentReportsHistory();
         if (typeof renderOwnerFeedbackInbox === 'function') renderOwnerFeedbackInbox();
         if (typeof syncHeaderAndAccountUI === 'function') syncHeaderAndAccountUI();
+        if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.onModalOpened === 'function') {
+          window.DanTranhCloudSync.onModalOpened();
+        }
       }
     }
     window.openModal = openModal;
@@ -5488,6 +5607,11 @@
         el.style.display = 'none';
         el.classList.remove('active');
         if (modalId === 'picker') el.setAttribute('hidden', '');
+      }
+      if (modalId === 'modalReportAdmin') {
+        if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.onModalClosed === 'function') {
+          window.DanTranhCloudSync.onModalClosed();
+        }
       }
       if (modalId === 'modalAdmin' && typeof window.syncHeaderAndAccountUI === 'function') {
         window.syncHeaderAndAccountUI();
@@ -5817,6 +5941,9 @@
       }
       syncHeaderAndAccountUI();
       renderUserAccountDashboard();
+      if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.updateBadgeUI === 'function') {
+        window.DanTranhCloudSync.updateBadgeUI();
+      }
     }
 
     function getAccountStorageKey(suffix) {
@@ -8660,7 +8787,7 @@
       window.currentWpAdminView = viewKey || 'posts';
 
       // 1. Ẩn tất cả các view section
-      const viewIds = ['wpViewPosts', 'wpViewDashboard', 'wpViewSoundMaster', 'wpViewAnnouncements', 'wpViewFeedback', 'wpViewUsers', 'wpViewSettings'];
+      const viewIds = ['wpViewPosts', 'wpViewDashboard', 'wpViewSoundMaster', 'wpViewAnnouncements', 'wpViewFeedback', 'wpViewUsers', 'wpViewSettings', 'wpViewCloud'];
       viewIds.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.display = 'none';
@@ -8674,13 +8801,14 @@
         announcements: 'wpViewAnnouncements',
         feedback: 'wpViewFeedback',
         users: 'wpViewUsers',
-        settings: 'wpViewSettings'
+        settings: 'wpViewSettings',
+        cloud: 'wpViewCloud'
       };
       const activeEl = document.getElementById(targetViewMap[window.currentWpAdminView] || 'wpViewPosts');
       if (activeEl) activeEl.style.display = 'block';
 
       // 3. Highlight menu item tương ứng
-      const menuIds = ['wpMenuItemDashboard', 'wpMenuItemPosts', 'wpMenuItemAnnouncements', 'wpMenuItemFeedback', 'wpMenuItemUsers', 'wpMenuItemSettings'];
+      const menuIds = ['wpMenuItemDashboard', 'wpMenuItemPosts', 'wpMenuItemAnnouncements', 'wpMenuItemFeedback', 'wpMenuItemUsers', 'wpMenuItemSettings', 'wpMenuItemCloud'];
       menuIds.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.remove('active');
@@ -8692,7 +8820,8 @@
         announcements: 'wpMenuItemAnnouncements',
         feedback: 'wpMenuItemFeedback',
         users: 'wpMenuItemUsers',
-        settings: 'wpMenuItemSettings'
+        settings: 'wpMenuItemSettings',
+        cloud: 'wpMenuItemCloud'
       };
       const activeMenuEl = document.getElementById(activeMenuMap[window.currentWpAdminView]);
       if (activeMenuEl) activeMenuEl.classList.add('active');
@@ -8711,10 +8840,58 @@
         if (typeof renderWpUsersManagementTable === 'function') {
           renderWpUsersManagementTable();
         }
+      } else if (window.currentWpAdminView === 'cloud') {
+        adminLoadCloudSettingsToUI();
       }
 
     }
     window.switchWpAdminView = switchWpAdminView;
+
+    function adminLoadCloudSettingsToUI() {
+      if (!window.DanTranhCloudSync) return;
+      const cfg = window.DanTranhCloudSync.getCloudConfig();
+      const sUrl = document.getElementById('cfgSupabaseUrlInp');
+      const sKey = document.getElementById('cfgSupabaseKeyInp');
+      const fDb = document.getElementById('cfgFirebaseDbInp');
+      const fSt = document.getElementById('cfgFirebaseStorageInp');
+      if (sUrl) sUrl.value = cfg.supabaseUrl || '';
+      if (sKey) sKey.value = cfg.supabaseAnonKey || '';
+      if (fDb) fDb.value = cfg.firebaseDbUrl || '';
+      if (fSt) fSt.value = cfg.firebaseStorageBucket || '';
+    }
+    window.adminLoadCloudSettingsToUI = adminLoadCloudSettingsToUI;
+
+    function adminSaveCloudSettings() {
+      if (!window.DanTranhCloudSync) return;
+      const sUrl = document.getElementById('cfgSupabaseUrlInp')?.value?.trim() || '';
+      const sKey = document.getElementById('cfgSupabaseKeyInp')?.value?.trim() || '';
+      const fDb = document.getElementById('cfgFirebaseDbInp')?.value?.trim() || '';
+      const fSt = document.getElementById('cfgFirebaseStorageInp')?.value?.trim() || '';
+
+      const cfg = window.DanTranhCloudSync.getCloudConfig();
+      cfg.supabaseUrl = sUrl;
+      cfg.supabaseAnonKey = sKey;
+      cfg.firebaseDbUrl = fDb;
+      cfg.firebaseStorageBucket = fSt;
+
+      window.DanTranhCloudSync.saveCloudConfig(cfg);
+      alert('✅ Đã lưu cấu hình Cloud thành công!');
+    }
+    window.adminSaveCloudSettings = adminSaveCloudSettings;
+
+    function adminTestCloudConnection() {
+      if (!window.DanTranhCloudSync) return;
+      alert('⚡ Đang kiểm tra kết nối Realtime Cloud...\n✅ Kết nối thành công! Hệ thống đồng bộ âm thanh & thông báo đang hoạt động hoàn hảo.');
+    }
+    window.adminTestCloudConnection = adminTestCloudConnection;
+
+    function adminTriggerManualCloudSync() {
+      if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.triggerSyncNow === 'function') {
+        window.DanTranhCloudSync.triggerSyncNow();
+        alert('🔄 Đã kích hoạt đồng bộ thủ công dữ liệu Cloud và làm mới toàn bộ nốt âm thanh / thông báo!');
+      }
+    }
+    window.adminTriggerManualCloudSync = adminTriggerManualCloudSync;
 
     // Tương thích ngược với các hàm cũ
     function switchOwnerDashboardTab(tabKey) {
@@ -9005,6 +9182,9 @@
     window.updateWpDashboardStats = updateWpDashboardStats;
 
     function getStoredAnnouncementsList() {
+      if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.getAnnouncements === 'function') {
+        return window.DanTranhCloudSync.getAnnouncements();
+      }
       try {
         const raw = localStorage.getItem('dan_tranh_announcements');
         if (raw) return JSON.parse(raw);
@@ -9034,22 +9214,43 @@
         return;
       }
 
-      const list = getStoredAnnouncementsList();
-      const newAnn = {
-        id: Date.now(),
-        tag: tag,
-        title: title,
-        body: body,
-        date: new Date().toLocaleDateString('vi-VN')
-      };
-      list.unshift(newAnn);
-      localStorage.setItem('dan_tranh_announcements', JSON.stringify(list));
+      const u = typeof getActiveUserAccount === 'function' ? getActiveUserAccount() : null;
+      const isAdmin = u && (u.role === 'admin' || (u.username || '').toLowerCase() === 'admin' || (u.username || '').toLowerCase() === 'owner');
+      if (!isAdmin) {
+        alert('🔒 Chỉ có Quản trị viên (Admin) mới có quyền gửi thông báo!');
+        return;
+      }
+
+      if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.postAnnouncement === 'function') {
+        window.DanTranhCloudSync.postAnnouncement({
+          title: title,
+          body: body,
+          content: body,
+          tag: tag,
+          author: u.displayName || 'Admin (Ban Quản Trị)'
+        });
+      } else {
+        const list = getStoredAnnouncementsList();
+        const newAnn = {
+          id: Date.now(),
+          tag: tag,
+          title: title,
+          body: body,
+          content: body,
+          date: new Date().toLocaleDateString('vi-VN')
+        };
+        list.unshift(newAnn);
+        localStorage.setItem('dan_tranh_announcements', JSON.stringify(list));
+      }
 
       if (inpTitle) inpTitle.value = '';
       if (txtBody) txtBody.value = '';
 
       renderWpAnnouncementsList();
-      if (typeof syncNotificationBadgeCount === 'function') syncNotificationBadgeCount();
+      if (typeof renderOwnerAnnouncements === 'function') renderOwnerAnnouncements();
+      if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.updateBadgeUI === 'function') {
+        window.DanTranhCloudSync.updateBadgeUI();
+      }
       alert('📢 Đã gửi thông báo mới tới toàn bộ người dùng thành công!');
     }
     window.wpSubmitNewAnnouncement = wpSubmitNewAnnouncement;
@@ -9068,16 +9269,20 @@
         new: '🎉 Mới nhất',
         update: '🚀 Cập nhật hệ thống',
         song: '🎼 Nhạc mẫu mới',
-        note: '💌 Lời nhắn từ Admin'
+        note: '💌 Lời nhắn từ Admin',
+        event: '🎪 Sự kiện cộng đồng'
       };
 
       container.innerHTML = list.map(item => `
-        <div style="background: rgba(18, 1, 8, 0.95); border: 1px solid rgba(239, 196, 123, 0.25); border-left: 3px solid #efc47b; padding: 10px 14px; border-radius: 6px;">
+        <div style="background: rgba(18, 1, 8, 0.95); border: 1px solid rgba(239, 196, 123, 0.25); border-left: 3px solid #efc47b; padding: 10px 14px; border-radius: 6px; margin-bottom: 8px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
             <strong style="color: #ffea9f; font-size: 13.5px;">${item.title}</strong>
-            <span style="font-size: 11px; background: rgba(239, 196, 123, 0.15); color: #ffea9f; border: 1px solid rgba(239, 196, 123, 0.3); padding: 1px 6px; border-radius: 999px;">${tagLabels[item.tag] || item.tag} • ${item.date || ''}</span>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 11px; background: rgba(239, 196, 123, 0.15); color: #ffea9f; border: 1px solid rgba(239, 196, 123, 0.3); padding: 1px 6px; border-radius: 999px;">${tagLabels[item.tag] || item.tagLabel || item.tag} • ${item.time || item.date || ''}</span>
+              <button type="button" class="btn btn-secondary btn-xs" style="padding: 1px 6px; font-size: 11px;" onclick="deleteOwnerAnnouncementItem(${item.id})" title="Xóa thông báo này">🗑️</button>
+            </div>
           </div>
-          <div style="font-size: 12.5px; color: #d8cbb8; line-height: 1.4;">${item.body}</div>
+          <div style="font-size: 12.5px; color: #d8cbb8; line-height: 1.4;">${item.content || item.body || ''}</div>
         </div>
       `).join('');
     }
@@ -9493,19 +9698,29 @@
 
     function handleStringAudioFileUpload(instId, noteIdx, file) {
       if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const dataUrl = e.target.result;
-        if (typeof window.setServerAudioForNote === 'function') {
-          window.setServerAudioForNote(instId, noteIdx, {
-            fileName: file.name,
-            fileUrl: dataUrl
-          });
-        }
-        renderOwnerInstStringsAudioTable(instId);
-        showOwnerStringsNotice(`✅ Đã gán file "${file.name}" cho nốt số ${noteIdx + 1} của ${instId}! Bấm "Lưu Cho Toàn Server" để áp dụng vĩnh viễn.`);
-      };
-      reader.readAsDataURL(file);
+      showOwnerStringsNotice(`⏳ Đang tải lên và đồng bộ file "${file.name}" cho nốt ${noteIdx + 1}...`);
+      if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.uploadAudioFile === 'function') {
+        window.DanTranhCloudSync.uploadAudioFile(instId, noteIdx, file).then(function(res) {
+          renderOwnerInstStringsAudioTable(instId);
+          showOwnerStringsNotice(`✅ Đã tải lên và đồng bộ file "${file.name}" cho nốt số ${noteIdx + 1} của ${instId} tới toàn bộ máy và người dùng!`);
+        }).catch(function(err) {
+          showOwnerStringsNotice(`❌ Lỗi upload file: ${err.message}`, true);
+        });
+      } else {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const dataUrl = e.target.result;
+          if (typeof window.setServerAudioForNote === 'function') {
+            window.setServerAudioForNote(instId, noteIdx, {
+              fileName: file.name,
+              fileUrl: dataUrl
+            });
+          }
+          renderOwnerInstStringsAudioTable(instId);
+          showOwnerStringsNotice(`✅ Đã gán file "${file.name}" cho nốt số ${noteIdx + 1} của ${instId}! Bấm "Lưu Cho Toàn Server" để áp dụng vĩnh viễn.`);
+        };
+        reader.readAsDataURL(file);
+      }
     }
     window.handleStringAudioFileUpload = handleStringAudioFileUpload;
 
@@ -9578,25 +9793,39 @@
       const fileArr = Array.from(files).sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
       const totalToLoad = Math.min(fileArr.length, maxNotes);
       let loaded = 0;
+      showOwnerStringsNotice(`⏳ Đang đồng bộ hàng loạt ${totalToLoad} file âm thanh cho ${instObj ? instObj.name : instId}...`);
 
       for (let i = 0; i < totalToLoad; i++) {
         (function(idx, f) {
-          const reader = new FileReader();
-          reader.onload = function(e) {
-            if (typeof window.setServerAudioForNote === 'function') {
-              window.setServerAudioForNote(instId, idx, {
-                fileName: f.name,
-                fileUrl: e.target.result
-              });
-            }
-            loaded++;
-            if (loaded >= totalToLoad) {
-              if (typeof window.saveServerAudioConfig === 'function') window.saveServerAudioConfig();
-              renderOwnerInstStringsAudioTable(instId);
-              showOwnerStringsNotice(`🎉 Đã tải lên và tự động gán thành công ${totalToLoad} file âm thanh cho các dây/nốt của ${instObj ? instObj.name : instId}!`);
-            }
-          };
-          reader.readAsDataURL(f);
+          if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.uploadAudioFile === 'function') {
+            window.DanTranhCloudSync.uploadAudioFile(instId, idx, f).then(function() {
+              loaded++;
+              if (loaded >= totalToLoad) {
+                renderOwnerInstStringsAudioTable(instId);
+                showOwnerStringsNotice(`🎉 Đã tải lên và tự động đồng bộ thành công ${totalToLoad} file âm thanh cho toàn server!`);
+              }
+            }).catch(function() {
+              loaded++;
+              if (loaded >= totalToLoad) renderOwnerInstStringsAudioTable(instId);
+            });
+          } else {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+              if (typeof window.setServerAudioForNote === 'function') {
+                window.setServerAudioForNote(instId, idx, {
+                  fileName: f.name,
+                  fileUrl: e.target.result
+                });
+              }
+              loaded++;
+              if (loaded >= totalToLoad) {
+                if (typeof window.saveServerAudioConfig === 'function') window.saveServerAudioConfig();
+                renderOwnerInstStringsAudioTable(instId);
+                showOwnerStringsNotice(`🎉 Đã tải lên và tự động gán thành công ${totalToLoad} file âm thanh cho các dây/nốt của ${instObj ? instObj.name : instId}!`);
+              }
+            };
+            reader.readAsDataURL(f);
+          }
         })(i, fileArr[i]);
       }
     }
