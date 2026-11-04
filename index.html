@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
@@ -157,10 +157,6 @@
           🔔 Thông báo <span id="bellBadgeCount" style="display: none; background: #ef4444; color: #fff; font-size: 10.5px; font-weight: 800; padding: 1px 6px; border-radius: 999px; line-height: 1.3;"></span>
         </button>
 
-        <!-- Chế độ màn hình Sáng & Tối (Yêu cầu 2) -->
-        <button type="button" id="btnThemeToggle" onclick="toggleAppTheme()" class="btn btn-secondary btn-xs" title="Chuyển đổi giao diện Sáng / Tối" style="height: 36px; padding: 0 14px; font-size: 13px; font-weight: 700; border-radius: 999px; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;">
-          <span id="themeToggleIcon">🌙</span> <span id="themeToggleLabel">Tối</span>
-        </button>
       </div>
     </div>
 
@@ -5152,48 +5148,39 @@
     }
 
     // =========================================================
-    // YÊU CẦU 2: CHẾ ĐỘ MÀN HÌNH SÁNG & TỐI (LIGHT / DARK THEME)
+    // THEME GIAO DIỆN MẶC ĐỊNH (ĐỒNG BỘ GIAO DIỆN TỐI NGUYÊN BẢN)
     // =========================================================
+    function isPrimaryAdminAccount(userOrUsername) {
+      if (!userOrUsername) return false;
+      var uname = '';
+      if (typeof userOrUsername === 'string') {
+        uname = userOrUsername.toLowerCase().trim();
+      } else if (typeof userOrUsername === 'object') {
+        uname = (userOrUsername.username || '').toLowerCase().trim();
+      }
+      return uname === 'admin' || uname === 'owner';
+    }
+    window.isPrimaryAdminAccount = isPrimaryAdminAccount;
+
     function setAppTheme(theme) {
-      const isLight = theme === 'light';
-      if (isLight) {
-        document.body.classList.add('light-theme');
-        try { localStorage.setItem('dan_tranh_theme', 'light'); } catch(e) {}
-      } else {
-        document.body.classList.remove('light-theme');
-        try { localStorage.setItem('dan_tranh_theme', 'dark'); } catch(e) {}
-      }
-      const icon = document.getElementById('themeToggleIcon');
-      const label = document.getElementById('themeToggleLabel');
-      if (icon) icon.textContent = isLight ? '☀️' : '🌙';
-      if (label) label.textContent = isLight ? 'Sáng' : 'Tối';
-      document.querySelectorAll('.lux-theme-option').forEach(el => el.classList.remove('active'));
-      if (isLight) {
-        document.getElementById('optThemeLight')?.classList.add('active');
-      } else {
-        document.getElementById('optThemeDark')?.classList.add('active');
-      }
+      document.body.classList.remove('light-theme');
+      try { localStorage.removeItem('dan_tranh_theme'); } catch(e) {}
     }
     window.setAppTheme = setAppTheme;
 
     function toggleAppTheme() {
-      const isCurrentlyLight = document.body.classList.contains('light-theme');
-      setAppTheme(isCurrentlyLight ? 'dark' : 'light');
+      setAppTheme('dark');
     }
     window.toggleAppTheme = toggleAppTheme;
 
     function setLuxuryThemeMode(mode) {
-      setAppTheme(mode);
+      setAppTheme('dark');
     }
     window.setLuxuryThemeMode = setLuxuryThemeMode;
 
     function initAppTheme() {
-      try {
-        const saved = localStorage.getItem('dan_tranh_theme') || 'dark';
-        setAppTheme(saved);
-      } catch(e) {
-        setAppTheme('dark');
-      }
+      document.body.classList.remove('light-theme');
+      try { localStorage.removeItem('dan_tranh_theme'); } catch(e) {}
     }
     window.initAppTheme = initAppTheme;
     initAppTheme();
@@ -7146,7 +7133,8 @@
     function syncHeaderAndAccountUI() {
       const u = getActiveUserAccount();
       const isGuest = !u || u.role === 'guest' || u.username === 'guest';
-      const isOwner = !isGuest && (u.role === 'admin' || (u.username || '').toLowerCase() === 'owner');
+      const isPrimary = (typeof isPrimaryAdminAccount === 'function') ? isPrimaryAdminAccount(u) : ((u.username || '').toLowerCase() === 'admin' || (u.username || '').toLowerCase() === 'owner');
+      const isOwner = !isGuest && (u.role === 'admin' || (u.username || '').toLowerCase() === 'admin' || (u.username || '').toLowerCase() === 'owner');
 
       const btnOpenOwnerLogin = document.getElementById('btnOpenOwnerLogin');
       const ownerLoggedHeader = document.getElementById('ownerLoggedHeader');
@@ -7173,8 +7161,9 @@
       const dockBtnAccountEmoji = document.getElementById('dockBtnAccountEmoji');
 
       if (dockBtnAdminFloating) {
-        // Chỉ hiện nút quyền Admin khi là Admin / Owner
+        // Cả Admin chính và Admin phụ (sửa web) đều có thể mở Bảng Admin để chỉnh sửa web
         dockBtnAdminFloating.style.display = isOwner ? 'inline-flex' : 'none';
+        dockBtnAdminFloating.title = isPrimary ? 'Bảng Quản Trị Hệ Thống (Admin Chính)' : 'Bảng Điều Khiển Sửa Web (Admin Phụ)';
       }
 
       if (dockBtnAccountFloating) {
@@ -7182,7 +7171,7 @@
         if (isOwner) {
           // Khi là Admin: Nằm bên cạnh nút quyền admin (right: 246px)
           dockBtnAccountFloating.classList.add('is-admin-dock');
-          dockBtnAccountFloating.title = 'Cài đặt tài khoản & phím bấm (Admin)';
+          dockBtnAccountFloating.title = isPrimary ? 'Cài đặt tài khoản & phím bấm (Admin Chính)' : 'Cài đặt tài khoản & phím bấm (Admin Sửa Web)';
           if (dockBtnAccountEmoji) dockBtnAccountEmoji.textContent = '⚙️';
         } else {
           // Khi là người bình thường (khách hoặc user thường): Nằm ở vị trí nút bảng admin cũ (right: 172px)
@@ -7196,7 +7185,21 @@
       // 3. Cập nhật tên user trên topbar của WordPress
       const wpAdminBarUserName = document.getElementById('wpAdminBarUserName');
       if (wpAdminBarUserName) {
-        wpAdminBarUserName.textContent = isGuest ? 'Guest' : (u.username || 'owner');
+        if (isGuest) {
+          wpAdminBarUserName.textContent = 'Guest';
+        } else if (isPrimary) {
+          wpAdminBarUserName.innerHTML = '👑 Admin Chính (@' + escapeHtml(u.username) + ')';
+        } else if (isOwner) {
+          wpAdminBarUserName.innerHTML = '🛠️ Admin Sửa Web (@' + escapeHtml(u.username) + ')';
+        } else {
+          wpAdminBarUserName.textContent = u.username;
+        }
+      }
+
+      // 4. KIỂM SOÁT QUYỀN TRÊN MENU WORDPRESS ADMIN: CHỈ ADMIN CHÍNH MỚI THẤY MENU USERS
+      const wpMenuItemUsers = document.getElementById('wpMenuItemUsers');
+      if (wpMenuItemUsers) {
+        wpMenuItemUsers.style.display = isPrimary ? 'block' : 'none';
       }
 
       if (isGuest) {
@@ -7256,14 +7259,20 @@
       if (profBadge) {
         profBadge.textContent = isGuest
           ? 'Lưu cục bộ trên trình duyệt'
-          : (isOwner ? '👑 Tài khoản Owner (Có thêm Bảng Owner & Xem báo cáo)' : '✨ Thành viên chính thức');
+          : (isPrimary
+              ? '👑 Quản trị viên Chính (Toàn quyền quản trị & kiểm soát người dùng)'
+              : (isOwner
+                  ? '🛠️ Quản trị viên Phụ (Quyền sửa web & nhạc cụ)'
+                  : '✨ Thành viên chính thức'));
       }
       if (profSub) {
         profSub.textContent = isGuest
           ? 'Nhấn nút "Log In" trên thanh công cụ để Đăng nhập hoặc Tạo tài khoản (Sign Up) và lưu riêng cấu hình nút bấm, bài đã đánh!'
-          : (isOwner
-              ? `Tài khoản @${u.username} hoạt động như một tài khoản bình thường (lưu setting nút bấm, bài đã đánh, lịch sử web) và có thêm quyền mở Bảng Owner di động & xem toàn bộ báo cáo từ người dùng.`
-              : `Đang đồng bộ tự động setting nút bấm cá nhân, lịch sử sử dụng web, các bài đã đánh và nhạc cụ yêu thích vào tài khoản @${u.username}.`);
+          : (isPrimary
+              ? `Tài khoản @${u.username} là Quản trị viên chính với toàn quyền quản trị: thêm, sửa, khóa, xóa tài khoản người dùng và quản lý toàn bộ hệ thống website.`
+              : (isOwner
+                  ? `Tài khoản @${u.username} là Quản trị viên phụ do Admin chính tạo ra: có quyền sửa web, chỉnh cấu hình âm thanh nhạc cụ và đăng thông báo (không có quyền quản lý tài khoản người dùng).`
+                  : `Đang đồng bộ tự động setting nút bấm cá nhân, lịch sử sử dụng web, các bài đã đánh và nhạc cụ yêu thích vào tài khoản @${u.username}.`));
       }
       if (guestActions) guestActions.style.display = isGuest ? 'flex' : 'none';
       if (loggedActions) loggedActions.style.display = isGuest ? 'none' : 'flex';
@@ -7955,6 +7964,10 @@
         initOwnerSoundSettingsPanel();
         renderOwnerFeedbackInbox();
         syncOwnerHeaderFeedbackBadge();
+        const curU = typeof getActiveUserAccount === 'function' ? getActiveUserAccount() : null;
+        const isPrimaryUser = typeof isPrimaryAdminAccount === 'function' ? isPrimaryAdminAccount(curU) : false;
+        const menuUsersEl = document.getElementById('wpMenuItemUsers');
+        if (menuUsersEl) menuUsersEl.style.display = isPrimaryUser ? 'block' : 'none';
         if (typeof switchWpAdminView === 'function') {
           switchWpAdminView(initialTab || 'posts');
         } else if (initialTab) {
@@ -8635,6 +8648,15 @@
     window.wpItemsPerPage = 20;
 
     function switchWpAdminView(viewKey) {
+      const curActiveUser = (typeof getActiveUserAccount === 'function') ? getActiveUserAccount() : null;
+      const isCurPrimary = (typeof isPrimaryAdminAccount === 'function') ? isPrimaryAdminAccount(curActiveUser) : false;
+
+      // Bảo vệ: Admin phụ do Admin chính tạo ra CHỈ CÓ QUYỀN SỬA WEB, KHÔNG CÓ QUYỀN QUẢN LÝ ACC
+      if (viewKey === 'users' && !isCurPrimary) {
+        alert('🔒 Bạn là Quản trị viên phụ (chỉ có quyền sửa web), không có quyền quản lý tài khoản người dùng!');
+        viewKey = 'posts';
+      }
+
       window.currentWpAdminView = viewKey || 'posts';
 
       // 1. Ẩn tất cả các view section
@@ -11563,6 +11585,15 @@
       const badge = document.getElementById('wpUsersCountBadge');
       if (!tbody) return;
 
+      const curUser = (typeof getActiveUserAccount === 'function') ? getActiveUserAccount() : null;
+      const isCurPrimary = (typeof isPrimaryAdminAccount === 'function') ? isPrimaryAdminAccount(curUser) : false;
+
+      // Nếu không phải Admin chính, chặn hiển thị bảng quản lý tài khoản
+      if (!isCurPrimary) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 28px; color: #f87171; font-weight: 600;">🔒 Bạn đang đăng nhập bằng tài khoản Quản trị viên phụ (chỉ có quyền sửa web). Khu vực kiểm soát tài khoản người dùng chỉ dành riêng cho Admin chính.</td></tr>';
+        return;
+      }
+
       const q = (document.getElementById('wpUserSearchInput')?.value || '').trim().toLowerCase();
       const roleFilter = document.getElementById('wpUserRoleFilter')?.value || 'all';
 
@@ -11587,11 +11618,19 @@
       }
 
       tbody.innerHTML = users.map(u => {
-        const isAdmin = (u.role === 'admin' || u.username.toLowerCase() === 'admin' || u.username.toLowerCase() === 'owner');
+        const isPrimaryAdminUser = (typeof isPrimaryAdminAccount === 'function') ? isPrimaryAdminAccount(u) : (u.username.toLowerCase() === 'admin' || u.username.toLowerCase() === 'owner');
+        const isSubAdminUser = !isPrimaryAdminUser && (u.role === 'admin');
         const isLocked = !!u.isLocked;
-        const roleBadge = isAdmin
-          ? '<span style="background: linear-gradient(135deg, #de194b, #b91c1c); color: #fff; border: 1px solid #efc47b; padding: 4px 12px; border-radius: 999px; font-size: 11.5px; font-weight: 700; white-space: nowrap !important; display: inline-flex; align-items: center; min-width: max-content; box-shadow: 0 2px 6px rgba(222,25,75,0.3);">Quản trị viên (Admin)</span>'
-          : '<span style="background: rgba(239, 196, 123, 0.15); border: 1px solid rgba(239, 196, 123, 0.35); color: #ffea9f; padding: 4px 12px; border-radius: 999px; font-size: 11.5px; white-space: nowrap !important; display: inline-flex; align-items: center; min-width: max-content;">Thành viên</span>';
+
+        let roleBadge = '';
+        if (isPrimaryAdminUser) {
+          roleBadge = '<span style="background: linear-gradient(135deg, #b91c1c, #991b1b); color: #fff; border: 1px solid #efc47b; padding: 4px 12px; border-radius: 999px; font-size: 11.5px; font-weight: 700; white-space: nowrap !important; display: inline-flex; align-items: center; min-width: max-content; box-shadow: 0 2px 6px rgba(185,28,28,0.35);">👑 Quản trị viên Chính</span>';
+        } else if (isSubAdminUser) {
+          roleBadge = '<span style="background: linear-gradient(135deg, #1d4ed8, #1e40af); color: #dbeafe; border: 1px solid #93c5fa; padding: 4px 12px; border-radius: 999px; font-size: 11.5px; font-weight: 700; white-space: nowrap !important; display: inline-flex; align-items: center; min-width: max-content; box-shadow: 0 2px 6px rgba(29,78,216,0.3);">🛠️ Quản trị viên (Sửa Web)</span>';
+        } else {
+          roleBadge = '<span style="background: rgba(239, 196, 123, 0.15); border: 1px solid rgba(239, 196, 123, 0.35); color: #ffea9f; padding: 4px 12px; border-radius: 999px; font-size: 11.5px; white-space: nowrap !important; display: inline-flex; align-items: center; min-width: max-content;">Thành viên</span>';
+        }
+
         const statusBadge = isLocked
           ? '<span style="color: #f87171; font-weight: 700; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;"><span>🔒</span> <span>Đã bị khóa</span></span>'
           : '<span style="color: #6ee7b7; font-weight: 700; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;"><span>✅</span> <span>Hoạt động</span></span>';
@@ -11629,12 +11668,12 @@
                 <button type="button" class="btn btn-secondary btn-xs" onclick="adminChangeUserPasswordPrompt('${safeU}')" title="Đổi mật khẩu tài khoản" style="white-space: nowrap; padding: 4px 12px; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">
                   <span>🔑</span> <span>Đổi MK</span>
                 </button>
-                ${!isAdmin ? `
+                ${!isPrimaryAdminUser ? `
                   <button type="button" class="btn btn-xs" onclick="adminToggleUserLock('${safeU}')" style="background: ${isLocked ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)'}; border: 1px solid ${isLocked ? '#22c55e' : '#ef4444'}; color: ${isLocked ? '#86efac' : '#fca5a5'}; padding: 4px 10px; border-radius: 6px; white-space: nowrap;" title="${isLocked ? 'Mở khóa tài khoản' : 'Khóa tài khoản'}">
                     ${isLocked ? '🔓 Mở' : '🔒 Khóa'}
                   </button>
-                  <button type="button" class="btn btn-danger btn-xs" onclick="adminDeleteUserPrompt('${safeU}')" style="padding: 4px 8px; border-radius: 6px; white-space: nowrap;" title="Xóa tài khoản">
-                    🗑️
+                  <button type="button" class="btn btn-danger btn-xs" onclick="adminDeleteUserPrompt('${safeU}')" style="padding: 4px 10px; border-radius: 6px; white-space: nowrap; font-weight: 700;" title="Xóa tài khoản này">
+                    🗑️ Xóa
                   </button>
                 ` : '<span style="font-size: 11.5px; color: #a1a1aa; font-style: italic; white-space: nowrap;">(Bảo vệ)</span>'}
               </div>
@@ -11657,9 +11696,18 @@
     window.adminToggleShowPass = adminToggleShowPass;
 
     function adminAddNewUserPrompt() {
+      const cur = (typeof getActiveUserAccount === 'function') ? getActiveUserAccount() : null;
+      if (!isPrimaryAdminAccount(cur)) {
+        alert('🔒 Chỉ Quản trị viên chính (Admin chính) mới có quyền tạo và phân quyền tài khoản!');
+        return;
+      }
       const u = prompt('Nhập tên tài khoản (Username) mới:');
       if (!u || !u.trim()) return;
       const cleanU = u.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
+      if (!cleanU) {
+        alert('Tên tài khoản không hợp lệ!');
+        return;
+      }
       const users = getRegisteredUsersList();
       if (users.some(x => x.username.toLowerCase() === cleanU)) {
         alert('Tên tài khoản này đã tồn tại!');
@@ -11667,24 +11715,32 @@
       }
       const p = prompt('Nhập mật khẩu cho tài khoản mới:') || '123456';
       const dn = prompt('Nhập tên hiển thị:') || cleanU;
-      const role = confirm('Cấp quyền Quản trị viên (Admin) cho tài khoản này? Bấm OK nếu là Admin, Cancel nếu là Thành viên.') ? 'admin' : 'member';
+      const isMakeAdmin = confirm('Cấp quyền Quản trị viên phụ (chỉ có quyền Sửa Web) cho tài khoản này?\n\n• Bấm OK: Cấp quyền Quản trị viên phụ (chỉ sửa web, không quản lý tài khoản)\n• Bấm Cancel: Tài khoản Thành viên thông thường');
+      const role = isMakeAdmin ? 'admin' : 'member';
 
       users.push({
         username: cleanU,
         password: p,
         displayName: dn,
         role: role,
-        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+        isSubAdmin: isMakeAdmin,
+        createdBy: cur.username || 'admin',
+        avatar: isMakeAdmin ? 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80' : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
         createdAt: new Date().toISOString().slice(0, 10),
         isLocked: false
       });
       saveRegisteredUsersList(users);
       renderWpUsersManagementTable();
-      alert(`✅ Đã thêm tài khoản @${cleanU} thành công!`);
+      alert(`✅ Đã thêm tài khoản @${cleanU} (${isMakeAdmin ? 'Quản trị viên phụ - Sửa web' : 'Thành viên'}) thành công!`);
     }
     window.adminAddNewUserPrompt = adminAddNewUserPrompt;
 
     function adminChangeUserPasswordPrompt(username) {
+      const cur = (typeof getActiveUserAccount === 'function') ? getActiveUserAccount() : null;
+      if (!isPrimaryAdminAccount(cur)) {
+        alert('🔒 Chỉ Quản trị viên chính (Admin chính) mới có quyền đổi mật khẩu của tài khoản khác!');
+        return;
+      }
       const newPass = prompt(`Nhập mật khẩu mới cho tài khoản @${username}:`);
       if (!newPass || !newPass.trim()) return;
       const users = getRegisteredUsersList();
@@ -11699,6 +11755,15 @@
     window.adminChangeUserPasswordPrompt = adminChangeUserPasswordPrompt;
 
     function adminToggleUserLock(username) {
+      const cur = (typeof getActiveUserAccount === 'function') ? getActiveUserAccount() : null;
+      if (!isPrimaryAdminAccount(cur)) {
+        alert('🔒 Chỉ Quản trị viên chính (Admin chính) mới có quyền khóa/mở khóa tài khoản!');
+        return;
+      }
+      if (isPrimaryAdminAccount(username)) {
+        alert('⚠️ Không thể khóa tài khoản Quản trị viên chính hệ thống!');
+        return;
+      }
       const users = getRegisteredUsersList();
       const user = users.find(x => x.username.toLowerCase() === username.toLowerCase());
       if (user) {
@@ -11711,12 +11776,32 @@
     window.adminToggleUserLock = adminToggleUserLock;
 
     function adminDeleteUserPrompt(username) {
-      if (!confirm(`Bạn có chắc chắn muốn xóa tài khoản @${username} khỏi hệ thống?`)) return;
+      const cur = (typeof getActiveUserAccount === 'function') ? getActiveUserAccount() : null;
+      if (!isPrimaryAdminAccount(cur)) {
+        alert('🔒 Chỉ Quản trị viên chính (Admin chính) mới có quyền xóa tài khoản!');
+        return;
+      }
+      if (isPrimaryAdminAccount(username)) {
+        alert('⚠️ Không thể xóa tài khoản Quản trị viên chính hệ thống!');
+        return;
+      }
       let users = getRegisteredUsersList();
+      const targetUser = users.find(x => x.username.toLowerCase() === username.toLowerCase());
+      if (!targetUser) {
+        alert('Không tìm thấy tài khoản này trong hệ thống!');
+        return;
+      }
+      const isTargetAdmin = targetUser.role === 'admin';
+      const promptText = isTargetAdmin
+        ? `Xác nhận xóa tài khoản Quản trị viên phụ @${username} (do Admin chính tạo ra)?\nTài khoản này sẽ bị thu hồi toàn bộ quyền quản trị sửa web!`
+        : `Bạn có chắc chắn muốn xóa tài khoản @${username} khỏi hệ thống?`;
+
+      if (!confirm(promptText)) return;
+
       users = users.filter(x => x.username.toLowerCase() !== username.toLowerCase());
       saveRegisteredUsersList(users);
       renderWpUsersManagementTable();
-      alert(`🗑️ Đã xóa tài khoản @${username}!`);
+      alert(`🗑️ Đã xóa thành công tài khoản @${username}!`);
     }
     window.adminDeleteUserPrompt = adminDeleteUserPrompt;
 
