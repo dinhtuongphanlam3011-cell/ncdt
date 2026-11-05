@@ -85,18 +85,21 @@
     /* Đảm bảo nút đóng trong thanh minimized không bị tràn chữ 'Đóng' xuống dòng dưới (Ảnh 2) */
     .owner-floating-window.minimized .wp-bar-actions .wp-bar-close-btn,
     .owner-floating-window.minimized .wp-bar-close-btn {
-      width: auto !important;
+      width: 26px !important;
       min-width: 26px !important;
       height: 26px !important;
-      padding: 0 10px !important;
-      border-radius: 999px !important;
+      min-height: 26px !important;
+      padding: 0 !important;
+      border-radius: 50% !important;
       white-space: nowrap !important;
       display: inline-flex !important;
       align-items: center !important;
       justify-content: center !important;
-      gap: 4px !important;
-      font-size: 11px !important;
+      font-size: 13px !important;
       line-height: 1 !important;
+    }
+    .owner-floating-window.minimized .wp-bar-close-btn .wp-bar-btn-text {
+      display: none !important;
     }
 
     /* Yêu cầu 4: Bỏ làm mờ màn hình khi tạo bài viết diễn đàn và làm tab nổi di chuyển được */
@@ -307,6 +310,52 @@
       padding: 0 12px;
       box-sizing: border-box;
       outline: none;
+    }
+
+    /* Yêu cầu 1: Làm mọi thứ trong trang giới thiệu không thể chọn (no selected / unselectable) */
+    #tabContentEncyclopedia,
+    #tabContentEncyclopedia *,
+    #tabContentLookup,
+    #tabContentLookup *,
+    #ttttIntroSection,
+    #ttttIntroSection *,
+    #ttttDetailedInfoSection,
+    #ttttDetailedInfoSection *,
+    .tttt-intro-glass-card,
+    .tttt-intro-glass-card *,
+    .lux-research-card,
+    .lux-research-card *,
+    .tttt-roadmap-card,
+    .tttt-roadmap-card *,
+    .lux-research-dossier-box,
+    .lux-research-dossier-box *,
+    #modalInstrumentDossier,
+    #modalInstrumentDossier * {
+      -webkit-user-select: none !important;
+      -moz-user-select: none !important;
+      -ms-user-select: none !important;
+      user-select: none !important;
+      -webkit-touch-callout: none !important;
+    }
+
+    #tabContentEncyclopedia ::selection,
+    #tabContentLookup ::selection,
+    #ttttIntroSection ::selection,
+    #ttttDetailedInfoSection ::selection,
+    .tttt-intro-glass-card ::selection,
+    .lux-research-dossier-box ::selection,
+    #modalInstrumentDossier ::selection {
+      background: transparent !important;
+      color: inherit !important;
+    }
+
+    #tabContentEncyclopedia img,
+    #tabContentEncyclopedia a,
+    #tabContentEncyclopedia svg,
+    .tttt-intro-glass-card img,
+    .lux-research-dossier-box img {
+      -webkit-user-drag: none !important;
+      user-drag: none !important;
     }
   </style>
 </head>
@@ -557,7 +606,7 @@
   <!-- =========================================================
        TAB 1: TRANG CHỦ HERITUNE
        ========================================================= -->
-  <div id="tabContentEncyclopedia" class="tab-pane active" style="display: block;">
+  <div id="tabContentEncyclopedia" class="tab-pane active" style="display: block; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;" onselectstart="return false;">
     <section class="encyclopedia-section tttt-home-wrapper" id="encyclopediaSection">
 
       <!-- 1. HERO SPLIT 2 CỘT HERITUNE -->
@@ -705,7 +754,7 @@
   <!-- =========================================================
        TAB 2: THÔNG TIN CHI TIẾT & HỒ SƠ NGHIÊN CỨU NHẠC CỤ ĐANG CHỌN (VÀO THẲNG CHI TIẾT, BỎ THANH CHỌN PILL)
        ========================================================= -->
-  <div id="tabContentLookup" class="tab-pane" style="display: none;">
+  <div id="tabContentLookup" class="tab-pane" style="display: none; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;" onselectstart="return false;">
     <section class="encyclopedia-section" style="margin-top: 24px;">
 
       <!-- Khung Thông Tin Chi Tiết & Nghiên Cứu Chuyên Sâu Nhạc Cụ Đang Chọn -->
@@ -2669,8 +2718,8 @@
           <button type="button" class="wp-bar-action-btn" onclick="resetOwnerWindowPosition()" title="Căn giữa màn hình">
             🎯 Căn giữa
           </button>
-          <button type="button" class="wp-bar-action-btn wp-bar-close-btn" onclick="toggleOwnerFloatingWindow(false)" title="Đóng bảng Admin" style="white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; gap: 4px;">
-            ✕ Đóng
+          <button type="button" class="wp-bar-action-btn wp-bar-close-btn" onclick="toggleOwnerFloatingWindow(false)" title="Đóng bảng Admin" style="white-space: nowrap; display: inline-flex; align-items: center; justify-content: center;">
+            <span style="font-size: 13px; line-height: 1;">✕</span><span class="wp-bar-btn-text" style="font-size: 12px; font-weight: 600; margin-left: 4px;">Đóng</span>
           </button>
         </div>
       </div>
@@ -3134,12 +3183,12 @@
               <span>🌐</span> <span>Chế độ Đồng Bộ &amp; Dịch Vụ Cloud (Server/Storage)</span>
             </h3>
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 20px;">
+            <div class="wp-cloud-mode-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 20px;">
               <!-- Thẻ Cloud Relay Tự Động -->
               <div style="background: rgba(18, 1, 8, 0.85); border: 1.5px solid rgba(239, 196, 123, 0.35); border-radius: 10px; padding: 16px;">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                  <strong style="color: #6ee7b7; font-size: 13.5px;">1. Cloud Relay Tự Động (Mặc định)</strong>
-                  <span style="background: rgba(34, 197, 94, 0.2); color: #86efac; font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 700;">Khuyên Dùng</span>
+                <div class="wp-cloud-card-header" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px;">
+                  <strong style="color: #6ee7b7; font-size: 13.5px; white-space: nowrap;">1. Cloud Relay Tự Động (Mặc định)</strong>
+                  <span class="wp-cloud-badge" style="background: rgba(34, 197, 94, 0.2); color: #86efac; font-size: 11px; padding: 3px 10px; border-radius: 999px; font-weight: 700; white-space: nowrap; flex-shrink: 0;">Khuyên Dùng</span>
                 </div>
                 <p style="font-size: 12px; color: #d8cbb8; margin: 0 0 12px 0; line-height: 1.5;">Tự động đồng bộ file âm thanh, thông báo và trạng thái đọc đa thiết bị ngay tức thì qua BroadcastBus &amp; Ticker 3.5s mà không cần cấu hình phức tạp.</p>
                 <div style="font-size: 11.5px; color: #a1a1aa;">Trạng thái: <strong style="color: #6ee7b7;">Sẵn sàng 100%</strong></div>
@@ -3147,9 +3196,9 @@
 
               <!-- Thẻ Supabase -->
               <div style="background: rgba(18, 1, 8, 0.85); border: 1px solid rgba(239, 196, 123, 0.25); border-radius: 10px; padding: 16px;">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                  <strong style="color: #93c5fa; font-size: 13.5px;">2. Supabase (PostgreSQL &amp; Storage)</strong>
-                  <span style="background: rgba(59, 130, 246, 0.2); color: #93c5fa; font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 700;">Tùy chọn</span>
+                <div class="wp-cloud-card-header" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px;">
+                  <strong style="color: #93c5fa; font-size: 13.5px; white-space: nowrap;">2. Supabase (PostgreSQL &amp; Storage)</strong>
+                  <span class="wp-cloud-badge" style="background: rgba(59, 130, 246, 0.2); color: #93c5fa; font-size: 11px; padding: 3px 10px; border-radius: 999px; font-weight: 700; white-space: nowrap; flex-shrink: 0;">Tùy chọn</span>
                 </div>
                 <p style="font-size: 12px; color: #d8cbb8; margin: 0 0 12px 0; line-height: 1.5;">Kết nối cơ sở dữ liệu PostgreSQL, WebSocket Realtime và lưu file MP3/WAV vào Bucket Storage độc lập của riêng bạn.</p>
                 <div style="font-size: 11.5px; color: #a1a1aa;">Hỗ trợ: <strong style="color: #93c5fa;">Bucket 'dan_tranh_audio'</strong></div>
@@ -3157,9 +3206,9 @@
 
               <!-- Thẻ Firebase -->
               <div style="background: rgba(18, 1, 8, 0.85); border: 1px solid rgba(239, 196, 123, 0.25); border-radius: 10px; padding: 16px;">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                  <strong style="color: #fca5a5; font-size: 13.5px;">3. Firebase Realtime DB &amp; Storage</strong>
-                  <span style="background: rgba(239, 68, 68, 0.2); color: #fca5a5; font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 700;">Tùy chọn</span>
+                <div class="wp-cloud-card-header" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px;">
+                  <strong style="color: #fca5a5; font-size: 13.5px; white-space: nowrap;">3. Firebase Realtime DB &amp; Storage</strong>
+                  <span class="wp-cloud-badge" style="background: rgba(239, 68, 68, 0.2); color: #fca5a5; font-size: 11px; padding: 3px 10px; border-radius: 999px; font-weight: 700; white-space: nowrap; flex-shrink: 0;">Tùy chọn</span>
                 </div>
                 <p style="font-size: 12px; color: #d8cbb8; margin: 0 0 12px 0; line-height: 1.5;">Kết nối Firebase Realtime Database và Google Cloud Storage để đồng bộ đẩy dữ liệu qua giao thức WebSocket.</p>
                 <div style="font-size: 11.5px; color: #a1a1aa;">Hỗ trợ: <strong style="color: #fca5a5;">RTDB + Firebase Storage</strong></div>
@@ -6128,7 +6177,24 @@
     }
     window.renderUserAvatarHelper = renderUserAvatarHelper;
 
+    // Yêu cầu: Mặc định luôn ở trạng thái "Chưa đăng nhập" (Khách / Guest) khi tải hoặc mở mới website
+    if (sessionStorage.getItem('dan_tranh_session_authenticated') !== 'true') {
+      try {
+        localStorage.removeItem('dan_tranh_owner_session');
+        localStorage.removeItem('dan_tranh_user_session');
+        localStorage.removeItem('dan_tranh_active_user');
+      } catch (e) {}
+    }
+
     function getActiveUserAccount() {
+      if (sessionStorage.getItem('dan_tranh_session_authenticated') !== 'true') {
+        return {
+          username: 'guest',
+          displayName: 'Khách (Guest)',
+          role: 'guest',
+          avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'
+        };
+      }
       try {
         const userRaw = localStorage.getItem('dan_tranh_user_session');
         if (userRaw) {
@@ -6152,8 +6218,7 @@
             return parsedOwner;
           }
         }
-      }
- catch (e) {}
+      } catch (e) {}
       return {
         username: 'guest',
         displayName: 'Khách (Guest)',
@@ -6163,9 +6228,13 @@
     }
 
     function setActiveUserAccount(userObj) {
-      if (!userObj || userObj.username === 'guest') {
+      if (!userObj || userObj.username === 'guest' || userObj.role === 'guest') {
+        sessionStorage.removeItem('dan_tranh_session_authenticated');
         localStorage.removeItem('dan_tranh_user_session');
+        localStorage.removeItem('dan_tranh_owner_session');
+        localStorage.removeItem('dan_tranh_active_user');
       } else {
+        sessionStorage.setItem('dan_tranh_session_authenticated', 'true');
         localStorage.setItem('dan_tranh_user_session', JSON.stringify(userObj));
       }
       syncHeaderAndAccountUI();

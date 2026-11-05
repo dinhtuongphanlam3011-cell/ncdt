@@ -11311,3 +11311,107 @@ label {
     margin: 10px;
   }
 }
+
+/* =========================================================
+   YÊU CẦU 1: LÀM MỌI THỨ TRONG TRANG GIỚI THIỆU KHÔNG THỂ CHỌN (NO SELECTED / UNSELECTABLE)
+   ========================================================= */
+#tabContentEncyclopedia,
+#tabContentEncyclopedia *,
+#tabContentLookup,
+#tabContentLookup *,
+#ttttIntroSection,
+#ttttIntroSection *,
+#ttttDetailedInfoSection,
+#ttttDetailedInfoSection *,
+.tttt-intro-glass-card,
+.tttt-intro-glass-card *,
+.lux-research-card,
+.lux-research-card *,
+.tttt-roadmap-card,
+.tttt-roadmap-card *,
+.lux-research-dossier-box,
+.lux-research-dossier-box *,
+#modalInstrumentDossier,
+#modalInstrumentDossier * {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+}
+
+#tabContentEncyclopedia ::selection,
+#tabContentLookup ::selection,
+#ttttIntroSection ::selection,
+#ttttDetailedInfoSection ::selection,
+.tttt-intro-glass-card ::selection,
+.lux-research-dossier-box ::selection,
+#modalInstrumentDossier ::selection {
+  background: transparent !important;
+  color: inherit !important;
+}
+
+#tabContentEncyclopedia img,
+#tabContentEncyclopedia a,
+#tabContentEncyclopedia svg,
+.tttt-intro-glass-card img,
+.lux-research-dossier-box img {
+  -webkit-user-drag: none !important;
+  user-drag: none !important;
+}
+
+/* =========================================================
+   FIX ANH 2: Nut dong trong thanh minimized tron 26px khong tran chu
+   ========================================================= */
+.owner-floating-window.minimized .wp-bar-actions .wp-bar-close-btn,
+.owner-floating-window.minimized .wp-bar-close-btn {
+  width: 26px !important;
+  min-width: 26px !important;
+  max-width: 26px !important;
+  height: 26px !important;
+  min-height: 26px !important;
+  max-height: 26px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  white-space: nowrap !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 13px !important;
+  line-height: 1 !important;
+}
+.owner-floating-window.minimized .wp-bar-close-btn .wp-bar-btn-text {
+  display: none !important;
+}
+
+/* =========================================================
+   FIX ANH 4: An hoan toan cum chu de AI trong dien dan
+   ========================================================= */
+#mitAiTopicClusterPanel,
+.mit-ai-topic-cluster-panel {
+  display: none !important;
+}
+
+/* =========================================================
+   FIX ANH 1: The Cloud Relay, Supabase, Firebase khong bi tran chu hay rot dong
+   ========================================================= */
+.wp-cloud-mode-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
+  gap: 16px !important;
+}
+.wp-cloud-card-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  margin-bottom: 8px !important;
+}
+.wp-cloud-badge {
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1.2 !important;
+}

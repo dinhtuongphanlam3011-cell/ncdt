@@ -802,10 +802,11 @@
     updateReportBadges();
   }
 
-  // Khôi phục phiên tài khoản đã từng đăng nhập trên máy này; máy mới mở chưa từng đăng nhập sẽ là Khách (Guest)
+  // Mặc định luôn ở trạng thái "Chưa đăng nhập" (Khách / Guest), chỉ khôi phục nếu người dùng chủ động đăng nhập trong phiên này
   try {
-    var savedOwner = localStorage.getItem("dan_tranh_owner_session");
-    var savedUser = localStorage.getItem("dan_tranh_user_session");
+    var isAuthSession = sessionStorage.getItem("dan_tranh_session_authenticated") === "true";
+    var savedOwner = isAuthSession ? localStorage.getItem("dan_tranh_owner_session") : null;
+    var savedUser = isAuthSession ? localStorage.getItem("dan_tranh_user_session") : null;
     var parsedSession = null;
     if (savedUser) parsedSession = JSON.parse(savedUser);
     else if (savedOwner) parsedSession = JSON.parse(savedOwner);
