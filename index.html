@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
@@ -503,7 +503,7 @@
         <button type="button" class="mit-create-post-btn" onclick="openRedditComposer()" title="Đăng bài viết mới lên diễn đàn MIT">
           <span>➕</span> <span>Tạo bài viết</span>
         </button>
-        <div class="mit-user-avatar-btn" id="mitTaskbarUserAvatar" onclick="switchNavTab('feedback')" title="Hồ sơ cá nhân">
+        <div class="mit-user-avatar-btn" id="mitTaskbarUserAvatar" onclick="openForumUserProfile()" title="Trang cá nhân của tôi">
           🪕
           <span class="reddit-online-dot"></span>
         </div>
@@ -970,6 +970,13 @@
               <span>Khám phá chủ đề</span>
             </li>
             <li class="reddit-nav-item" onclick="openRedditComposer()" style="color: #ffea9f;">
+              <span class="reddit-nav-item-icon">➕</span>
+              <span>Tạo bài viết mới</span>
+            </li>
+            <li class="reddit-nav-item" onclick="openForumUserProfile()" style="color: #ffea9f;">
+              <span class="reddit-nav-item-icon">👤</span>
+              <span>Trang cá nhân của tôi</span>
+            </li>
               <span class="reddit-nav-item-icon">➕</span>
               <span>Tạo bài viết mới</span>
             </li>
@@ -2014,10 +2021,9 @@
               <div style="display: flex; align-items: center; gap: 16px;">
                 <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
                   <div class="lux-profile-avatar" id="accProfileAvatar" style="width: 68px; height: 68px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; background: rgba(239, 196, 123, 0.2); border: 2px solid rgba(239, 196, 123, 0.6); font-size: 32px; box-shadow: 0 4px 16px rgba(0,0,0,0.5);">👤</div>
-                  <label class="btn btn-secondary btn-xs" style="cursor: pointer; border-radius: 999px; padding: 3px 10px; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; border-color: rgba(239,196,123,0.4);" title="Tải ảnh avatar từ máy tính">
-                    <input type="file" id="inpUploadUserAvatar" accept="image/*" style="display: none;" onchange="handleUserAvatarUpload(event)">
-                    📷 Đổi avatar
-                  </label>
+                  <button type="button" class="btn btn-secondary btn-xs" onclick="openAvatarPickerModal()" style="cursor: pointer; border-radius: 999px; padding: 5px 14px; font-size: 11.5px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 6px; border-color: rgba(239,196,123,0.45); white-space: nowrap !important; background: rgba(239,196,123,0.12); color: #ffea9f; min-width: 104px; flex-shrink: 0;" title="Mở bộ sưu tập avatar hoặc tải ảnh từ máy">
+                    <span style="white-space: nowrap !important; display: inline-block;">📷 Đổi avatar</span>
+                  </button>
                 </div>
                 <div>
                   <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
@@ -2589,6 +2595,215 @@
         </div>
 
       </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       MODAL TRANG CÁ NHÂN NGƯỜI DÙNG TRONG DIỄN ĐÀN (YÊU CẦU 2)
+       ========================================================= -->
+  <div id="modalForumUserProfile" class="modal-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.78); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); z-index: 100000; align-items: center; justify-content: center;" onclick="if(event.target === this) closeForumUserProfile()">
+    <div class="lux-profile-dialog" style="position: relative; width: 720px; max-width: calc(100vw - 32px); max-height: calc(100vh - 48px); background: linear-gradient(155deg, rgba(32, 20, 16, 0.98) 0%, rgba(18, 10, 8, 0.99) 100%); border: 1.5px solid rgba(239, 196, 123, 0.45); border-radius: 20px; box-shadow: 0 24px 64px rgba(0,0,0,0.85), 0 0 40px rgba(239, 196, 123, 0.2); overflow: hidden; display: flex; flex-direction: column;" onclick="event.stopPropagation()">
+      
+      <!-- Header bar with title and close button -->
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid rgba(239, 196, 123, 0.25); background: rgba(0, 0, 0, 0.35);">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 18px;">👤</span>
+          <span style="font-size: 14px; font-weight: 700; color: #ffea9f; text-transform: uppercase; letter-spacing: 0.05em;">Hồ Sơ Cá Nhân Diễn Đàn</span>
+        </div>
+        <button type="button" onclick="closeForumUserProfile()" style="width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.08); border: 1px solid rgba(239,196,123,0.3); color: #ffea9f; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Đóng">✕</button>
+      </div>
+
+      <!-- Scrollable content area -->
+      <div style="flex: 1; overflow-y: auto; padding: 20px 24px;">
+        
+        <!-- Profile Banner & Hero Header -->
+        <div style="display: flex; gap: 20px; align-items: flex-start; padding-bottom: 20px; border-bottom: 1px solid rgba(239, 196, 123, 0.2); flex-wrap: wrap;">
+          <div style="position: relative; flex-shrink: 0;">
+            <div id="forumProfileAvatarBox" style="width: 86px; height: 86px; border-radius: 50%; overflow: hidden; border: 3px solid #efc47b; box-shadow: 0 4px 20px rgba(239,196,123,0.35); background: #261208; display: flex; align-items: center; justify-content: center; font-size: 38px;"></div>
+            <span id="forumProfileRoleBadge" style="position: absolute; bottom: -4px; right: -4px; background: linear-gradient(135deg, #ef4444, #f59e0b); color: #fff; font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 999px; border: 1px solid #ffd166; text-transform: uppercase;">MEMBER</span>
+          </div>
+
+          <div style="flex: 1; min-width: 240px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 4px;">
+              <div>
+                <h2 id="forumProfileDisplayName" style="margin: 0; font-size: 20px; font-weight: 800; color: #fff8eb;"></h2>
+                <div style="font-size: 13px; color: #efc47b; font-weight: 600; margin-top: 2px;">
+                  <span id="forumProfileUsername">@username</span>
+                  <span style="color: rgba(255,255,255,0.4); margin: 0 6px;">•</span>
+                  <span id="forumProfileJoinDate" style="color: #a1a1aa; font-weight: 400; font-size: 12px;">Tham gia: --/--/----</span>
+                </div>
+              </div>
+
+              <div id="forumProfileOwnerActions" style="display: none;">
+                <button type="button" id="btnToggleEditForumProfile" onclick="toggleEditForumProfileMode(true)" style="background: rgba(239, 196, 123, 0.15); border: 1px solid rgba(239, 196, 123, 0.45); color: #ffea9f; font-size: 12px; font-weight: 700; border-radius: 999px; padding: 6px 16px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s;">
+                  ✏️ Chỉnh sửa hồ sơ
+                </button>
+              </div>
+            </div>
+
+            <!-- View mode: Bio text -->
+            <div id="forumProfileBioView" style="margin-top: 10px; background: rgba(0, 0, 0, 0.28); border: 1px solid rgba(239, 196, 123, 0.18); border-radius: 10px; padding: 10px 14px; font-size: 13px; color: #dfd0bb; line-height: 1.5;">
+              <span id="forumProfileBioText">Chưa có giới thiệu bản thân.</span>
+            </div>
+
+            <!-- Edit mode form (Hidden by default, shown when clicking Edit) -->
+            <div id="forumProfileEditForm" style="display: none; margin-top: 12px; background: rgba(14, 10, 8, 0.95); border: 1.5px solid #efc47b; border-radius: 12px; padding: 16px;">
+              <div style="font-size: 13px; font-weight: 700; color: #ffea9f; margin-bottom: 12px;">✏️ Cập nhật thông tin cá nhân của bạn:</div>
+              
+              <div style="margin-bottom: 12px;">
+                <label style="display: block; font-size: 12px; color: #e2c08d; font-weight: 600; margin-bottom: 4px;">Tên hiển thị:</label>
+                <input type="text" id="inpEditProfileDisplayName" style="width: 100%; height: 36px; background: rgba(0,0,0,0.5); border: 1px solid rgba(239,196,123,0.35); border-radius: 8px; color: #fff; font-size: 13px; padding: 0 12px; box-sizing: border-box; outline: none;" placeholder="Nhập tên hiển thị..." />
+              </div>
+
+              <div style="margin-bottom: 12px;">
+                <label style="display: block; font-size: 12px; color: #e2c08d; font-weight: 600; margin-bottom: 4px;">Ảnh đại diện (Avatar):</label>
+                <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                  <input type="text" id="inpEditProfileAvatarUrl" style="flex: 1; min-width: 200px; height: 36px; background: rgba(0,0,0,0.5); border: 1px solid rgba(239,196,123,0.35); border-radius: 8px; color: #fff; font-size: 12px; padding: 0 12px; box-sizing: border-box; outline: none;" placeholder="Dán link ảnh (https://...)" />
+                  <label style="background: rgba(239,196,123,0.2); border: 1px solid rgba(239,196,123,0.4); color: #ffea9f; border-radius: 8px; padding: 8px 14px; font-size: 12px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap;">
+                    📁 Tải tệp từ máy
+                    <input type="file" id="inpEditProfileAvatarFile" accept="image/*" style="display: none;" onchange="handleForumProfileAvatarFileSelect(event)" />
+                  </label>
+                </div>
+              </div>
+
+              <div style="margin-bottom: 14px;">
+                <label style="display: block; font-size: 12px; color: #e2c08d; font-weight: 600; margin-bottom: 4px;">Giới thiệu bản thân (Bio):</label>
+                <textarea id="inpEditProfileBio" rows="3" style="width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(239,196,123,0.35); border-radius: 8px; color: #fff; font-size: 13px; padding: 8px 12px; box-sizing: border-box; outline: none; line-height: 1.5;" placeholder="Chia sẻ kinh nghiệm chơi nhạc cụ, sở thích hoặc giới thiệu ngắn về bạn..."></textarea>
+              </div>
+
+              <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button type="button" onclick="toggleEditForumProfileMode(false)" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: #d1d5db; border-radius: 999px; padding: 6px 16px; font-size: 12px; cursor: pointer;">✕ Hủy bỏ</button>
+                <button type="button" onclick="saveForumUserProfileChanges()" style="background: linear-gradient(135deg, #10b981, #059669); border: none; color: #fff; font-weight: 700; border-radius: 999px; padding: 6px 20px; font-size: 12px; cursor: pointer; box-shadow: 0 4px 12px rgba(16,185,129,0.35);">💾 Lưu hồ sơ</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity Stats Counts -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 18px 0;">
+          <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(239,196,123,0.2); border-radius: 12px; padding: 12px; text-align: center;">
+            <div id="statProfilePostsCount" style="font-size: 20px; font-weight: 800; color: #ffea9f;">0</div>
+            <div style="font-size: 11.5px; color: #a1a1aa; margin-top: 2px;">📝 Bài viết đã đăng</div>
+          </div>
+          <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(239,196,123,0.2); border-radius: 12px; padding: 12px; text-align: center;">
+            <div id="statProfileCommentsCount" style="font-size: 20px; font-weight: 800; color: #93c5fa;">0</div>
+            <div style="font-size: 11.5px; color: #a1a1aa; margin-top: 2px;">💬 Bình luận đã viết</div>
+          </div>
+          <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(239,196,123,0.2); border-radius: 12px; padding: 12px; text-align: center;">
+            <div id="statProfileUpvotesCount" style="font-size: 20px; font-weight: 800; color: #86efac;">0</div>
+            <div style="font-size: 11.5px; color: #a1a1aa; margin-top: 2px;">⭐ Lượt tán thành</div>
+          </div>
+        </div>
+
+        <!-- Subtabs: Bài viết đã đăng | Bình luận đã viết -->
+        <div style="display: flex; gap: 10px; border-bottom: 1px solid rgba(239,196,123,0.25); margin-bottom: 14px;">
+          <button type="button" id="tabBtnProfilePosts" onclick="switchForumProfileSubTab('posts')" style="background: none; border: none; border-bottom: 2px solid #efc47b; color: #ffea9f; font-weight: 700; font-size: 13.5px; padding: 8px 16px; cursor: pointer;">
+            📝 Bài viết đã đăng (<span id="lblProfileTabPostsCount">0</span>)
+          </button>
+          <button type="button" id="tabBtnProfileComments" onclick="switchForumProfileSubTab('comments')" style="background: none; border: none; border-bottom: 2px solid transparent; color: #a1a1aa; font-weight: 600; font-size: 13.5px; padding: 8px 16px; cursor: pointer;">
+            💬 Bình luận đã viết (<span id="lblProfileTabCommentsCount">0</span>)
+          </button>
+        </div>
+
+        <!-- Pane 1: Danh sách bài viết -->
+        <div id="paneProfilePosts" style="display: block;">
+          <div id="listProfilePostsContainer" style="display: flex; flex-direction: column; gap: 10px;"></div>
+        </div>
+
+        <!-- Pane 2: Danh sách bình luận -->
+        <div id="paneProfileComments" style="display: none;">
+          <div id="listProfileCommentsContainer" style="display: flex; flex-direction: column; gap: 10px;"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       MODAL THAY ĐỔI ẢNH ĐẠI DIỆN (AVATAR PICKER MODAL - YÊU CẦU 2)
+       ========================================================= -->
+  <div id="modalAvatarPicker" class="modal-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.82); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 100005 !important; align-items: center; justify-content: center;" onclick="if(event.target === this) closeAvatarPickerModal()">
+    <div class="lux-avatar-picker-dialog" style="position: relative; width: 680px; max-width: calc(100vw - 32px); max-height: calc(100vh - 48px); background: linear-gradient(155deg, rgba(32, 18, 14, 0.98) 0%, rgba(20, 10, 8, 0.99) 100%); border: 1.5px solid rgba(239, 196, 123, 0.45); border-radius: 20px; box-shadow: 0 24px 64px rgba(0,0,0,0.85), 0 0 40px rgba(239, 196, 123, 0.2); overflow: hidden; display: flex; flex-direction: column;" onclick="event.stopPropagation()">
+      
+      <!-- Top header -->
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px 22px; border-bottom: 1.5px solid rgba(239, 196, 123, 0.3); background: linear-gradient(135deg, rgba(82, 9, 33, 0.95), rgba(38, 4, 16, 0.95));">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 20px;">🖼️</span>
+          <span style="font-size: 16px; font-weight: 800; color: #ffea9f; text-transform: uppercase; letter-spacing: 0.04em;">Thay Đổi Ảnh Đại Diện (Avatar)</span>
+        </div>
+        <button type="button" onclick="closeAvatarPickerModal()" style="width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.08); border: 1px solid rgba(239,196,123,0.35); color: #ffea9f; font-size: 14px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Đóng">✕</button>
+      </div>
+
+      <!-- Body Content -->
+      <div style="flex: 1; overflow-y: auto; padding: 20px 24px;">
+
+        <!-- 1. KHUNG SO SÁNH & XEM LUÔN ĐƯỢC AVATAR HIỆN TẠI (Yêu cầu 2) -->
+        <div style="background: rgba(0,0,0,0.35); border: 1.5px solid rgba(239,196,123,0.3); border-radius: 16px; padding: 16px 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-around; flex-wrap: wrap; gap: 16px;">
+          <!-- Avatar hiện tại -->
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+            <div style="font-size: 11.5px; font-weight: 700; color: #a1a1aa; text-transform: uppercase; letter-spacing: 0.05em;">Avatar hiện tại</div>
+            <div id="pickerCurrentAvatarPreview" style="width: 78px; height: 78px; border-radius: 50%; overflow: hidden; border: 2.5px solid rgba(239,196,123,0.6); box-shadow: 0 4px 18px rgba(0,0,0,0.6); background: #261208; display: flex; align-items: center; justify-content: center; font-size: 34px;"></div>
+            <span style="font-size: 11px; color: #efc47b; background: rgba(239,196,123,0.12); padding: 2px 10px; border-radius: 999px;">Đang dùng</span>
+          </div>
+
+          <div style="font-size: 24px; color: #efc47b; opacity: 0.7;">➜</div>
+
+          <!-- Avatar mới đã chọn -->
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+            <div style="font-size: 11.5px; font-weight: 700; color: #6ee7b7; text-transform: uppercase; letter-spacing: 0.05em;">Avatar mới đã chọn</div>
+            <div id="pickerSelectedAvatarPreview" style="width: 78px; height: 78px; border-radius: 50%; overflow: hidden; border: 3px solid #10b981; box-shadow: 0 0 20px rgba(16,185,129,0.45); background: #261208; display: flex; align-items: center; justify-content: center; font-size: 34px; transition: all 0.2s;"></div>
+            <span id="lblPickerSelectedStatus" style="font-size: 11px; color: #6ee7b7; background: rgba(16,185,129,0.15); padding: 2px 10px; border-radius: 999px; font-weight: 600;">Xem trước</span>
+          </div>
+        </div>
+
+        <!-- 2. MỤC 1: CÁC AVATAR CÓ SẴN (Yêu cầu 2) -->
+        <div style="margin-bottom: 22px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+            <h4 style="margin: 0; font-size: 14.5px; font-weight: 700; color: #ffea9f; display: flex; align-items: center; gap: 8px;">
+              <span>🪕</span> <span>Mục 1: Chọn các Avatar có sẵn trong thư viện</span>
+            </h4>
+            <span style="font-size: 11.5px; color: #a1a1aa;">Bấm vào ảnh bất kỳ để chọn</span>
+          </div>
+
+          <div id="pickerPresetAvatarsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 12px; margin-bottom: 14px;"></div>
+
+          <div style="background: rgba(0,0,0,0.25); border: 1px solid rgba(239,196,123,0.18); border-radius: 12px; padding: 10px 14px;">
+            <div style="font-size: 11.5px; color: #e2c08d; font-weight: 600; margin-bottom: 8px;">Biểu tượng &amp; Nhạc cụ Di sản:</div>
+            <div id="pickerEmojiAvatarsRow" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
+          </div>
+        </div>
+
+        <!-- 3. MỤC 2: AVATAR TẢI LÊN HOẶC ĐƯỜNG DẪN (Yêu cầu 2) -->
+        <div style="background: rgba(0,0,0,0.3); border: 1.5px solid rgba(239,196,123,0.28); border-radius: 14px; padding: 16px 18px;">
+          <h4 style="margin: 0 0 10px 0; font-size: 14px; font-weight: 700; color: #ffea9f; display: flex; align-items: center; gap: 8px;">
+            <span>📁</span> <span>Mục 2: Tải lên Avatar từ thiết bị hoặc Dán liên kết</span>
+          </h4>
+
+          <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 10px;">
+            <label style="background: linear-gradient(135deg, rgba(239, 196, 123, 0.25), rgba(222, 25, 75, 0.25)); border: 1.5px solid #efc47b; color: #ffea9f; font-size: 12.5px; font-weight: 700; border-radius: 999px; padding: 8px 18px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; transition: all 0.2s;" title="Chọn tệp ảnh từ máy tính hoặc điện thoại">
+              <input type="file" id="inpPickerUploadAvatarFile" accept="image/*" style="display: none;" onchange="handlePickerAvatarFileUpload(event)">
+              📤 Tải ảnh từ máy (PNG, JPG, WEBP)
+            </label>
+            <span style="font-size: 12px; color: #a1a1aa;">hoặc</span>
+          </div>
+
+          <div>
+            <input type="text" id="inpPickerAvatarUrlInput" placeholder="Dán đường dẫn ảnh trực tiếp (VD: https://domain.com/photo.jpg)..." oninput="handlePickerAvatarUrlInput(this.value)" style="width: 100%; height: 38px; background: rgba(0,0,0,0.55); border: 1px solid rgba(239,196,123,0.35); border-radius: 8px; color: #fff8eb; font-size: 12.5px; padding: 0 12px; box-sizing: border-box; outline: none;" />
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 22px; border-top: 1px solid rgba(239,196,123,0.25); background: rgba(0,0,0,0.35);">
+        <button type="button" onclick="closeAvatarPickerModal()" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: #d1d5db; font-size: 13px; font-weight: 600; border-radius: 999px; padding: 8px 20px; cursor: pointer;">
+          ✕ Hủy bỏ
+        </button>
+        <button type="button" onclick="saveSelectedAvatarFromPicker()" style="background: linear-gradient(135deg, #10b981, #059669); border: none; color: #fff; font-size: 13.5px; font-weight: 800; border-radius: 999px; padding: 8px 26px; cursor: pointer; box-shadow: 0 4px 16px rgba(16,185,129,0.4); display: inline-flex; align-items: center; gap: 6px;">
+          💾 Áp Dụng &amp; Lưu Avatar
+        </button>
+      </div>
+
     </div>
   </div>
 
@@ -3348,9 +3563,9 @@
         - Người bình thường: Nằm ở vị trí nút bảng admin (right: 172px)
         - Admin: Nằm ở bên cạnh nút quyền admin (right: 246px)
        ========================================================= -->
-  <button type="button" id="dockBtnAccountFloating" class="floating-account-trigger floating-account-circle-mascot" title="Cài đặt tài khoản &amp; phím bấm" aria-label="Cài đặt tài khoản" onclick="openAccountSettingsModal()">
+  <button type="button" id="dockBtnAccountFloating" class="floating-account-trigger floating-account-circle-mascot" title="Cài đặt hệ thống &amp; phím bấm" aria-label="Cài đặt hệ thống &amp; phím bấm" onclick="openAccountSettingsModal()">
     <div class="account-mascot-icon-inner">
-      <span class="account-mascot-emoji" id="dockBtnAccountEmoji">👤</span>
+      <span class="account-mascot-emoji" id="dockBtnAccountEmoji"><span style="font-size: 20px; line-height: 1; display: inline-flex; align-items: center; justify-content: center;">⚙️</span></span>
     </div>
   </button>
 
@@ -6183,6 +6398,9 @@
         localStorage.removeItem('dan_tranh_owner_session');
         localStorage.removeItem('dan_tranh_user_session');
         localStorage.removeItem('dan_tranh_active_user');
+        if (userObj && userObj.avatar) {
+          sessionStorage.setItem('dan_tranh_guest_avatar', userObj.avatar);
+        }
       } catch (e) {}
     }
 
@@ -6192,7 +6410,7 @@
           username: 'guest',
           displayName: 'Khách (Guest)',
           role: 'guest',
-          avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'
+          avatar: sessionStorage.getItem('dan_tranh_guest_avatar') || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'
         };
       }
       try {
@@ -6200,9 +6418,9 @@
         if (userRaw) {
           const parsed = JSON.parse(userRaw);
           if (parsed && parsed.username) {
-            if (!parsed.avatar || parsed.avatar === '🪕' || parsed.avatar === '👤') {
+            if (!parsed.avatar) {
               parsed.avatar = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80';
-            } else if (parsed.avatar === '👑') {
+            } else if (false) {
               parsed.avatar = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80';
             }
             return parsed;
@@ -6212,7 +6430,7 @@
         if (ownerRaw) {
           const parsedOwner = JSON.parse(ownerRaw);
           if (parsedOwner && parsedOwner.username) {
-            if (!parsedOwner.avatar || parsedOwner.avatar === '👑' || parsedOwner.avatar === '🪕') {
+            if (!parsedOwner.avatar) {
               parsedOwner.avatar = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80';
             }
             return parsedOwner;
@@ -6223,7 +6441,7 @@
         username: 'guest',
         displayName: 'Khách (Guest)',
         role: 'guest',
-        avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'
+        avatar: sessionStorage.getItem('dan_tranh_guest_avatar') || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'
       };
     }
 
@@ -6233,9 +6451,16 @@
         localStorage.removeItem('dan_tranh_user_session');
         localStorage.removeItem('dan_tranh_owner_session');
         localStorage.removeItem('dan_tranh_active_user');
+        if (userObj && userObj.avatar) {
+          sessionStorage.setItem('dan_tranh_guest_avatar', userObj.avatar);
+        }
       } else {
         sessionStorage.setItem('dan_tranh_session_authenticated', 'true');
         localStorage.setItem('dan_tranh_user_session', JSON.stringify(userObj));
+        if (userObj.role === 'admin' || (userObj.username || '').toLowerCase() === 'admin' || (userObj.username || '').toLowerCase() === 'owner') {
+          try { localStorage.setItem('dan_tranh_owner_session', JSON.stringify(userObj)); } catch(eOwner) {}
+        }
+        try { localStorage.setItem('dan_tranh_active_user', JSON.stringify(userObj)); } catch(eActive) {}
       }
       syncHeaderAndAccountUI();
       renderUserAccountDashboard();
@@ -7386,49 +7611,283 @@
         username: 'guest',
         displayName: 'Khách (Guest)',
         role: 'guest',
-        avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'
+        avatar: sessionStorage.getItem('dan_tranh_guest_avatar') || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'
       });
       closeAccountAuthBox();
     }
     window.logoutUserAccount = logoutUserAccount;
 
-    // Tải lên ảnh avatar người dùng & đổi avatar toàn hệ thống (Yêu cầu 6)
-    function handleUserAvatarUpload(e) {
+    // =========================================================
+    // Há»† THá»NG CHá»ŒN VÃ€ Äá»”I AVATAR (AVATAR PICKER MODAL - YÃŠU Cáº¦U 2)
+    // =========================================================
+    const PRESET_AVATARS_GALLERY = [
+      { id: 'av_1', url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=240&auto=format&fit=crop&q=80', label: 'Ngh\u1EC7 nh\u00E2n \u00C1o d\u00E0i' },
+      { id: 'av_2', url: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=240&auto=format&fit=crop&q=80', label: 'N\u1EEF nh\u1EA1c c\u00F4ng' },
+      { id: 'av_3', url: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=240&auto=format&fit=crop&q=80', label: 'Ngh\u1EC7 nh\u00E2n Nam' },
+      { id: 'av_4', url: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=240&auto=format&fit=crop&q=80', label: 'Hoa sen C\u1ED5 \u0111i\u1EC3n' },
+      { id: 'av_5', url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=240&auto=format&fit=crop&q=80', label: 'Nh\u1EA1c s\u0129 Truy\u1EC1n th\u1ED1ng' },
+      { id: 'av_6', url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=240&auto=format&fit=crop&q=80', label: 'Ngh\u1EC7 nh\u00E2n Tr\u1EBB' },
+      { id: 'av_7', url: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=240&auto=format&fit=crop&q=80', label: 'Th\u1EA7y \u0111\u1EDDn C\u1ED5 nh\u1EA1c' },
+      { id: 'av_8', url: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=240&auto=format&fit=crop&q=80', label: 'C\u00F4 \u0111\u00E0o D\u00E2n ca' },
+      { id: 'av_9', url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=240&auto=format&fit=crop&q=80', label: 'Qu\u1EA3n tr\u1ECB C\u1ED5 truy\u1EC1n' },
+      { id: 'av_10', url: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=240&auto=format&fit=crop&q=80', label: 'Gi\u1EA3ng vi\u00EAn \u00C2m nh\u1EA1c' },
+      { id: 'av_11', url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=240&auto=format&fit=crop&q=80', label: 'Ngh\u1EC7 nh\u00E2n D\u00E2n gian' },
+      { id: 'av_12', url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=240&auto=format&fit=crop&q=80', label: 'Kh\u00E1ch Di\u1EC5n T\u1EA5u' }
+    ];
+
+    const PRESET_EMOJI_AVATARS = [
+      { emoji: '\uD83E\uDE95', label: '\u0110\u00E0n Tranh' },
+      { emoji: '\uD83C\uDFBB', label: '\u0110\u00E0n Nh\u1ECB / B\u1EA7u' },
+      { emoji: '\uD83C\uDFB8', label: '\u0110\u00E0n Nguy\u1EC7t' },
+      { emoji: '\uD83D\uDC51', label: 'Ho\u00E0ng Cung' },
+      { emoji: '\uD83C\uDF38', label: 'Hoa \u0110\u00E0o' },
+      { emoji: '\uD83E\uDEB7', label: 'Hoa Sen' },
+      { emoji: '\uD83C\uDFEE', label: '\u0110\u00E8n L\u1ED3ng' },
+      { emoji: '\uD83D\uDC09', label: 'Long Ph\u1EE5ng' },
+      { emoji: '\uD83C\uDF8B', label: 'S\u00E1o Tr\u00FAc' },
+      { emoji: '\u2728', label: 'Tinh Hoa' }
+    ];
+
+    window.pickerCurrentActiveAvatar = '';
+    window.pickerTempSelectedAvatar = '';
+
+    function renderAvatarPreviewBox(targetEl, val) {
+      if (!targetEl) return;
+      targetEl.innerHTML = '';
+      if (val && (val.startsWith('data:image/') || val.startsWith('http://') || val.startsWith('https://'))) {
+        const img = document.createElement('img');
+        img.src = val;
+        img.alt = 'Avatar Preview';
+        img.style.cssText = 'width: 100%; height: 100%; object-fit: cover; display: block;';
+        targetEl.appendChild(img);
+      } else {
+        const span = document.createElement('span');
+        span.style.cssText = 'font-size: 36px; line-height: 1;';
+        span.textContent = val || 'ðŸ‘¤';
+        targetEl.appendChild(span);
+      }
+    }
+
+    function openAvatarPickerModal() {
+      const u = getActiveUserAccount();
+      const currentAv = (u && u.avatar) ? u.avatar : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80';
+      window.pickerCurrentActiveAvatar = currentAv;
+      window.pickerTempSelectedAvatar = currentAv;
+
+      // Hiá»ƒn thá»‹ khung xem luÃ´n Ä‘Æ°á»£c avatar hiá»‡n táº¡i (YÃªu cáº§u 2)
+      const curPreview = document.getElementById('pickerCurrentAvatarPreview');
+      renderAvatarPreviewBox(curPreview, window.pickerCurrentActiveAvatar);
+
+      // Hiá»ƒn thá»‹ khung xem trÆ°á»›c avatar má»›i Ä‘Ã£ chá»n (YÃªu cáº§u 2)
+      const selPreview = document.getElementById('pickerSelectedAvatarPreview');
+      renderAvatarPreviewBox(selPreview, window.pickerTempSelectedAvatar);
+
+      const statusLbl = document.getElementById('lblPickerSelectedStatus');
+      if (statusLbl) {
+        statusLbl.textContent = 'Avatar hiá»‡n táº¡i';
+        statusLbl.style.color = '#efc47b';
+      }
+
+      // Reset file input & URL input
+      const fileInp = document.getElementById('inpPickerUploadAvatarFile');
+      if (fileInp) fileInp.value = '';
+      const urlInp = document.getElementById('inpPickerAvatarUrlInput');
+      if (urlInp) urlInp.value = '';
+
+      renderAvatarPickerGallery();
+
+      const modal = document.getElementById('modalAvatarPicker');
+      if (modal) {
+        modal.style.display = 'flex';
+      }
+    }
+    window.openAvatarPickerModal = openAvatarPickerModal;
+
+    function closeAvatarPickerModal() {
+      const modal = document.getElementById('modalAvatarPicker');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+    }
+    window.closeAvatarPickerModal = closeAvatarPickerModal;
+
+    function selectAvatarInPicker(val, isCustomUpload) {
+      if (!val) return;
+      window.pickerTempSelectedAvatar = val;
+
+      const selPreview = document.getElementById('pickerSelectedAvatarPreview');
+      renderAvatarPreviewBox(selPreview, val);
+
+      const statusLbl = document.getElementById('lblPickerSelectedStatus');
+      if (statusLbl) {
+        if (isCustomUpload) {
+          statusLbl.textContent = 'áº¢nh táº£i lÃªn tá»« mÃ¡y âœ“';
+          statusLbl.style.color = '#10b981';
+        } else if (val === window.pickerCurrentActiveAvatar) {
+          statusLbl.textContent = 'Avatar hiá»‡n táº¡i';
+          statusLbl.style.color = '#efc47b';
+        } else {
+          statusLbl.textContent = 'ÄÃ£ chá»n áº£nh má»›i âœ“';
+          statusLbl.style.color = '#10b981';
+        }
+      }
+
+      // Cáº­p nháº­t viá»n active trÃªn danh sÃ¡ch cÃ³ sáºµn
+      renderAvatarPickerGallery();
+    }
+    window.selectAvatarInPicker = selectAvatarInPicker;
+
+    function renderAvatarPickerGallery() {
+      const grid = document.getElementById('pickerPresetAvatarsGrid');
+      if (grid) {
+        grid.innerHTML = PRESET_AVATARS_GALLERY.map(item => {
+          const isSelected = item.url === window.pickerTempSelectedAvatar;
+          const borderStyle = isSelected ? '3px solid #10b981' : '2px solid rgba(239, 196, 123, 0.4)';
+          const shadowStyle = isSelected ? 'box-shadow: 0 0 16px rgba(16, 185, 129, 0.65), 0 4px 12px rgba(0,0,0,0.5);' : 'box-shadow: 0 4px 10px rgba(0,0,0,0.4);';
+          const checkmark = isSelected ? `<span style="position: absolute; top: 4px; right: 4px; background: #10b981; color: #fff; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; box-shadow: 0 2px 6px rgba(0,0,0,0.5);">âœ“</span>` : '';
+          return `
+            <div onclick="selectAvatarInPicker('${item.url}')" style="position: relative; width: 76px; height: 76px; border-radius: 14px; overflow: hidden; cursor: pointer; border: ${borderStyle}; ${shadowStyle} transition: transform 0.18s, border 0.18s; transform: ${isSelected ? 'scale(1.06)' : 'scale(1)'};" title="${item.label}">
+              <img src="${item.url}" alt="${item.label}" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
+              ${checkmark}
+            </div>
+          `;
+        }).join('');
+      }
+
+      const emoRow = document.getElementById('pickerEmojiAvatarsRow');
+      if (emoRow) {
+        emoRow.innerHTML = PRESET_EMOJI_AVATARS.map(item => {
+          const isSelected = item.emoji === window.pickerTempSelectedAvatar;
+          const bgStyle = isSelected ? 'background: rgba(16, 185, 129, 0.25); border: 2px solid #10b981;' : 'background: rgba(255, 255, 255, 0.06); border: 1.5px solid rgba(239, 196, 123, 0.35);';
+          const shadowStyle = isSelected ? 'box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);' : '';
+          return `
+            <button type="button" onclick="selectAvatarInPicker('${item.emoji}')" style="width: 44px; height: 44px; border-radius: 12px; font-size: 22px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; ${bgStyle} ${shadowStyle} transition: all 0.18s;" title="${item.label}">
+              ${item.emoji}
+            </button>
+          `;
+        }).join('');
+      }
+    }
+    window.renderAvatarPickerGallery = renderAvatarPickerGallery;
+
+    function handlePickerAvatarFileUpload(e) {
       const file = e.target.files && e.target.files[0];
       if (!file) return;
       if (!file.type.startsWith('image/')) {
-        alert('Vui lòng chọn một tệp hình ảnh hợp lệ (PNG, JPG, WEBP, GIF)!');
+        alert('Vui lÃ²ng chá»n má»™t tá»‡p hÃ¬nh áº£nh há»£p lá»‡ (PNG, JPG, WEBP, GIF)!');
         return;
       }
       const reader = new FileReader();
       reader.onload = function(evt) {
         const dataUrl = evt.target.result;
-        let u = getActiveUserAccount();
-        if (!u || u.username === 'guest') {
-          u = { username: 'guest', displayName: 'Khách', role: 'guest', avatar: dataUrl };
-        } else {
-          u.avatar = dataUrl;
-          try {
-            const rawUsers = localStorage.getItem('dan_tranh_users');
-            if (rawUsers) {
-              const users = JSON.parse(rawUsers);
-              const found = users.find(x => x.username.toLowerCase() === u.username.toLowerCase());
-              if (found) {
-                found.avatar = dataUrl;
-                localStorage.setItem('dan_tranh_users', JSON.stringify(users));
-              }
-            }
-          } catch(err) {}
-        }
-        localStorage.setItem('dan_tranh_active_user', JSON.stringify(u));
-        syncHeaderAndAccountUI();
-        if (typeof showActionToast === 'function') {
-          showActionToast('Đã tải lên và đổi ảnh đại diện thành công! ✨');
-        } else {
-          alert('Đã cập nhật ảnh đại diện thành công!');
-        }
+        selectAvatarInPicker(dataUrl, true);
       };
       reader.readAsDataURL(file);
+    }
+    window.handlePickerAvatarFileUpload = handlePickerAvatarFileUpload;
+
+    function handlePickerAvatarUrlInput(url) {
+      if (!url) return;
+      const clean = url.trim();
+      if (clean.startsWith('http://') || clean.startsWith('https://') || clean.startsWith('data:image/')) {
+        selectAvatarInPicker(clean, false);
+      }
+    }
+    window.handlePickerAvatarUrlInput = handlePickerAvatarUrlInput;
+
+    function saveSelectedAvatarFromPicker() {
+      const newAv = window.pickerTempSelectedAvatar || window.pickerCurrentActiveAvatar;
+      if (!newAv) {
+        alert('Vui lÃ²ng chá»n hoáº·c táº£i lÃªn má»™t áº£nh Ä‘áº¡i diá»‡n!');
+        return;
+      }
+
+      let u = getActiveUserAccount();
+      const isGuest = !u || u.role === 'guest' || u.username === 'guest';
+
+      if (isGuest) {
+        sessionStorage.setItem('dan_tranh_guest_avatar', newAv);
+        u.avatar = newAv;
+      } else {
+        u.avatar = newAv;
+
+        // LÆ°u vÃ o session user
+        try {
+          localStorage.setItem('dan_tranh_user_session', JSON.stringify(u));
+        } catch(e) {}
+
+        // Náº¿u lÃ  admin hoáº·c owner, lÆ°u cáº£ vÃ o owner_session
+        if (u.role === 'admin' || (u.username || '').toLowerCase() === 'admin' || (u.username || '').toLowerCase() === 'owner') {
+          try {
+            localStorage.setItem('dan_tranh_owner_session', JSON.stringify(u));
+          } catch(e) {}
+        }
+
+        // LÆ°u vÃ o danh sÃ¡ch ngÆ°á»i dÃ¹ng Ä‘Äƒng kÃ½ dan_tranh_users
+        try {
+          const rawUsers = localStorage.getItem('dan_tranh_users');
+          if (rawUsers) {
+            const users = JSON.parse(rawUsers);
+            const found = users.find(x => x.username.toLowerCase() === u.username.toLowerCase());
+            if (found) {
+              found.avatar = newAv;
+              localStorage.setItem('dan_tranh_users', JSON.stringify(users));
+            }
+          }
+        } catch(e) {}
+
+        // Cáº­p nháº­t avatar trÃªn cÃ¡c bÃ i viáº¿t & bÃ¬nh luáº­n Diá»…n ÄÃ n cá»§a user nÃ y
+        try {
+          const rawPosts = localStorage.getItem('dan_tranh_forum_posts');
+          if (rawPosts) {
+            const posts = JSON.parse(rawPosts);
+            let hasChanged = false;
+            posts.forEach(p => {
+              if (p.authorUsername && p.authorUsername.toLowerCase() === u.username.toLowerCase()) {
+                p.authorAvatar = newAv;
+                hasChanged = true;
+              }
+              if (Array.isArray(p.comments)) {
+                p.comments.forEach(c => {
+                  if (c.authorUsername && c.authorUsername.toLowerCase() === u.username.toLowerCase()) {
+                    c.authorAvatar = newAv;
+                    hasChanged = true;
+                  }
+                });
+              }
+            });
+            if (hasChanged) {
+              localStorage.setItem('dan_tranh_forum_posts', JSON.stringify(posts));
+              if (typeof renderForumPostsList === 'function') {
+                renderForumPostsList();
+              }
+            }
+          }
+        } catch(e) {}
+      }
+
+      localStorage.setItem('dan_tranh_active_user', JSON.stringify(u));
+      setActiveUserAccount(u);
+      syncHeaderAndAccountUI();
+
+      // Äá»“ng bá»™ Cloud náº¿u cÃ³
+      if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.broadcastSync === 'function') {
+        window.DanTranhCloudSync.broadcastSync('account_avatar_update', { username: u.username, avatar: newAv });
+      }
+
+      closeAvatarPickerModal();
+
+      if (typeof showActionToast === 'function') {
+        showActionToast('âœ¨ ÄÃ£ cáº­p nháº­t áº£nh Ä‘áº¡i diá»‡n thÃ nh cÃ´ng!');
+      } else {
+        alert('âœ¨ ÄÃ£ cáº­p nháº­t áº£nh Ä‘áº¡i diá»‡n thÃ nh cÃ´ng!');
+      }
+    }
+    window.saveSelectedAvatarFromPicker = saveSelectedAvatarFromPicker;
+
+    function handleUserAvatarUpload(e) {
+      handlePickerAvatarFileUpload(e);
+      saveSelectedAvatarFromPicker();
     }
     window.handleUserAvatarUpload = handleUserAvatarUpload;
 
@@ -7584,7 +8043,7 @@
         username: 'guest',
         displayName: 'Khách (Guest)',
         role: 'guest',
-        avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'
+        avatar: sessionStorage.getItem('dan_tranh_guest_avatar') || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'
       });
       if (typeof toggleOwnerFloatingWindow === 'function') {
         toggleOwnerFloatingWindow(false);
@@ -7657,10 +8116,14 @@
         } else {
           // Khi là người bình thường (khách hoặc user thường): Nằm ở vị trí nút bảng admin cũ (right: 172px)
           dockBtnAccountFloating.classList.remove('is-admin-dock');
-          dockBtnAccountFloating.title = 'Cài đặt tài khoản & phím bấm';
+          dockBtnAccountFloating.title = isGuest ? 'Cài đặt hệ thống & phím bấm' : 'Cài đặt tài khoản & phím bấm';
         }
         if (dockBtnAccountEmoji) {
-          renderUserAvatarPill(dockBtnAccountEmoji, u ? u.avatar : '👤');
+          if (isGuest) {
+            dockBtnAccountEmoji.innerHTML = '<span style="font-size: 20px; line-height: 1; display: inline-flex; align-items: center; justify-content: center;">⚙️</span>';
+          } else {
+            renderUserAvatarPill(dockBtnAccountEmoji, u ? u.avatar : '👤');
+          }
         }
       }
 
@@ -7743,7 +8206,7 @@
       const guestActions = document.getElementById('accGuestActions');
       const loggedActions = document.getElementById('accLoggedActions');
 
-      if (profAv) profAv.style.display = 'none';
+      if (profAv) profAv.style.display = 'flex';
       if (profName) profName.textContent = isGuest ? 'Khách (Chưa đăng nhập)' : `${u.displayName} (@${u.username})`;
       if (profBadge) {
         profBadge.textContent = isGuest
@@ -7925,8 +8388,34 @@
 
     // Mở Modal Cài đặt Tài khoản & Phím bấm
     function openAccountSettingsModal(subTab) {
-      openModal('modalAccountSettings');
-      switchAccountModalSubTab(subTab || 'profile');
+      const u = (typeof getActiveUserAccount === 'function') ? getActiveUserAccount() : null;
+      const isGuest = !u || u.role === 'guest' || u.username === 'guest';
+      const modalHeaderTitle = document.querySelector('#modalAccountSettings .modal-header h2');
+      const btnProfile = document.getElementById('btnAccTabProfile');
+      const btnKeybind = document.getElementById('btnAccTabKeybind');
+      const btnSongs = document.getElementById('btnAccTabSongs');
+      const btnHistory = document.getElementById('btnAccTabHistory');
+      if (isGuest) {
+        if (modalHeaderTitle) modalHeaderTitle.innerHTML = '⚙️ Cài Đặt Hệ Thống &amp; Phím Bấm';
+        if (btnProfile) btnProfile.style.display = 'none';
+        if (btnSongs) btnSongs.style.display = 'none';
+        if (btnHistory) btnHistory.style.display = 'none';
+        if (btnKeybind) {
+          btnKeybind.style.display = 'inline-flex';
+          btnKeybind.innerHTML = '⚙️ Cài Đặt Hệ Thống &amp; Phím Bấm';
+        }
+        openModal('modalAccountSettings');
+        switchAccountModalSubTab('keybind');
+      } else {
+        if (modalHeaderTitle) modalHeaderTitle.innerHTML = '⚙️ Cài Đặt Tài Khoản &amp; Phím Bấm';
+        if (btnProfile) { btnProfile.style.display = 'inline-flex'; btnProfile.innerHTML = '👤 Hồ sơ cá nhân'; }
+        if (btnKeybind) { btnKeybind.style.display = 'inline-flex'; btnKeybind.innerHTML = '⌨️ Tùy chỉnh nút bấm'; }
+        if (btnSongs) { btnSongs.style.display = 'inline-flex'; btnSongs.innerHTML = '🎵 Bài đã lưu'; }
+        if (btnHistory) { btnHistory.style.display = 'inline-flex'; btnHistory.innerHTML = '🕒 Lịch sử sử dụng web'; }
+        openModal('modalAccountSettings');
+        switchAccountModalSubTab(subTab || 'profile');
+      }
+
       if (typeof initAutoOpenInstrumentUI === 'function') initAutoOpenInstrumentUI();
       if (typeof initAutoSavePasswordUI === 'function') initAutoSavePasswordUI();
       if (typeof initUserKeybindingEditorSelector === 'function') initUserKeybindingEditorSelector();
@@ -7940,6 +8429,12 @@
 
     // Chuyển tab con bên trong Modal Cài đặt Tài khoản
     function switchAccountModalSubTab(tabName) {
+      const u = (typeof getActiveUserAccount === 'function') ? getActiveUserAccount() : null;
+      const isGuest = !u || u.role === 'guest' || u.username === 'guest';
+      let activeTab = tabName;
+      if (isGuest && (activeTab === 'profile' || activeTab === 'songs' || activeTab === 'history')) {
+        activeTab = 'keybind';
+      }
       const tabs = {
         profile: document.getElementById('accModalSecProfile'),
         keybind: document.getElementById('accModalSecKeybind'),
@@ -7953,9 +8448,9 @@
         history: document.getElementById('btnAccTabHistory')
       };
       Object.keys(tabs).forEach(k => {
-        if (tabs[k]) tabs[k].style.display = (k === tabName) ? 'block' : 'none';
+        if (tabs[k]) tabs[k].style.display = (k === activeTab) ? 'block' : 'none';
         if (btns[k]) {
-          if (k === tabName) {
+          if (k === activeTab) {
             btns[k].classList.add('active', 'btn-primary');
             btns[k].classList.remove('btn-secondary');
           } else {
@@ -7965,7 +8460,7 @@
         }
       }
 );
-      if (tabName === 'keybind' && typeof renderUserKeybindingEditor === 'function') {
+      if (activeTab === 'keybind' && typeof renderUserKeybindingEditor === 'function') {
         const curId = window.currentKeybindEditingInstId || 'dantranh';
         renderUserKeybindingEditor(curId);
       }
