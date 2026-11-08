@@ -12689,6 +12689,22 @@
     if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA" || e.target.tagName === "SELECT" || e.target.isContentEditable)) return;
     if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
 
+    // YÊU CẦU 3: Chỉ ở trang đánh đàn mới đánh được đàn (Sân khấu Chơi nhạc cụ 3D 'dantranh')
+    var isDanTranhTab = false;
+    if (window.currentActiveNavTab === "dantranh") {
+      isDanTranhTab = true;
+    } else {
+      var dtPane = document.getElementById("tabContentDanTranh");
+      if (dtPane && dtPane.style.display !== "none" && !dtPane.classList.contains("hidden")) {
+        isDanTranhTab = true;
+      }
+    }
+    if (!isDanTranhTab) return;
+
+    // Không kích hoạt phím đàn nếu đang mở modal pop-up
+    var openModal = document.querySelector(".modal-overlay[style*='display: flex'], .modal-overlay[style*='display: block'], #modalAccountSettings[style*='display: block'], #modalAvatarPicker[style*='display: flex'], #modalOwnerLogin[style*='display: block'], #redditComposerExpanded.open");
+    if (openModal) return;
+
     var pressedKey = String(e.key).toUpperCase();
     var instId = currentActiveInstrument || "dantranh";
     var activeInst = INSTRUMENT_MAP[instId];

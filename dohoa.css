@@ -9100,11 +9100,55 @@ body.tttt-theme-body .floating-account-trigger.is-admin-dock,
   display: none !important;
 }
 
-/* Bỏ hoàn toàn phần avatar người dùng, chỉ hiển thị tên */
-.nav-account-avatar,
-#navAccountAvatar,
-.lux-profile-avatar,
-#accProfileAvatar,
+/* Yêu cầu 1 & 2: Hiển thị avatar tròn trịa, vừa vặn trên toàn website */
+
+
+
+.account-mascot-emoji,
+#dockBtnAccountEmoji,
+.forum-avatar,
+.forum-user-avatar,
+.reddit-post-avatar,
+.reddit-comment-avatar,
+.lux-avatar-circle {
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  aspect-ratio: 1 / 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+
+#accProfileAvatar {
+  width: 76px !important;
+  height: 76px !important;
+  min-width: 76px !important;
+  min-height: 76px !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  border: 2.5px solid rgba(239, 196, 123, 0.75) !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6), 0 0 16px rgba(239, 196, 123, 0.25) !important;
+  background: rgba(38, 18, 12, 0.95) !important;
+}
+
+.lux-profile-avatar img,
+#accProfileAvatar img,
+.nav-account-avatar img,
+#navAccountAvatar img,
+#dockBtnAccountEmoji img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 50% !important;
+  display: block !important;
+}
+
+/* Các trường input avatar cũ ẩn đi */
+/* input wrap */
+
+
+
 #accFieldAvatarWrap,
 #unifiedSignupAvatarWrap {
   display: none !important;
@@ -11414,4 +11458,126 @@ label {
   align-items: center !important;
   justify-content: center !important;
   line-height: 1.2 !important;
+}
+
+/* =========================================================
+   YÊU CẦU 2 & 4: TẤT CẢ AVATAR LÀ HÌNH TRÒN & TAB LỊCH SỬ BÀI ĐÃ ĐÁNH NỔI (KHÔNG CHE ĐEN)
+   ========================================================= */
+
+/* Tất cả avatar là hình tròn trên toàn trang web */
+.account-mascot-emoji,
+#dockBtnAccountEmoji,
+.forum-avatar,
+.forum-user-avatar,
+.reddit-post-avatar,
+.reddit-comment-avatar,
+.lux-avatar-circle,
+.picker-preset-item,
+#pickerCurrentAvatarPreview,
+#pickerSelectedAvatarPreview,
+.nav-account-avatar,
+#navAccountAvatar {
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  aspect-ratio: 1 / 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+#accProfileAvatar {
+  width: 76px !important;
+  height: 76px !important;
+  min-width: 76px !important;
+  min-height: 76px !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 2.5px solid rgba(239, 196, 123, 0.75) !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6), 0 0 16px rgba(239, 196, 123, 0.25) !important;
+  background: rgba(38, 18, 12, 0.95) !important;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#accProfileAvatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 22px rgba(239, 196, 123, 0.45) !important;
+}
+
+.lux-profile-avatar img,
+#accProfileAvatar img,
+.nav-account-avatar img,
+#navAccountAvatar img,
+#dockBtnAccountEmoji img,
+.forum-avatar img,
+.forum-user-avatar img,
+.reddit-post-avatar img,
+.reddit-comment-avatar img,
+#pickerCurrentAvatarPreview img,
+#pickerSelectedAvatarPreview img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 50% !important;
+  display: block !important;
+}
+
+/* YÊU CẦU 4: CỬA SỔ / TAB NỔI LỊCH SỬ BÀI ĐÃ ĐÁNH (GIỐNG PHẦN TẠO BÀI, BỎ PHẦN NỀN ĐEN CHE ĐI) */
+.floating-songs-window-modal {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  z-index: 100004 !important;
+  pointer-events: none !important;
+  display: none;
+}
+
+.floating-songs-window-modal.open {
+  display: block !important;
+}
+
+.floating-songs-card {
+  pointer-events: auto !important;
+  position: fixed !important;
+  top: 86px;
+  right: 28px;
+  width: 480px;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 110px);
+  background: linear-gradient(160deg, rgba(34, 12, 18, 0.98) 0%, rgba(18, 5, 10, 0.99) 100%) !important;
+  border: 1.5px solid rgba(239, 196, 123, 0.45) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85), 0 0 35px rgba(222, 25, 75, 0.22) !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-sizing: border-box !important;
+  animation: floatingSongsFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes floatingSongsFadeIn {
+  from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.floating-songs-header {
+  cursor: grab !important;
+  user-select: none !important;
+  padding: 12px 18px !important;
+  background: linear-gradient(135deg, rgba(163, 18, 56, 0.96), rgba(89, 4, 26, 0.96)) !important;
+  border-bottom: 1px solid rgba(239, 196, 123, 0.35) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+.floating-songs-header:active {
+  cursor: grabbing !important;
 }
