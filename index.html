@@ -411,7 +411,7 @@
       </nav>
 
       <!-- Thanh công cụ bên phải: Cùng nằm trên 1 dòng với thanh điều hướng -->
-      <div class="header-right tttt-header-actions">
+      <div class="header-right tttt-header-actions" id="commonGlobalAccountWidget">
         <!-- Khi CHƯA đăng nhập: Hiển thị nút "Log In" -->
         <button type="button" class="btn btn-primary btn-xs" id="btnOpenOwnerLogin" onclick="openUnifiedAuthModal('login')" title="Log In / Sign Up (Tài khoản người dùng &amp; Owner)" style="height: 36px; padding: 0 18px; font-size: 13.5px; font-weight: 800; border-radius: 999px;">
           🔑 Log In
@@ -438,20 +438,21 @@
 
     <!-- ==================== 2. TASKBAR KHU VỰC NHẠC CỤ (Instrument Taskbar - Yêu Cầu 2.2) ==================== -->
     <div class="contextual-taskbar taskbar-instrument" id="taskbarInstrument" style="display: none !important;">
-      <!-- Góc trái: Nút Quay Về Trang Chủ & Tên nhạc cụ hiện tại -->
+      <!-- Góc trái: Nút Quay Về Trang Chủ & Tên nhạc cụ hiện tại (Nhấn vào để mở bộ lọc chọn 38 nhạc cụ) -->
       <div class="contextual-taskbar-left">
         <button type="button" class="taskbar-back-btn" onclick="switchNavTab('encyclopedia')" title="Quay về Trang chủ">
           <span class="taskbar-back-arrow">←</span>
           <span class="taskbar-back-text">Quay về</span>
         </button>
 
-        <div class="taskbar-inst-badge" title="Nhạc cụ đang diễn tấu" style="cursor: default; pointer-events: none;">
+        <div class="taskbar-inst-badge" id="instTaskbarBadgeBtn" onclick="toggleMegaFilterPanel(undefined, event)" title="Nhấn vào đây để mở bộ lọc &amp; chọn nhạc cụ khác" style="cursor: pointer !important; pointer-events: auto !important; user-select: none;">
           <span class="inst-pill-icon" id="instTaskbarIcon">🪕</span>
           <span class="inst-pill-name" id="instTaskbarName">Đàn Tranh</span>
+          <span class="inst-pill-caret" style="font-size: 11px; margin-left: 2px; opacity: 0.85;">▾</span>
         </div>
       </div>
 
-      <!-- Giữa: Chỉ để lại 2 chế độ: Nhạc cụ 3D & Thông tin nhạc cụ (Yêu Cầu 1 & 2) -->
+      <!-- Giữa: Chỉ để lại 2 chế độ: Nhạc cụ 3D & Thông tin nhạc cụ, Căn giữa cân đối hoàn hảo (Yêu Cầu 2 & 5) -->
       <div class="taskbar-inst-actions taskbar-inst-mode-tabs">
         <button type="button" class="inst-action-btn inst-mode-tab-btn active" id="btnInstMode3D" onclick="switchInstrumentSubMode('3d')" title="Trải nghiệm mô hình 3D xoay 360 độ &amp; phím gảy diễn tấu">
           <span>🪕</span> <span id="lblInstMode3DTitle">Nhạc cụ 3D</span>
@@ -459,16 +460,11 @@
         <button type="button" class="inst-action-btn inst-mode-tab-btn" id="btnInstModeInfo" onclick="switchInstrumentSubMode('info')" title="Xem thông tin chi tiết, cấu tạo &amp; lịch sử của cây đàn này">
           <span>📖</span> <span id="lblInstModeInfoTitle">Thông tin &amp; Cấu tạo</span>
         </button>
-        <button type="button" class="inst-action-btn inst-mode-tab-btn" id="btnInstModePlayedSongs" onclick="toggleFloatingPlayedSongsTab()" title="Mở Tab Lịch Sử Bài Đã Đánh (Cửa sổ nổi không che màn hình)">
-          <span>📜</span> <span id="lblInstModePlayedSongsTitle">Lịch sử bài đã đánh</span>
-        </button>
       </div>
 
-      <!-- Góc phải: Nút Đổi nhạc cụ nhanh (Đã ẩn theo yêu cầu người dùng) -->
-      <div class="contextual-taskbar-right" style="display: none !important;">
-        <button type="button" class="btn btn-primary btn-xs" onclick="toggleMegaFilterPanel(undefined, event)" style="border-radius: 999px; font-weight: 700; height: 36px; padding: 0 16px;">
-          ☰ Đổi nhạc cụ
-        </button>
+      <!-- Góc phải: Khu vực chứa Tài khoản chung của website (Yêu cầu 1) -->
+      <div class="contextual-taskbar-right" id="taskbarInstrumentRight">
+        <!-- Vị trí tự động gắn tài khoản chung khi ở khu vực Nhạc cụ -->
       </div>
     </div>
 
@@ -4441,6 +4437,25 @@
           item.el.style.setProperty('display', 'none', 'important');
         }
       });
+
+      // Tái sử dụng thành phần Tài khoản chung cho cả Trang chủ và Nhạc cụ (Yêu cầu 1)
+      const accountWidget = document.getElementById('commonGlobalAccountWidget') || document.querySelector('.header-right.tttt-header-actions');
+      if (accountWidget) {
+        if (activeBarId === 'taskbarInstrument') {
+          const instRight = document.getElementById('taskbarInstrumentRight') || document.getElementById('taskbarInstrument');
+          if (instRight && accountWidget.parentElement !== instRight) {
+            instRight.appendChild(accountWidget);
+          }
+        } else if (activeBarId === 'taskbarHome') {
+          const homeBar = document.getElementById('taskbarHome');
+          if (homeBar && accountWidget.parentElement !== homeBar) {
+            homeBar.appendChild(accountWidget);
+          }
+        }
+      }
+      if (typeof syncHeaderAndAccountUI === 'function') {
+        syncHeaderAndAccountUI();
+      }
     }
     window.setExclusiveTaskbar = setExclusiveTaskbar;
 
@@ -7057,16 +7072,14 @@
             const bg = isLatest ? 'linear-gradient(135deg, rgba(222, 25, 75, 0.32), rgba(245, 158, 11, 0.22))' : 'rgba(255, 255, 255, 0.04)';
             const nameColor = isLatest ? '#ffea9f' : '#6ee7b7';
             const glow = isLatest ? 'box-shadow: 0 0 12px rgba(239, 196, 123, 0.35);' : '';
-            return `<div style="background:${bg}; border:${border}; ${glow} border-radius: 8px; padding: 7px 10px; display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 11.5px; transition: all 0.2s ease;">
-              <div style="display: flex; align-items: center; gap: 7px; min-width: 0;">
-                <span style="font-size: 13px;">${isLatest ? '⚡' : '🎵'}</span>
-                <div style="min-width: 0;">
-                  <div style="color:${nameColor}; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.name}</div>
-                  <div style="font-size: 9.5px; color: #94a3b8;">${item.time}</div>
-                </div>
+            return `<div style="background:${bg}; border:${border}; ${glow} border-radius: 8px; padding: 6px 10px; display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 11.5px; transition: all 0.2s ease; white-space: nowrap !important; overflow: hidden !important;" title="${item.name} - Lúc ${item.time} [Phím ${item.key}]">
+              <div style="display: flex; align-items: center; gap: 6px; min-width: 0; flex: 1; overflow: hidden !important; white-space: nowrap !important;">
+                <span style="font-size: 13px; flex-shrink: 0;">${isLatest ? '⚡' : '🎵'}</span>
+                <span style="color:${nameColor}; font-weight: 700; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; max-width: 105px; display: inline-block;">${item.name}</span>
+                <span style="font-size: 9.5px; color: #94a3b8; white-space: nowrap !important; flex-shrink: 0; opacity: 0.85;">${item.time}</span>
               </div>
-              <div style="display: flex; align-items: center; gap: 5px; flex-shrink: 0;">
-                <span style="background: rgba(239, 196, 123, 0.18); color: #ffd166; border: 1px solid rgba(239, 196, 123, 0.35); padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 700;">[${item.key}]</span>
+              <div style="display: flex; align-items: center; gap: 4px; flex-shrink: 0; white-space: nowrap !important;">
+                <span style="background: rgba(239, 196, 123, 0.18); color: #ffd166; border: 1px solid rgba(239, 196, 123, 0.35); padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; white-space: nowrap !important;">[${item.key}]</span>
               </div>
             </div>`;
           }).join('');
@@ -11953,56 +11966,1186 @@
       return 'mit_forum_real_posts_v5';
     }
 
-    function getInitialDefaultRedditPosts() {
-      // Diễn đàn thật: Không tải trước bài viết ảo/bài viết sẵn
-      return [];
+function getInitialDefaultRedditPosts() {
+  const now = Date.now();
+  const H = 3600000;
+  const D = 24 * H;
+
+  return [
+    // ==========================================
+    // 1. ĐÀN TRANH (dantranh) - 5 bài viết
+    // ==========================================
+    {
+      id: 'post_seed_dantranh_1',
+      subreddit: 'dantranh',
+      subredditAvatar: '🪕',
+      author: '@ngocanh_tranh',
+      authorName: 'Ngọc Ánh',
+      authorRole: 'Nghệ nhân / Giáo viên',
+      authorBadge: '🏅 Nghệ sĩ',
+      authorAvatar: '👩‍🎤',
+      timestamp: now - (2 * D + 3 * H),
+      title: 'Kinh nghiệm luyện ngón rung (rung ngón 4) trên Đàn Tranh không bị mỏi cơ',
+      content: 'Chào các bạn đồng môn! Khi mới học ngón rung (chấn âm) trên đàn tranh 19 dây, rất nhiều bạn hay dùng lực ép cổ tay thay vì tận dụng trọng lượng tự nhiên của cánh tay. Mẹo nhỏ của mình: hãy thả lỏng khớp ngón 4, nhấn nhẹ nhàng xuống mặt dây với nhịp đều đặn theo hơi thở. Các bạn thường mất bao lâu để thuần thục ngón rung mềm mại này?',
+      image: null,
+      flair: 'Kỹ thuật ngón',
+      cardBg: '#1e1418',
+      upvotes: 28,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_dt_1',
+          author: '@minhtri_dan',
+          authorName: 'Minh Trí',
+          authorAvatar: '👨‍🎨',
+          timestamp: now - (2 * D + 1 * H),
+          text: 'Bài viết rất bổ ích ạ, mình hay bị cứng ngón út khi rung nhanh, sẽ thử theo cách thả lỏng cánh tay của bạn!',
+          upvotes: 6
+        }
+      ]
+    },
+    {
+      id: 'post_seed_dantranh_2',
+      subreddit: 'dantranh',
+      subredditAvatar: '🪕',
+      author: '@hoangnam_tranh',
+      authorName: 'Hoàng Nam',
+      authorRole: 'Thành viên kỳ cựu',
+      authorBadge: '⭐ Tinh hoa',
+      authorAvatar: '👨‍🏫',
+      timestamp: now - (4 * D + 5 * H),
+      title: 'Phân biệt kỹ thuật gảy móng đồi mồi và móng nhựa tổng hợp cho đàn tranh 17-19 dây',
+      content: 'Nhiều bạn mới tập đàn tranh thường băn khoăn nên dùng móng đồi mồi tự nhiên hay móng nhựa. Theo trải nghiệm của mình, móng đồi mồi cho âm sắc ấm, đầm và tiếng gảy đanh rõ nét khi diễn tấu các bài phong cách Nam Bộ. Trong khi đó móng nhựa tổng hợp lại dẻo hơn, phù hợp cho người mới đỡ đau khớp móng. Mọi người thích chất âm của loại móng nào hơn?',
+      image: null,
+      flair: 'Kinh nghiệm',
+      cardBg: '#1e1418',
+      upvotes: 22,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_dt_2',
+          author: '@thanhthao_cam',
+          authorName: 'Thanh Thảo',
+          authorAvatar: '👩‍🎨',
+          timestamp: now - (4 * D + 2 * H),
+          text: 'Mình gắn bó với móng đồi mồi 3 năm nay, tiếng vuốt dây nghe rất vang và sáng!',
+          upvotes: 5
+        }
+      ]
+    },
+    {
+      id: 'post_seed_dantranh_3',
+      subreddit: 'dantranh',
+      subredditAvatar: '🪕',
+      author: '@thanhthao_cam',
+      authorName: 'Thanh Thảo',
+      authorRole: 'Thành viên Diễn đàn',
+      authorBadge: '🎵 Thành viên',
+      authorAvatar: '👩‍🎨',
+      timestamp: now - (6 * D + 2 * H),
+      title: 'Cách khắc phục tiếng rè con nhạn (ngựa đàn) khi gảy các nốt quãng trầm',
+      content: 'Dạo gần đây cây đàn tranh 19 dây của mình ở các nốt Đô và Rê trầm hay phát ra tiếng rè nhỏ. Sau khi kiểm tra thì thấy chân con nhạn tiếp xúc không đều với mặt gỗ ngô đồng do thời tiết nồm ẩm. Chỉ cần chêm một miếng giấy da mỏng hoặc mài lại rãnh nhạn là êm ngay. Có ai từng gặp hiện tượng này chưa?',
+      image: null,
+      flair: 'Hỏi đáp kỹ thuật',
+      cardBg: '#1e1418',
+      upvotes: 19,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_dt_3',
+          author: '@thoxuan_dan',
+          authorName: 'Thợ Mộc Xuân',
+          authorAvatar: '🪵',
+          timestamp: now - (5 * D + 8 * H),
+          text: 'Chuẩn luôn bạn ơi, mùa nồm miền Bắc con nhạn rất dễ bị xê dịch hoặc vênh nhẹ, chêm da mỏng là mẹo gia truyền rất hay.',
+          upvotes: 7
+        }
+      ]
+    },
+    {
+      id: 'post_seed_dantranh_4',
+      subreddit: 'dantranh',
+      subredditAvatar: '🪕',
+      author: '@thay_minhkhoi',
+      authorName: 'Thầy Minh Khôi',
+      authorRole: 'Giảng viên Âm nhạc',
+      authorBadge: '🏅 Nghệ sĩ',
+      authorAvatar: '👨‍🎓',
+      timestamp: now - (7 * D + 4 * H),
+      title: 'Kỹ thuật vuốt (Án - Á - Trượt) tạo linh hồn cho điệu Oán và điệu Bắc',
+      content: 'Đàn tranh nếu chỉ gảy nốt đơn thuần thì chưa thể hiện được cái hồn của âm nhạc dân tộc. Điểm cốt lõi nằm ở tay trái: cách nhấn vuốt lướt trên dây bên trái con nhạn. Trong điệu Oán, ngón nhấn phải hơi chùng một chút ở nốt Xang và Xế để tạo nét bi thương, da diết. Bạn nào đang tập bài "Lưu Thủy Kim Tiền" hay "Dạ Cổ Hoài Lang" cùng chia sẻ kinh nghiệm nhé!',
+      image: null,
+      flair: 'Điệu thức cổ',
+      cardBg: '#1e1418',
+      upvotes: 35,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_dt_4',
+          author: '@thuylinh_music',
+          authorName: 'Thùy Linh',
+          authorAvatar: '👧',
+          timestamp: now - (7 * D + 1 * H),
+          text: 'Thầy giải thích dễ hiểu quá ạ, em nhấn tay trái toàn bị chênh nửa cung giờ mới hiểu do độ căng của dây.',
+          upvotes: 9
+        }
+      ]
+    },
+    {
+      id: 'post_seed_dantranh_5',
+      subreddit: 'dantranh',
+      subredditAvatar: '🪕',
+      author: '@thuylinh_music',
+      authorName: 'Thùy Linh',
+      authorRole: 'Học viên Diễn đàn',
+      authorBadge: '🌱 Học viên mới',
+      authorAvatar: '👧',
+      timestamp: now - (9 * D + 6 * H),
+      title: 'Chia sẻ lộ trình tự học Đàn Tranh tại nhà từ con số 0 trong 6 tháng',
+      content: 'Mình xin đúc kết lại quá trình tự học đàn tranh từ lúc chưa biết đọc nốt nhạc số cho đến khi đánh thành thạo 5 bài dân ca cơ bản: Tháng 1-2 làm quen thế ngồi và ngón gảy 1-2-3; Tháng 3 luyện tay trái rung nhấn; Tháng 4-6 ghép bài và luyện nhịp phách. Đừng nản lòng ở tháng đầu tiên nhé mọi người, kiên trì mỗi ngày 30 phút là tay sẽ mềm dẻo!',
+      image: null,
+      flair: 'Chia sẻ học tập',
+      cardBg: '#1e1418',
+      upvotes: 31,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_dt_5',
+          author: '@ngocanh_tranh',
+          authorName: 'Ngọc Ánh',
+          authorAvatar: '👩‍🎤',
+          timestamp: now - (9 * D + 2 * H),
+          text: 'Chúc mừng bạn nhé! Tinh thần tự học âm nhạc dân tộc rất đáng trân trọng.',
+          upvotes: 8
+        }
+      ]
+    },
+
+    // ==========================================
+    // 2. ĐÀN BẦU (danbau) - 4 bài viết
+    // ==========================================
+    {
+      id: 'post_seed_danbau_1',
+      subreddit: 'danbau',
+      subredditAvatar: '🎻',
+      author: '@quanghuy_danbau',
+      authorName: 'Quang Huy',
+      authorRole: 'Nghệ nhân / Biểu diễn',
+      authorBadge: '🏅 Nghệ sĩ',
+      authorAvatar: '🎻',
+      timestamp: now - (2 * D + 6 * H),
+      title: 'Bí quyết tạo âm bồi (Harmonics) tròn trịa, ngân vang trên Đàn Bầu một dây',
+      content: 'Nét kỳ diệu của đàn bầu nằm ở chỗ toàn bộ giai điệu đều được sinh ra từ các điểm nút âm bồi trên thân dây duy nhất. Tay phải khi gảy que phải đồng thời dùng cạnh bàn tay chạm nhẹ vào điểm nút (1/2, 1/3, 1/4 dây) rồi nhấc lên thật dứt khoát. Các bạn mới tập hay bị mất tiếng do nhấc tay chạm quá chậm. Ai có mẹo tập que gảy chia sẻ thêm nhé!',
+      image: null,
+      flair: 'Kỹ thuật âm bồi',
+      cardBg: '#1e1418',
+      upvotes: 27,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_db_1',
+          author: '@vanthanh_bau',
+          authorName: 'Văn Thành',
+          authorAvatar: '👨‍💼',
+          timestamp: now - (2 * D + 2 * H),
+          text: 'Chạm que gảy đúng điểm nút 1/2 cho nốt Đô cao ngân dài nghe mê thật sự anh Huy ơi.',
+          upvotes: 6
+        }
+      ]
+    },
+    {
+      id: 'post_seed_danbau_2',
+      subreddit: 'danbau',
+      subredditAvatar: '🎻',
+      author: '@vanthanh_bau',
+      authorName: 'Văn Thành',
+      authorRole: 'Thành viên Diễn đàn',
+      authorBadge: '🎵 Thành viên',
+      authorAvatar: '👨‍💼',
+      timestamp: now - (5 * D + 1 * H),
+      title: 'Kỹ thuật uốn cần đàn bầu (vòi đàn): Cách kiểm soát cao độ chính xác',
+      content: 'Cần đàn bầu làm bằng sừng trâu dẻo dai giúp tăng giảm cao độ linh hoạt. Khi kéo cần vào lòng thì cao độ nâng lên, đẩy cần ra xa thì cao độ hạ xuống. Người nghệ sĩ đàn bầu giỏi là người biết "hát" qua cần đàn, rung cần nhịp nhàng theo hơi thở bài ca. Mọi người thường dùng cần đàn sừng hay cần tre già?',
+      image: null,
+      flair: 'Kỹ thuật vòi đàn',
+      cardBg: '#1e1418',
+      upvotes: 21,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_db_2',
+          author: '@nghexuan_bau',
+          authorName: 'Nghệ sĩ Xuân Bách',
+          authorAvatar: '👴',
+          timestamp: now - (4 * D + 9 * H),
+          text: 'Cần sừng trâu có độ đàn hồi tuyệt vời nhất, luyến láy rất mượt mà và bền bỉ qua năm tháng.',
+          upvotes: 7
+        }
+      ]
+    },
+    {
+      id: 'post_seed_danbau_3',
+      subreddit: 'danbau',
+      subredditAvatar: '🎻',
+      author: '@nghexuan_bau',
+      authorName: 'Nghệ sĩ Xuân Bách',
+      authorRole: 'Cố vấn Văn hóa',
+      authorBadge: '⭐ Bậc thầy',
+      authorAvatar: '👴',
+      timestamp: now - (7 * D + 8 * H),
+      title: 'Bảo quản dây đàn bầu và que gảy trong mùa mưa ẩm tránh rỉ sét',
+      content: 'Dây đàn bầu bằng thép mỏng rất dễ bị oxy hóa nếu để ngoài không khí ẩm ướt, làm tiếng đàn bị xỉn đục. Sau mỗi buổi tập, các bạn nên dùng khăn bông khô lau sạch mồ hôi tay trên dây, có thể thoa một giọt dầu máy mỏng. Que gảy bằng tre cật hoặc sừng cũng nên cất trong bao nhung khô ráo.',
+      image: null,
+      flair: 'Bảo quản nhạc cụ',
+      cardBg: '#1e1418',
+      upvotes: 30,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_db_3',
+          author: '@thanhnga_hue',
+          authorName: 'Thanh Nga',
+          authorAvatar: '👩‍💼',
+          timestamp: now - (7 * D + 3 * H),
+          text: 'Bác chia sẻ rất chu đáo, nhờ lau dầu mà dây đàn của cháu dùng cả năm vẫn sáng bóng.',
+          upvotes: 4
+        }
+      ]
+    },
+    {
+      id: 'post_seed_danbau_4',
+      subreddit: 'danbau',
+      subredditAvatar: '🎻',
+      author: '@thanhnga_hue',
+      authorName: 'Thanh Nga',
+      authorRole: 'Thành viên Diễn đàn',
+      authorBadge: '🎵 Thành viên',
+      authorAvatar: '👩‍💼',
+      timestamp: now - (10 * D + 2 * H),
+      title: 'Diễn tấu khúc dân ca Nam Bộ "Ru Con" trên Đàn Bầu: Nốt luyến và độ sâu cảm xúc',
+      content: 'Khi tấu điệu "Ru Con Nam Bộ", sự rung ngân của cần đàn bầu tái hiện lại trọn vẹn giọng ru của mẹ. Những nốt rung chậm, kéo dài rồi tắt dần đòi hỏi lực cổ tay cực kỳ tinh tế. Đây là bài kiểm tra độ nhạy cảm xúc tốt nhất cho người chơi đàn bầu, ai muốn trao đổi về cách ngân ngón xin mời góp ý!',
+      image: null,
+      flair: 'Tác phẩm cổ truyền',
+      cardBg: '#1e1418',
+      upvotes: 26,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_db_4',
+          author: '@quanghuy_danbau',
+          authorName: 'Quang Huy',
+          authorAvatar: '🎻',
+          timestamp: now - (9 * D + 18 * H),
+          text: 'Nghe đàn bầu tấu bài Ru Con lúc đêm vắng rưng rưng nước mắt luôn bạn ơi.',
+          upvotes: 5
+        }
+      ]
+    },
+
+    // ==========================================
+    // 3. ĐÀN NGUYỆT (dannguyet) - 4 bài viết
+    // ==========================================
+    {
+      id: 'post_seed_dannguyet_1',
+      subreddit: 'dannguyet',
+      subredditAvatar: '🌕',
+      author: '@ductrong_nguyet',
+      authorName: 'Đức Trọng',
+      authorRole: 'Nghệ nhân Chầu Văn',
+      authorBadge: '🏅 Nghệ sĩ',
+      authorAvatar: '🌕',
+      timestamp: now - (1 * D + 8 * H),
+      title: 'Kỹ thuật vê móng (tremolo) liên tục trên Đàn Nguyệt không bị ngắt quãng',
+      content: 'Ngón vê là linh hồn trong biểu diễn đàn nguyệt chầu văn và hát chèo. Để vê móng nhanh và đều, ngón trỏ và ngón cái kẹp móng vừa phải, cử động chủ yếu ở khớp cổ tay chứ không dùng cả cẳng tay. Hãy bắt đầu với máy đập nhịp (metronome) ở tốc độ 80 bpm rồi tăng dần lên 140 bpm nhé các bạn.',
+      image: null,
+      flair: 'Kỹ thuật vê móng',
+      cardBg: '#1e1418',
+      upvotes: 34,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_dn_1',
+          author: '@haianh_chauvan',
+          authorName: 'Hải Anh',
+          authorAvatar: '👨‍🎤',
+          timestamp: now - (1 * D + 2 * H),
+          text: 'Lúc đầu em gồng cả cánh tay nên mỏi nhừ, chuyển sang lắc cổ tay thấy nhanh và đều hơn hẳn!',
+          upvotes: 8
+        }
+      ]
+    },
+    {
+      id: 'post_seed_dannguyet_2',
+      subreddit: 'dannguyet',
+      subredditAvatar: '🌕',
+      author: '@haianh_chauvan',
+      authorName: 'Hải Anh',
+      authorRole: 'Cung văn truyền thống',
+      authorBadge: '⭐ Tinh hoa',
+      authorAvatar: '👨‍🎤',
+      timestamp: now - (3 * D + 11 * H),
+      title: 'Tìm hiểu hệ thống dây Ngũ Cung trên Đàn Nguyệt: Hò - Xự - Xang - Xê - Cống',
+      content: 'Đàn nguyệt truyền thống thường lên theo quãng 5 (Đô - Sol) hoặc quãng 4 (Đô - Fa). Khi tấu Chầu Văn hay Ca Trù, việc lên dây chuẩn xác theo thang âm cổ truyền sẽ quyết định đến màu sắc tâm linh và không khí uy nghiêm của canh hát. Mọi người hay lên dây theo điệu Bắc hay điệu Nam?',
+      image: null,
+      flair: 'Thang âm ngũ cung',
+      cardBg: '#1e1418',
+      upvotes: 29,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_dn_2',
+          author: '@lequang_music',
+          authorName: 'Lê Quang',
+          authorAvatar: '🧑‍🎨',
+          timestamp: now - (3 * D + 4 * H),
+          text: 'Em hay đánh văn hầu nên chuyên lên dây quãng 5 Đô - Sol, tiếng đàn rất đanh và thoát.',
+          upvotes: 6
+        }
+      ]
+    },
+    {
+      id: 'post_seed_dannguyet_3',
+      subreddit: 'dannguyet',
+      subredditAvatar: '🌕',
+      author: '@lequang_music',
+      authorName: 'Lê Quang',
+      authorRole: 'Nhà nghiên cứu âm nhạc',
+      authorBadge: '📚 Học giả',
+      authorAvatar: '🧑‍🎨',
+      timestamp: now - (6 * D + 7 * H),
+      title: 'So sánh chất âm Đàn Nguyệt phím cao (Chầu Văn) và Đàn Nguyệt phím thấp (Tài Tử)',
+      content: 'Đàn nguyệt miền Bắc thường có phím bấm cao hơn mặt cần để ngón bấm có thể nhấn sâu tạo độ rung mãnh liệt cho chầu văn. Ngược lại Đàn Kìm (Đàn Nguyệt Nam Bộ) trong Đờn Ca Tài Tử lại có phím bấm vừa phải, âm thanh mềm mại, trữ tình hơn. Bạn yêu thích phong cách nào hơn?',
+      image: null,
+      flair: 'Nghiên cứu so sánh',
+      cardBg: '#1e1418',
+      upvotes: 23,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_dn_3',
+          author: '@khanhlinh_nguyet',
+          authorName: 'Khánh Linh',
+          authorAvatar: '👩‍🎓',
+          timestamp: now - (6 * D + 1 * H),
+          text: 'Mỗi miền một vẻ độc đáo! Phím cao nhấn sướng tay nhưng đòi hỏi lực ngón tốt.',
+          upvotes: 5
+        }
+      ]
+    },
+    {
+      id: 'post_seed_dannguyet_4',
+      subreddit: 'dannguyet',
+      subredditAvatar: '🌕',
+      author: '@khanhlinh_nguyet',
+      authorName: 'Khánh Linh',
+      authorRole: 'Thành viên Diễn đàn',
+      authorBadge: '🎵 Thành viên',
+      authorAvatar: '👩‍🎓',
+      timestamp: now - (8 * D + 3 * H),
+      title: 'Hướng dẫn bài vỡ lòng "Lưu Thủy" cho các bạn mới cầm đàn nguyệt tuần đầu',
+      content: 'Bài "Lưu Thủy" là bản nhạc kinh điển, giai điệu trong sáng mô phỏng dòng nước chảy róc rách. Trong bài có nhiều chỗ sử dụng ngón gõ và ngón búng tay trái rất hay. Mình đã ghi lại nốt số và thế bấm chi tiết cho người mới, bạn nào cần tài liệu thì để lại bình luận nhé!',
+      image: null,
+      flair: 'Bài tập cho newbie',
+      cardBg: '#1e1418',
+      upvotes: 36,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_dn_4',
+          author: '@ductrong_nguyet',
+          authorName: 'Đức Trọng',
+          authorAvatar: '🌕',
+          timestamp: now - (7 * D + 20 * H),
+          text: 'Chị cho em xin bản nốt số với ạ, em cảm ơn chị nhiều!',
+          upvotes: 7
+        }
+      ]
+    },
+
+    // ==========================================
+    // 4. ĐÀN NHỊ (dannhi) - 4 bài viết
+    // ==========================================
+    {
+      id: 'post_seed_dannhi_1',
+      subreddit: 'dannhi',
+      subredditAvatar: '🎻',
+      author: '@tuananh_dannhi',
+      authorName: 'Tuấn Anh',
+      authorRole: 'Nghệ nhân Đàn Nhị',
+      authorBadge: '🏅 Nghệ sĩ',
+      authorAvatar: '🎻',
+      timestamp: now - (2 * D + 9 * H),
+      title: 'Cách tra nhựa thông (colophane) vào vĩ Đàn Nhị đúng chuẩn để không bị rít hay trượt',
+      content: 'Nhiều bạn mới kéo đàn nhị hay bị tiếng kêu kin kít khó chịu hoặc kéo trượt không ra tiếng. Nguyên nhân 90% do tra nhựa thông chưa đều. Hãy chà nhẹ bánh nhựa thông dọc theo lông vĩ khoảng 8-10 lần, sau đó vỗ nhẹ cho bụi bay bớt. Tuyệt đối không chà quá nhiều làm bám cặn trắng lên mặt da trăn nhé!',
+      image: null,
+      flair: 'Bảo dưỡng vĩ đàn',
+      cardBg: '#1e1418',
+      upvotes: 25,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_dni_1',
+          author: '@vietcuong_nhi',
+          authorName: 'Việt Cường',
+          authorAvatar: '🧑‍💻',
+          timestamp: now - (2 * D + 4 * H),
+          text: 'Em vừa làm theo và âm thanh kéo êm hơn hẳn, cảm ơn anh!',
+          upvotes: 5
+        }
+      ]
+    },
+    {
+      id: 'post_seed_dannhi_2',
+      subreddit: 'dannhi',
+      subredditAvatar: '🎻',
+      author: '@ngocmai_nhi',
+      authorName: 'Ngọc Mai',
+      authorRole: 'Giáo viên Nhạc cụ',
+      authorBadge: '⭐ Tinh hoa',
+      authorAvatar: '👩‍🏫',
+      timestamp: now - (4 * D + 6 * H),
+      title: 'Kỹ thuật vuốt ngón và rung bàn tay trái tạo độ nghẹn ngào đặc trưng của Đàn Nhị',
+      content: 'Đàn nhị không có phím bấm, toàn bộ độ cao nốt phụ thuộc hoàn toàn vào tai nghe và cảm giác vị trí ngón bấm trên dây lơ lửng. Khi rung nốt, cổ tay trái chuyển động mềm mại như sóng nước để làm nốt nhạc run rẩy, gợi cảm giác xót xa, hoài niệm. Ai có phương pháp luyện tai nghe nốt chuẩn chia sẻ nhé!',
+      image: null,
+      flair: 'Ngón rung vuốt',
+      cardBg: '#1e1418',
+      upvotes: 31,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_dni_2',
+          author: '@tuananh_dannhi',
+          authorName: 'Tuấn Anh',
+          authorAvatar: '🎻',
+          timestamp: now - (4 * D + 1 * H),
+          text: 'Đàn nhị khó nhất là không có phím, bấm lệch 1 milimet là chô đơ ngay. Cần luyện thang âm thật kiên trì.',
+          upvotes: 7
+        }
+      ]
+    },
+    {
+      id: 'post_seed_dannhi_3',
+      subreddit: 'dannhi',
+      subredditAvatar: '🎻',
+      author: '@nghesi_trongnghia',
+      authorName: 'Trọng Nghĩa',
+      authorRole: 'Nghệ nhân Làng nghề',
+      authorBadge: '🪵 Nghệ nhân',
+      authorAvatar: '👨‍🦳',
+      timestamp: now - (7 * D + 5 * H),
+      title: 'Bảo quản mặt bịt da trăn trên ống đàn nhị khi thời tiết thay đổi độ ẩm',
+      content: 'Mặt da trăn là linh hồn phát âm của đàn nhị. Trời ẩm da chùng làm tiếng đục, trời khô hanh da căng quá mức dễ nứt. Mẹo của các cụ ngày xưa: khi không diễn tấu, nên hạ miếng xốp chèn dưới ngựa đàn để giảm áp lực lên mặt da, cất đàn trong hộp có túi hút ẩm silica gel.',
+      image: null,
+      flair: 'Bảo dưỡng da đàn',
+      cardBg: '#1e1418',
+      upvotes: 28,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_dni_3',
+          author: '@ngocmai_nhi',
+          authorName: 'Ngọc Mai',
+          authorAvatar: '👩‍🏫',
+          timestamp: now - (6 * D + 22 * H),
+          text: 'Kinh nghiệm vàng của tiền bối! Em suýt nữa làm rách mặt da đàn đợt nồm vừa rồi.',
+          upvotes: 6
+        }
+      ]
+    },
+    {
+      id: 'post_seed_dannhi_4',
+      subreddit: 'dannhi',
+      subredditAvatar: '🎻',
+      author: '@vietcuong_nhi',
+      authorName: 'Việt Cường',
+      authorRole: 'Thành viên Diễn đàn',
+      authorBadge: '🎵 Thành viên',
+      authorAvatar: '🧑‍💻',
+      timestamp: now - (9 * D + 7 * H),
+      title: 'Trải nghiệm kéo bài "Kể Chuyện Ngày Mùa" của NSƯT Thao Giang trên Đàn Nhị',
+      content: 'Khúc nhạc tràn ngập niềm vui rộn ràng mùa gặt của bà con nông dân. Điểm nhấn là những đoạn miết vĩ dồn dập mô phỏng tiếng cười nói rộn rã trên cánh đồng lúa chín. Đánh đàn nhị không chỉ có buồn thương mà còn có những giai điệu tươi sáng, hào hùng như thế này nữa!',
+      image: null,
+      flair: 'Tác phẩm hiện đại',
+      cardBg: '#1e1418',
+      upvotes: 24,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_dni_4',
+          author: '@tuananh_dannhi',
+          authorName: 'Tuấn Anh',
+          authorAvatar: '🎻',
+          timestamp: now - (9 * D + 2 * H),
+          text: 'Bài này nghe phấn khởi vô cùng, kéo đoạn cao trào rất đã tay.',
+          upvotes: 4
+        }
+      ]
+    },
+
+    // ==========================================
+    // 5. SÁO TRÚC & TIÊU (saotruc) - 4 bài viết
+    // ==========================================
+    {
+      id: 'post_seed_saotruc_1',
+      subreddit: 'saotruc',
+      subredditAvatar: '🎋',
+      author: '@saotruc_hoang',
+      authorName: 'Hoàng Sáo',
+      authorRole: 'Nghệ nhân Sáo Trúc',
+      authorBadge: '🏅 Nghệ sĩ',
+      authorAvatar: '🎋',
+      timestamp: now - (1 * D + 5 * H),
+      title: 'Bí quyết mở khẩu hình và lấy hơi bụng để thổi sáo trúc bền hơi, không chóng mặt',
+      content: 'Người mới tập thổi sáo trúc thường chỉ thổi được 15 giây là hết hơi và bị chóng mặt do lấy hơi bằng ngực. Muốn hơi sâu và dài, các bạn phải tập hít thở cơ hoành (thở bụng): khi hít vào bụng phình ra, khi thổi ép cơ bụng đẩy luồng hơi mảnh, đều qua lỗ thổi. Hãy tập ngậm một ngụm trà ấm trước khi tập để môi mềm dẻo hơn nhé!',
+      image: null,
+      flair: 'Kỹ thuật lấy hơi',
+      cardBg: '#1e1418',
+      upvotes: 38,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_st_1',
+          author: '@bichthao_flute',
+          authorName: 'Bích Thảo',
+          authorAvatar: '👩‍🌾',
+          timestamp: now - (1 * D + 1 * H),
+          text: 'Tập thở bụng đúng là thay đổi hoàn toàn, giờ em thổi liền một hơi 45 giây thoải mái!',
+          upvotes: 9
+        }
+      ]
+    },
+    {
+      id: 'post_seed_saotruc_2',
+      subreddit: 'saotruc',
+      subredditAvatar: '🎋',
+      author: '@tiensao_bactu',
+      authorName: 'Tiến Sáo',
+      authorRole: 'Thợ làm sáo',
+      authorBadge: '🪵 Nghệ nhân',
+      authorAvatar: '🧑‍🔧',
+      timestamp: now - (3 * D + 8 * H),
+      title: 'Cách lựa chọn cây Sáo Trúc Tone Đô (C5) chuẩn cao độ cho người mới bắt đầu',
+      content: 'Sáo Tone Đô C5 là cây sáo quốc dân cho mọi người bắt đầu vì khoảng cách giữa các lỗ bấm vừa tầm tay, luồng hơi không quá nặng cũng không quá nhẹ. Khi mua sáo, nên kiểm tra bằng phần mềm chỉnh âm (Tuner) ở tần số chuẩn A=440Hz, kiểm tra độ dày của nứa/trúc và độ bóng mịn của lòng sáo.',
+      image: null,
+      flair: 'Chọn mua sáo',
+      cardBg: '#1e1418',
+      upvotes: 29,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_st_2',
+          author: '@saotruc_hoang',
+          authorName: 'Hoàng Sáo',
+          authorAvatar: '🎋',
+          timestamp: now - (3 * D + 2 * H),
+          text: 'Em cũng bắt đầu với sáo C5 nứa Nam, tiếng rất trong và ấm.',
+          upvotes: 6
+        }
+      ]
+    },
+    {
+      id: 'post_seed_saotruc_3',
+      subreddit: 'saotruc',
+      subredditAvatar: '🎋',
+      author: '@bichthao_flute',
+      authorName: 'Bích Thảo',
+      authorRole: 'Thành viên Diễn đàn',
+      authorBadge: '🎵 Thành viên',
+      authorAvatar: '👩‍🌾',
+      timestamp: now - (6 * D + 4 * H),
+      title: 'Kỹ thuật rung hơi cổ họng và ngón lượn (láy nốt) trong dân ca Quan họ Bắc Ninh',
+      content: 'Để thổi ra chất Quan họ "người ơi người ở đừng về", người thổi sáo phải kết hợp rung hơi bằng cơ họng nhịp nhàng với ngón láy mềm mại. Luồng hơi không được thẳng đơ mà phải uốn lượn như dải lụa đào. Mọi người có bài tập bổ trợ nào cho cơ vòm họng không?',
+      image: null,
+      flair: 'Dân ca Quan họ',
+      cardBg: '#1e1418',
+      upvotes: 27,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_st_3',
+          author: '@trieuvu_tieu',
+          authorName: 'Triệu Vũ',
+          authorAvatar: '🎋',
+          timestamp: now - (5 * D + 20 * H),
+          text: 'Hơi rung họng nghe ngọt ngào lắm chị ơi, thổi Quan họ nghe say đắm lòng người.',
+          upvotes: 5
+        }
+      ]
+    },
+    {
+      id: 'post_seed_saotruc_4',
+      subreddit: 'saotruc',
+      subredditAvatar: '🎋',
+      author: '@trieuvu_tieu',
+      authorName: 'Triệu Vũ',
+      authorRole: 'Nghệ nhân Thổi Tiêu',
+      authorBadge: '⭐ Bậc thầy',
+      authorAvatar: '🎋',
+      timestamp: now - (8 * D + 12 * H),
+      title: 'Phân biệt âm sắc giữa Tiêu Bát Khổng (8 lỗ) và Sáo Trúc Ngang truyền thống',
+      content: 'Trong khi sáo trúc ngang có âm sắc bay bổng, rực rỡ, reo vui thì cây Tiêu thổi dọc lại mang âm điệu trầm mặc, u hoài và sâu lắng tựa như tiếng gió thổi qua rừng trúc ngàn năm. Những đêm trăng thanh gió mát, một mình thổi tiêu là phương thức tĩnh tâm diệu kỳ nhất.',
+      image: null,
+      flair: 'Nghệ thuật tiêu dao',
+      cardBg: '#1e1418',
+      upvotes: 33,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_st_4',
+          author: '@saotruc_hoang',
+          authorName: 'Hoàng Sáo',
+          authorAvatar: '🎋',
+          timestamp: now - (8 * D + 4 * H),
+          text: 'Âm sắc của tiêu trầm ấm nghe như tiếng thiền tịnh, rất hợp nghe lúc đêm khuya.',
+          upvotes: 8
+        }
+      ]
+    },
+
+    // ==========================================
+    // 6. CỒNG CHIÊNG & TRỐNG (congchieng) - 4 bài viết
+    // ==========================================
+    {
+      id: 'post_seed_congchieng_1',
+      subreddit: 'congchieng',
+      subredditAvatar: '🔔',
+      author: '@amatran_taynguyen',
+      authorName: 'Y Krang M’Nông',
+      authorRole: 'Nghệ nhân Buôn Làng',
+      authorBadge: '🏅 Già làng',
+      authorAvatar: '🔔',
+      timestamp: now - (3 * D + 4 * H),
+      title: 'Không gian văn hóa Cồng Chiêng Tây Nguyên: Nghệ thuật chỉnh chiêng và hòa âm đa thanh',
+      content: 'Cồng Chiêng Tây Nguyên đã được UNESCO vinh danh là Kiệt tác truyền khẩu và Di sản văn hóa phi vật thể của nhân loại. Mỗi chiếc cồng (có núm) và chiêng (không núm) mang một cao độ riêng, khi hòa tấu cùng nhau tạo nên bản giao hưởng hùng tráng của đại ngàn. Nghệ nhân chỉnh chiêng dùng búa gõ tinh xảo để định hình cao độ cho từng thanh âm thiêng liêng.',
+      image: null,
+      flair: 'Di sản UNESCO',
+      cardBg: '#1e1418',
+      upvotes: 42,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_cc_1',
+          author: '@suviet_hongbang',
+          authorName: 'Sử Việt',
+          authorAvatar: '🏛️',
+          timestamp: now - (2 * D + 22 * H),
+          text: 'Tuyệt tác của núi rừng Tây Nguyên, nghe hòa tấu cồng chiêng bên bếp lửa nhà rông thật nổi da gà!',
+          upvotes: 11
+        }
+      ]
+    },
+    {
+      id: 'post_seed_congchieng_2',
+      subreddit: 'congchieng',
+      subredditAvatar: '🔔',
+      author: '@nhactruong_van',
+      authorName: 'Văn Hùng',
+      authorRole: 'Chỉ huy dàn nhạc',
+      authorBadge: '⭐ Tinh hoa',
+      authorAvatar: '🥁',
+      timestamp: now - (5 * D + 9 * H),
+      title: 'Tìm hiểu cấu tạo và kỹ thuật đánh Trống Cơm trong dàn nhạc dân tộc Việt Nam',
+      content: 'Trống Cơm có hai mặt bịt da, thân hình thoi thon ở hai đầu. Điểm đặc sắc nhất là trước khi đánh, nghệ nhân phải gắn một miếng cơm nếp dẻo đã tán mịn vào giữa mặt trống để định âm, tạo nên âm thanh trầm ấm, đục vừa phải đặc trưng cho ca khúc "Tình Bằng Có Cái Trống Cơm". Ai từng thử làm cơm dán trống cơm chưa?',
+      image: null,
+      flair: 'Bộ gõ cổ truyền',
+      cardBg: '#1e1418',
+      upvotes: 26,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_cc_2',
+          author: '@nghesi_quangthang',
+          authorName: 'NS. Quang Thắng',
+          authorAvatar: '🎭',
+          timestamp: now - (5 * D + 3 * H),
+          text: 'Hồi bé xem các bác dán cơm vào mặt trống thắc mắc mãi, lớn lên mới biết đó là kỹ thuật chỉnh âm độc nhất vô nhị.',
+          upvotes: 6
+        }
+      ]
+    },
+    {
+      id: 'post_seed_congchieng_3',
+      subreddit: 'congchieng',
+      subredditAvatar: '🔔',
+      author: '@nghesi_quangthang',
+      authorName: 'NS. Quang Thắng',
+      authorRole: 'Nghệ sĩ Nhà hát Chèo',
+      authorBadge: '🎭 Nghệ sĩ',
+      authorAvatar: '🎭',
+      timestamp: now - (7 * D + 6 * H),
+      title: 'Nhịp phách Trống Đế trong nghệ thuật Hát Chèo truyền thống Bắc Bộ',
+      content: 'Trống đế tuy kích thước nhỏ nhưng là nhạc cụ dẫn dắt nhịp điệu chính trong chiếu chèo. Dùi trống bằng gỗ ổi đánh vào tang trống và mặt trống tạo nên những tiếng "Tùng - Rắc - Cắc" sắc bén, cổ vũ cho diễn xuất của các đào, kép. Thiếu tiếng trống đế là chiếu chèo mất đi 70% khí thế!',
+      image: null,
+      flair: 'Nghệ thuật Chèo',
+      cardBg: '#1e1418',
+      upvotes: 30,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_cc_3',
+          author: '@nhactruong_van',
+          authorName: 'Văn Hùng',
+          authorAvatar: '🥁',
+          timestamp: now - (7 * D + 1 * H),
+          text: 'Tiếng "cắc - rắc" của dùi trống đế gõ tang nghe vui tai và giòn giã vô cùng.',
+          upvotes: 8
+        }
+      ]
+    },
+    {
+      id: 'post_seed_congchieng_4',
+      subreddit: 'congchieng',
+      subredditAvatar: '🔔',
+      author: '@suviet_hongbang',
+      authorName: 'Sử Việt',
+      authorRole: 'Nhà nghiên cứu Cổ sử',
+      authorBadge: '🏛️ Lịch sử',
+      authorAvatar: '🏛️',
+      timestamp: now - (10 * D + 4 * H),
+      title: 'Ý nghĩa của Trống Đồng Đông Sơn trong tâm thức nguồn cội dân tộc Việt',
+      content: 'Trống đồng Đông Sơn không chỉ là nhạc cụ linh thiêng biểu tượng cho quyền lực và sự trù phú thời các Vua Hùng, mà còn là cuốn bách khoa toàn thư khắc họa đời sống sinh hoạt, chim muông, mùa màng của người Lạc Việt cổ đại. Tiếng trống đồng vang lên tựa sấm rền cầu mưa thuận gió hòa cho muôn dân.',
+      image: null,
+      flair: 'Văn hóa Đông Sơn',
+      cardBg: '#1e1418',
+      upvotes: 45,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_cc_4',
+          author: '@amatran_taynguyen',
+          authorName: 'Y Krang M’Nông',
+          authorAvatar: '🔔',
+          timestamp: now - (9 * D + 19 * H),
+          text: 'Niềm tự hào ngàn đời của con cháu Lạc Hồng, hoa văn trên mặt trống đồng quá đỗi tinh xảo.',
+          upvotes: 12
+        }
+      ]
+    },
+
+    // ==========================================
+    // 7. BẢN NHẠC & NỐT SỐ (bannhaccotruyen) - 4 bài viết
+    // ==========================================
+    {
+      id: 'post_seed_bannhaccotruyen_1',
+      subreddit: 'bannhaccotruyen',
+      subredditAvatar: '🎼',
+      author: '@kyam_dantoc',
+      authorName: 'Thầy Hoàng Nam',
+      authorRole: 'Giảng viên Ký âm',
+      authorBadge: '🏅 Nghệ sĩ',
+      authorAvatar: '🎼',
+      timestamp: now - (1 * D + 10 * H),
+      title: 'Tổng hợp bảng ký âm Nốt Số (Jianpu - 1 2 3 5 6) tương ứng thang âm Ngũ Cung Việt Nam',
+      content: 'Để giúp các bạn mới tiếp cận âm nhạc cổ truyền dễ dàng hơn, mình xin chia sẻ bảng quy đổi hệ thống nốt số sang ngũ cung: Nốt 1 = Hò (Đô), Nốt 2 = Xự (Rê), Nốt 3 = Xang (Mi/Fa chênh), Nốt 5 = Xê (Sol), Nốt 6 = Cống (La). Nắm vững bảng này, các bạn có thể nhìn bản nốt số gảy được ngay trên Đàn Tranh, Sáo Trúc hay Đàn Nguyệt!',
+      image: null,
+      flair: 'Bảng nốt số',
+      cardBg: '#1e1418',
+      upvotes: 48,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_bn_1',
+          author: '@minhthu_cam',
+          authorName: 'Minh Thu',
+          authorAvatar: '📜',
+          timestamp: now - (1 * D + 3 * H),
+          text: 'Bảng quy đổi quá chi tiết và dễ hiểu, em lưu ngay về điện thoại để tra cứu lúc tập đàn.',
+          upvotes: 10
+        }
+      ]
+    },
+    {
+      id: 'post_seed_bannhaccotruyen_2',
+      subreddit: 'bannhaccotruyen',
+      subredditAvatar: '🎼',
+      author: '@minhthu_cam',
+      authorName: 'Minh Thu',
+      authorRole: 'Biên tập viên Nốt nhạc',
+      authorBadge: '⭐ Tinh hoa',
+      authorAvatar: '📜',
+      timestamp: now - (3 * D + 7 * H),
+      title: 'Chia sẻ bản nốt số bài "Cây Trúc Xinh" có đánh dấu ngón nhấn ngón rung đầy đủ',
+      content: 'Mình vừa biên soạn xong bản ký âm nốt số chuẩn của bài Dân ca Quan họ "Cây Trúc Xinh" dành riêng cho Đàn Tranh 16-19 dây. Trong bản nhạc mình có ký hiệu rõ ràng: dấu (~) là rung ngón, dấu (/) là vuốt dây, dấu (v) là nhấn nửa cung. Các bạn tải về tập luyện nhé, giai điệu rất mộc mạc và thanh thoát!',
+      image: null,
+      flair: 'Bản nhạc miễn phí',
+      cardBg: '#1e1418',
+      upvotes: 39,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_bn_2',
+          author: '@anhquan_music',
+          authorName: 'Anh Quân',
+          authorAvatar: '🎵',
+          timestamp: now - (3 * D + 2 * H),
+          text: 'Bản ký âm đẹp và rõ ràng lắm bạn ơi, mình tập theo nửa tiếng là đánh trôi chảy cả bài rồi.',
+          upvotes: 7
+        }
+      ]
+    },
+    {
+      id: 'post_seed_bannhaccotruyen_3',
+      subreddit: 'bannhaccotruyen',
+      subredditAvatar: '🎼',
+      author: '@anhquan_music',
+      authorName: 'Anh Quân',
+      authorRole: 'Nhạc sĩ Hòa âm',
+      authorBadge: '🎵 Thành viên',
+      authorAvatar: '🎵',
+      timestamp: now - (6 * D + 3 * H),
+      title: 'Nốt số ca khúc "Bèo Dạt Mây Trôi" - Bản chuyển soạn ngũ cung trữ tình cho Sáo và Đàn Bầu',
+      content: 'Khúc dân ca êm đềm này khi được tấu bằng sáo trúc hòa quyện cùng đàn bầu sẽ tạo nên không gian thôn quê yên bình đến nao lòng. Bản nhạc mình đã căn nhịp 2/4 chuẩn, có phần bè đệm đơn giản cho người tập hòa tấu đôi. Chúc các bạn có những giờ phút diễn tấu thăng hoa!',
+      image: null,
+      flair: 'Hòa tấu dân ca',
+      cardBg: '#1e1418',
+      upvotes: 35,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_bn_3',
+          author: '@kyam_dantoc',
+          authorName: 'Thầy Hoàng Nam',
+          authorAvatar: '🎼',
+          timestamp: now - (5 * D + 21 * H),
+          text: 'Giai điệu Bèo Dạt Mây Trôi nghe lúc nào cũng da diết, cảm ơn tác giả đã chia sẻ bản nhạc chuẩn!',
+          upvotes: 8
+        }
+      ]
+    },
+    {
+      id: 'post_seed_bannhaccotruyen_4',
+      subreddit: 'bannhaccotruyen',
+      subredditAvatar: '🎼',
+      author: '@nguyenthanh_co',
+      authorName: 'Nguyễn Thanh',
+      authorRole: 'Thành viên Diễn đàn',
+      authorBadge: '📚 Học giả',
+      authorAvatar: '👨‍🏫',
+      timestamp: now - (8 * D + 8 * H),
+      title: 'Phương pháp đọc và xướng âm chữ nhạc cổ truyền: Hò Xự Xang Xê Cống Phan Lục U',
+      content: 'Khác với ký âm phương Tây chỉ ghi cao độ tuyệt đối, chữ nhạc cổ truyền Việt Nam mang tính biểu cảm rất cao. Khi xướng âm "Hò... Xự... Xang...", ngữ điệu giọng đọc đã mang sẵn hơi thở của điệu thức. Tập xướng âm thuộc lòng giai điệu trước khi chạm vào phím đàn sẽ giúp bạn đánh đàn có hồn hơn rất nhiều.',
+      image: null,
+      flair: 'Xướng âm cổ truyền',
+      cardBg: '#1e1418',
+      upvotes: 33,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_bn_4',
+          author: '@minhthu_cam',
+          authorName: 'Minh Thu',
+          authorAvatar: '📜',
+          timestamp: now - (8 * D + 1 * H),
+          text: 'Ngày xưa các cụ toàn truyền khẩu xướng âm trước rồi mới dạy ngón đàn, cách này ngấm sâu vô cùng.',
+          upvotes: 6
+        }
+      ]
+    },
+
+    // ==========================================
+    // 8. TƯ VẤN CHỌN ĐÀN (tuvanchondan) - 5 bài viết
+    // ==========================================
+    {
+      id: 'post_seed_tuvanchondan_1',
+      subreddit: 'tuvanchondan',
+      subredditAvatar: '🪵',
+      author: '@thoxuan_dan',
+      authorName: 'Thợ Mộc Xuân',
+      authorRole: 'Nghệ nhân Đóng đàn',
+      authorBadge: '🪵 Bậc thầy',
+      authorAvatar: '🪵',
+      timestamp: now - (2 * D + 5 * H),
+      title: 'Kinh nghiệm chọn gỗ làm mặt Đàn Tranh: Gỗ Ngô Đồng xốp nhẹ hay Gỗ Hương?',
+      content: 'Mặt đàn tranh chuẩn mực từ xưa đến nay luôn phải làm bằng gỗ Ngô Đồng (hay còn gọi là cây vông), thớ gỗ xốp nhẹ, vân thẳng tắp giúp truyền dẫn dao động âm thanh cực kỳ nhạy và vang. Khung và thành đàn thì nên làm bằng gỗ gụ, gỗ cẩm lai hoặc gỗ hương để giữ độ chắc chắn, chống cong vênh khi căng dây. Tránh mua những cây đàn có mặt bằng gỗ ép công nghiệp nhé các bạn!',
+      image: null,
+      flair: 'Chất liệu gỗ',
+      cardBg: '#1e1418',
+      upvotes: 41,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_tv_1',
+          author: '@huonggiang_tranh',
+          authorName: 'Hương Giang',
+          authorAvatar: '👩‍💼',
+          timestamp: now - (2 * D + 1 * H),
+          text: 'Bác thợ nói rất chuẩn, mặt ngô đồng gảy tiếng vừa trong vừa ấm, mặt gỗ ép tiếng bí như gõ vào bìa các tông.',
+          upvotes: 9
+        }
+      ]
+    },
+    {
+      id: 'post_seed_tuvanchondan_2',
+      subreddit: 'tuvanchondan',
+      subredditAvatar: '🪵',
+      author: '@huonggiang_tranh',
+      authorName: 'Hương Giang',
+      authorRole: 'Cố vấn Nhạc cụ',
+      authorBadge: '⭐ Tinh hoa',
+      authorAvatar: '👩‍💼',
+      timestamp: now - (4 * D + 8 * H),
+      title: 'Nên mua Đàn Tranh 16 dây, 17 dây hay 19 dây cho người mới bắt đầu?',
+      content: 'Rất nhiều phụ huynh và bạn trẻ hỏi mình câu này: Đàn 16 dây là đàn truyền thống xưa; Đàn 17-19 dây là quy chuẩn biểu diễn hiện đại ngày nay với âm vực rộng hơn 3 quãng tám, diễn tấu được cả nhạc cổ truyền lẫn ca khúc đương đại. Lời khuyên chân thành: nên chọn cây 19 dây luôn để dùng lâu dài 5-10 năm không phải nâng cấp đàn.',
+      image: null,
+      flair: 'Tư vấn người mới',
+      cardBg: '#1e1418',
+      upvotes: 37,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_tv_2',
+          author: '@thuylinh_music',
+          authorName: 'Thùy Linh',
+          authorAvatar: '👧',
+          timestamp: now - (4 * D + 2 * H),
+          text: 'Em theo lời khuyên mua cây 19 dây từ đầu, giờ chơi được cả nhạc phim lẫn dân ca, không bị thiếu nốt.',
+          upvotes: 7
+        }
+      ]
+    },
+    {
+      id: 'post_seed_tuvanchondan_3',
+      subreddit: 'tuvanchondan',
+      subredditAvatar: '🪵',
+      author: '@manhcuong_luthier',
+      authorName: 'Mạnh Cường',
+      authorRole: 'Thợ chế tác Làng nghề',
+      authorBadge: '🪵 Nghệ nhân',
+      authorAvatar: '🎸',
+      timestamp: now - (6 * D + 9 * H),
+      title: 'Ngân sách từ 2 đến 5 triệu đồng thì nên chọn cây Đàn Nguyệt nào chất lượng ổn định?',
+      content: 'Với tầm tài chính 2 - 5 triệu, các bạn hoàn toàn có thể sở hữu một cây Đàn Nguyệt gỗ xà cừ hoặc gỗ mít ta già của các xưởng đàn thủ công uy tín ở làng nghề Đào Xá (Hà Nội) hoặc Sài Gòn. Cần chú ý kiểm tra cần đàn phải thẳng tắp, phím bấm gắn chắc chắn không bị lung lay và trục lên dây bằng gỗ tốt giữ dây không bị tuột.',
+      image: null,
+      flair: 'Tư vấn tầm giá',
+      cardBg: '#1e1418',
+      upvotes: 32,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_tv_3',
+          author: '@haianh_chauvan',
+          authorName: 'Hải Anh',
+          authorAvatar: '👨‍🎤',
+          timestamp: now - (6 * D + 2 * H),
+          text: 'Em đang dùng cây đàn nguyệt gỗ mít Đào Xá 3 triệu rưỡi, âm thanh đanh giòn hát văn rất đã!',
+          upvotes: 6
+        }
+      ]
+    },
+    {
+      id: 'post_seed_tuvanchondan_4',
+      subreddit: 'tuvanchondan',
+      subredditAvatar: '🪵',
+      author: '@canhgiac_nhaccu',
+      authorName: 'CLB Nhạc Cụ Truyền Thống',
+      authorBadge: '⚠️ Cảnh báo cộng đồng',
+      authorRole: 'Ban quản trị Diễn đàn',
+      authorAvatar: '⚠️',
+      timestamp: now - (8 * D + 10 * H),
+      title: 'Cảnh báo các loại Đàn Bầu, Sáo Trúc giá rẻ tràn lan trên mạng xã hội kém chất lượng',
+      content: 'Gần đây xuất hiện nhiều nơi bán sáo trúc 30k-50k hay đàn bầu 300k làm từ vật liệu phế liệu, nốt bị chênh lệch nghiêm trọng từ 1 đến 2 cung. Việc tập trên nhạc cụ sai cao độ sẽ làm hỏng hoàn toàn khả năng cảm thụ âm nhạc của đôi tai người mới học. Hãy tìm đến các xưởng đàn truyền thống có uy tín và bảo hành đàng hoàng nhé bà con!',
+      image: null,
+      flair: 'Cảnh báo mua sắm',
+      cardBg: '#1e1418',
+      upvotes: 53,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_tv_4',
+          author: '@saotruc_hoang',
+          authorName: 'Hoàng Sáo',
+          authorAvatar: '🎋',
+          timestamp: now - (8 * D + 3 * H),
+          text: 'Cảnh báo rất đúng lúc! Bạn em mua cây sáo 40k về thổi nốt Fa thành nốt Fa thăng, suýt bỏ cuộc vì tưởng mình không có khiếu.',
+          upvotes: 14
+        }
+      ]
+    },
+    {
+      id: 'post_seed_tuvanchondan_5',
+      subreddit: 'tuvanchondan',
+      subredditAvatar: '🪵',
+      author: '@vietduc_sound',
+      authorName: 'Việt Đức',
+      authorRole: 'Kỹ sư Âm thanh',
+      authorBadge: '🔍 Thẩm âm',
+      authorAvatar: '🔍',
+      timestamp: now - (10 * D + 5 * H),
+      title: 'Cách kiểm tra độ chuẩn cao độ (Intonation) và độ võng cần đàn khi đi test đàn trực tiếp',
+      content: 'Khi đi mua đàn trực tiếp tại xưởng: 1. Mang theo điện thoại cài sẵn app GuitarTuna hoặc DaTuner; 2. Thử từng phím bấm từ thấp đến cao xem có nốt nào bị rè (buzz) không; 3. Nhìn nghiêng cần đàn dọc từ đầu đàn xuống thân xem có bị vặn vẹo hình chữ S không; 4. Thử gảy mạnh xem khóa đàn có bị tuột không. Chúc các bạn chọn được cây đàn tri kỷ ưng ý!',
+      image: null,
+      flair: 'Mẹo test đàn',
+      cardBg: '#1e1418',
+      upvotes: 40,
+      myVote: 0,
+      isJoined: false,
+      isSeedPost: true,
+      isUserCreated: false,
+      comments: [
+        {
+          id: 'cmt_seed_tv_5',
+          author: '@thoxuan_dan',
+          authorName: 'Thợ Mộc Xuân',
+          authorAvatar: '🪵',
+          timestamp: now - (9 * D + 22 * H),
+          text: 'Cẩm nang bỏ túi cực kỳ hữu ích cho ai chuẩn bị đi sắm cây đàn đầu tiên!',
+          upvotes: 8
+        }
+      ]
     }
+  ];
+}
+
 
     function getAllRedditPosts() {
       try {
-        // Dọn dẹp các bài seed ảo cũ nếu còn sót trong các phiên bản trước
-        const legacyKeys = ['mit_forum_community_posts_v4', 'mit_forum_posts_v3', 'mit_forum_posts_v2'];
-        legacyKeys.forEach(k => {
+        const raw = localStorage.getItem(getRedditPostsStorageKey()) || localStorage.getItem('dan_tranh_forum_posts');
+        let savedList = [];
+        if (raw) {
           try {
-            const oldRaw = localStorage.getItem(k);
-            if (oldRaw) {
-              const oldParsed = JSON.parse(oldRaw);
-              if (Array.isArray(oldParsed)) {
-                // Thu gom các bài do người dùng thật đăng (không có id bắt đầu bằng post_seed_)
-                const realUserPosts = oldParsed.filter(p => p && p.id && !p.id.toString().startsWith('post_seed_'));
-                if (realUserPosts.length > 0) {
-                  const currentReal = localStorage.getItem(getRedditPostsStorageKey());
-                  if (!currentReal) {
-                    saveAllRedditPosts(realUserPosts);
-                  }
-                }
-              }
-              localStorage.removeItem(k);
-            }
-          } catch(err) {}
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) savedList = parsed;
+          } catch (e) {}
+        }
+
+        // Đọc danh sách các ID bài viết đã bị xóa có chủ đích
+        let deletedIds = [];
+        try {
+          const delRaw = localStorage.getItem('mit_forum_deleted_post_ids');
+          if (delRaw) deletedIds = JSON.parse(delRaw) || [];
+        } catch (e) {}
+
+        // 1. Giữ nguyên 100% bài viết của người dùng thật (Yêu cầu 6)
+        const userPosts = savedList.filter(p => p && p.id && (!p.id.toString().startsWith('post_seed_') || p.isUserCreated));
+        userPosts.forEach(p => {
+          p.subreddit = normalizeSubredditKey(p.subreddit);
+          p.author = formatUserHandle(p.author);
+          if (Array.isArray(p.comments)) {
+            p.comments.forEach(c => { c.author = formatUserHandle(c.author); });
+          }
         });
 
-        const raw = localStorage.getItem(getRedditPostsStorageKey());
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          if (Array.isArray(parsed)) {
-            // Lọc tuyệt đối loại bỏ bất kỳ bài viết sẵn giả lập nào
-            const realOnly = parsed.filter(p => p && p.id && !p.id.toString().startsWith('post_seed_'));
-            realOnly.forEach(p => {
-              p.subreddit = normalizeSubredditKey(p.subreddit);
-              p.author = formatUserHandle(p.author);
-              if (Array.isArray(p.comments)) {
-                p.comments.forEach(c => { c.author = formatUserHandle(c.author); });
-              }
-            });
-            return realOnly;
+        // 2. Thu nạp các bài mẫu Seed có kiểm soát (Yêu cầu 7)
+        const seedDefs = getInitialDefaultRedditPosts();
+        const savedPostMap = {};
+        savedList.forEach(p => { if (p && p.id) savedPostMap[String(p.id)] = p; });
+
+        const activeSeedPosts = [];
+        seedDefs.forEach(def => {
+          if (deletedIds.includes(def.id)) return; // Bỏ qua nếu người dùng đã chủ động xóa
+          if (savedPostMap[def.id]) {
+            // Giữ lại tương tác vote/comment của người dùng trên bài mẫu
+            activeSeedPosts.push(savedPostMap[def.id]);
+          } else {
+            activeSeedPosts.push(def);
           }
-        }
-      }
- catch (e) {
+        });
+
+        // Hợp nhất: Bài viết thật của người dùng đặt lên đầu, tiếp theo là các bài viết mẫu
+        const combined = [...userPosts, ...activeSeedPosts];
+        return combined;
+      } catch (e) {
         console.warn('Lỗi đọc diễn đàn:', e);
+        return getInitialDefaultRedditPosts();
       }
-      return [];
     }
 
     function saveAllRedditPosts(posts) {
@@ -12018,6 +13161,13 @@
     /* Xóa bài viết khỏi diễn đàn thực tế */
     function handleDeleteRedditPost(postId) {
       if (!confirm('Bạn có chắc chắn muốn xóa bài viết này khỏi diễn đàn?')) return;
+      try {
+        let deletedIds = [];
+        const delRaw = localStorage.getItem('mit_forum_deleted_post_ids');
+        if (delRaw) deletedIds = JSON.parse(delRaw) || [];
+        if (!deletedIds.includes(postId)) deletedIds.push(postId);
+        localStorage.setItem('mit_forum_deleted_post_ids', JSON.stringify(deletedIds));
+      } catch (e) {}
       let posts = getAllRedditPosts();
       posts = posts.filter(p => p.id !== postId);
       saveAllRedditPosts(posts);

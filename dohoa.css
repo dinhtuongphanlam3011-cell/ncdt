@@ -10638,6 +10638,11 @@ label {
 }
 
 /* ==================== 2. TASKBAR NHẠC CỤ (#taskbarInstrument) ==================== */
+#taskbarInstrument,
+.taskbar-instrument {
+  position: relative !important;
+}
+
 .taskbar-inst-badge {
   display: inline-flex;
   align-items: center;
@@ -10649,9 +10654,11 @@ label {
   color: #f5ece0;
   font-size: 14px;
   font-weight: 700;
-  cursor: pointer;
+  cursor: pointer !important;
+  pointer-events: auto !important;
   transition: all 0.2s ease;
   white-space: nowrap;
+  user-select: none;
 }
 
 .taskbar-inst-badge:hover {
@@ -10685,8 +10692,29 @@ label {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  flex: 1;
   flex-wrap: nowrap;
+}
+
+@media (min-width: 861px) {
+  .taskbar-inst-actions {
+    position: absolute !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    margin: 0 !important;
+    z-index: 5 !important;
+  }
+}
+
+@media (max-width: 860px) {
+  .taskbar-inst-actions {
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    transform: none !important;
+    margin: 0 auto !important;
+    flex: 1 !important;
+  }
 }
 
 .inst-action-btn {
