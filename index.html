@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
@@ -389,7 +389,7 @@
           <span id="navTabInstIcon">🪕</span>
           <span id="navTabInstText">Nhạc cụ</span>
         </button>
-        <button type="button" class="nav-link tttt-plain-tab" id="navTabForum" onclick="switchNavTab('forum')">
+        <button type="button" class="nav-link tttt-plain-tab" id="navTabForum" onclick="switchNavTab('forum')" style="display: none !important;">
           💬 Diễn đàn MIT
         </button>
         <button type="button" class="nav-link tttt-plain-tab" id="navTabLookup" onclick="switchNavTab('lookup')" style="display: none !important;">
@@ -500,6 +500,9 @@
 
       <!-- Cụm phải: Nút Lịch đăng bài, Tạo bài viết mới & Avatar cá nhân -->
       <div class="contextual-taskbar-right">
+        <button type="button" class="btn btn-secondary btn-xs" id="btnTaskbarForumHistory" onclick="selectRedditNav('history')" title="Xem giao diện Lịch sử bài viết đã đăng" style="border-radius: 999px; height: 36px; padding: 0 14px; font-weight: 700; color: #ffea9f; border-color: rgba(239, 196, 123, 0.4); display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;">
+          <span>📜</span> <span>Lịch sử đăng bài</span>
+        </button>
         <button type="button" class="btn btn-secondary btn-xs" id="btnOpenForumSchedule" onclick="openForumScheduleModal()" title="Xem lịch đăng bài &amp; kế hoạch hoạt động diễn đàn" style="border-radius: 999px; height: 36px; padding: 0 14px; font-weight: 700; color: #ffea9f; border-color: rgba(239, 196, 123, 0.4); display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;">
           <span>📅</span> <span>Lịch đăng bài</span>
         </button>
@@ -975,6 +978,10 @@
               <span class="reddit-nav-item-icon">🧭</span>
               <span>Khám phá chủ đề</span>
             </li>
+            <li class="reddit-nav-item" id="redditNavItemHistory" onclick="selectRedditNav('history')">
+              <span class="reddit-nav-item-icon">📜</span>
+              <span>Lịch sử đăng bài</span>
+            </li>
             <li class="reddit-nav-item" onclick="openRedditComposer()" style="color: #ffea9f;">
               <span class="reddit-nav-item-icon">➕</span>
               <span>Tạo bài viết mới</span>
@@ -982,9 +989,6 @@
             <li class="reddit-nav-item" onclick="openForumUserProfile()" style="color: #ffea9f;">
               <span class="reddit-nav-item-icon">👤</span>
               <span>Trang cá nhân của tôi</span>
-            </li>
-              <span class="reddit-nav-item-icon">➕</span>
-              <span>Tạo bài viết mới</span>
             </li>
           </ul>
 
@@ -1265,6 +1269,49 @@
           <!-- FEED CONTAINER (RENDER BỞI JAVASCRIPT) -->
           <div id="redditFeedContainer" style="display: flex; flex-direction: column; gap: 14px;">
             <!-- Dynamic MIT Post Cards -->
+          </div>
+
+          <!-- GIAO DIỆN TAB ĐỘC LẬP: LỊCH SỬ ĐĂNG BÀI (YÊU CẦU 3) -->
+          <div id="redditHistoryContainer" style="display: none; flex-direction: column; gap: 16px;">
+            <!-- Header của Tab Lịch sử -->
+            <div class="forum-history-header-card" style="background: linear-gradient(135deg, rgba(38, 12, 18, 0.96) 0%, rgba(20, 6, 10, 0.98) 100%); border: 1.5px solid rgba(239, 196, 123, 0.45); border-radius: 16px; padding: 20px 24px; box-shadow: 0 8px 30px rgba(0,0,0,0.5);">
+              <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 44px; height: 44px; border-radius: 50% !important; background: linear-gradient(135deg, #f59e0b, #b45309); display: flex; align-items: center; justify-content: center; font-size: 22px; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4); flex-shrink: 0;">📜</div>
+                  <div>
+                    <h2 style="margin: 0; font-size: 20px; font-weight: 800; color: #fff8eb;">Lịch Sử Đăng Bài Diễn Đàn</h2>
+                    <p style="margin: 3px 0 0 0; font-size: 12.5px; color: #d1c7b7;">Theo dõi và quản lý toàn bộ bài viết đã xuất bản theo trình tự thời gian mới nhất</p>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-primary btn-sm" onclick="openRedditComposer()" style="border-radius: 999px; font-weight: 700; padding: 8px 20px; display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #ef4444, #f97316); border: none; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4); cursor: pointer;">
+                  <span>✍️</span> <span>Đăng bài viết mới</span>
+                </button>
+              </div>
+
+              <!-- Bộ lọc chuyển đổi: Bài viết của tôi / Tất cả bài viết / Lọc theo thành viên -->
+              <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding-top: 14px; border-top: 1px solid rgba(239, 196, 123, 0.2);">
+                <div style="display: inline-flex; background: rgba(0,0,0,0.4); padding: 3px; border-radius: 999px; border: 1px solid rgba(239, 196, 123, 0.25);">
+                  <button type="button" id="btnHistoryFilterMy" onclick="setHistoryFilterScope('my')" style="border-radius: 999px; padding: 6px 18px; font-size: 12.5px; font-weight: 700; border: none; cursor: pointer; transition: all 0.2s; background: linear-gradient(135deg, #f59e0b, #d97706); color: #111;">
+                    👤 Bài viết của tôi (<span id="lblHistoryCountMy">0</span>)
+                  </button>
+                  <button type="button" id="btnHistoryFilterAll" onclick="setHistoryFilterScope('all')" style="border-radius: 999px; padding: 6px 18px; font-size: 12.5px; font-weight: 700; border: none; cursor: pointer; transition: all 0.2s; background: transparent; color: #c8baa6;">
+                    🌐 Tất cả thành viên (<span id="lblHistoryCountAll">0</span>)
+                  </button>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-size: 12px; color: #ffea9f; font-weight: 600;">Xem theo tác giả:</span>
+                  <select id="selHistoryAuthorFilter" onchange="onHistoryAuthorSelectChange(this.value)" style="background: rgba(20, 6, 10, 0.95); border: 1px solid rgba(239, 196, 123, 0.35); border-radius: 8px; color: #ffea9f; padding: 5px 12px; font-size: 12px; outline: none; cursor: pointer;">
+                    <option value="">-- Tất cả tác giả --</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Danh sách các bài viết trong Lịch sử -->
+            <div id="forumHistoryListContainer" style="display: flex; flex-direction: column; gap: 12px;">
+              <!-- Rendered dynamically by renderRedditHistoryTab() -->
+            </div>
           </div>
 
         </section>
@@ -4547,6 +4594,25 @@
         if (p) p.style.display = 'none';
       });
 
+      // YÊU CẦU 1: Bảo vệ truy cập Diễn đàn khi người dùng chưa đăng nhập
+      if (tabName === 'forum') {
+        const curAcc = (typeof getActiveUserAccount === 'function') ? getActiveUserAccount() : null;
+        const isGuest = !curAcc || curAcc.role === 'guest' || curAcc.username === 'guest';
+        if (isGuest) {
+          if (typeof showActionToast === 'function') {
+            showActionToast('🔒 Vui lòng đăng nhập để truy cập Diễn đàn MIT!');
+          } else {
+            alert('Vui lòng đăng nhập để truy cập Diễn đàn MIT!');
+          }
+          if (typeof openUnifiedLoginModal === 'function') {
+            openUnifiedLoginModal();
+          } else if (typeof openOwnerLoginModal === 'function') {
+            openOwnerLoginModal();
+          }
+          return;
+        }
+      }
+
       const targetKey = (panes[tabName] && tabName !== 'demosongs') ? tabName : 'encyclopedia';
       window.currentActiveNavTab = targetKey;
 
@@ -5772,6 +5838,9 @@
         reply: ''
       });
       localStorage.setItem('dan_tranh_reports', JSON.stringify(reports));
+      if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.syncReportsToCloud === 'function') {
+        window.DanTranhCloudSync.syncReportsToCloud(reports);
+      }
 
       if (typeof syncOwnerHeaderFeedbackBadge === 'function') syncOwnerHeaderFeedbackBadge();
       if (typeof renderOwnerFeedbackInbox === 'function') renderOwnerFeedbackInbox();
@@ -6490,6 +6559,9 @@
 
     function saveRegisteredUsersList(list) {
       localStorage.setItem('dan_tranh_users', JSON.stringify(list));
+      if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.syncUsersToCloud === 'function') {
+        window.DanTranhCloudSync.syncUsersToCloud(list);
+      }
     }
 
     // Giữ nguyên phiên đăng nhập của máy đã từng đăng nhập tài khoản. Máy chưa từng đăng nhập sẽ mặc định là Guest.
@@ -8396,6 +8468,13 @@
       if (typeof toggleOwnerFloatingWindow === 'function') {
         toggleOwnerFloatingWindow(false);
       }
+      const navTabForumEl = document.getElementById('navTabForum');
+      if (navTabForumEl) {
+        navTabForumEl.style.setProperty('display', 'none', 'important');
+      }
+      if (window.currentActiveNavTab === 'forum') {
+        switchNavTab('encyclopedia');
+      }
       syncHeaderAndAccountUI();
     }
     window.handleUnifiedLogout = handleUnifiedLogout;
@@ -8422,6 +8501,16 @@
           targetEl.appendChild(img);
         } else {
           targetEl.textContent = avVal || '👤';
+        }
+      }
+
+      // YÊU CẦU 1: Ẩn tab Diễn đàn khi người dùng chưa đăng nhập, chỉ hiện khi đã đăng nhập
+      const navTabForum = document.getElementById('navTabForum');
+      if (navTabForum) {
+        if (isGuest) {
+          navTabForum.style.setProperty('display', 'none', 'important');
+        } else {
+          navTabForum.style.setProperty('display', 'inline-flex', 'important');
         }
       }
 
@@ -11313,6 +11402,9 @@
     function saveOwnerFeedbackList(list) {
       localStorage.setItem('dan_tranh_reports', JSON.stringify(list || []));
       syncOwnerHeaderFeedbackBadge();
+      if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.syncReportsToCloud === 'function') {
+        window.DanTranhCloudSync.syncReportsToCloud(list || []);
+      }
     }
 
     function syncOwnerHeaderFeedbackBadge() {
@@ -11386,6 +11478,9 @@
         localStorage.setItem('dan_tranh_reports', JSON.stringify(list));
         syncOwnerHeaderFeedbackBadge();
         if (typeof updateReportBadges === 'function') updateReportBadges();
+        if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.syncReportsToCloud === 'function') {
+          window.DanTranhCloudSync.syncReportsToCloud(list);
+        }
       }
     }
     window.markAllOwnerFeedbackAsRead = markAllOwnerFeedbackAsRead;
@@ -11527,6 +11622,9 @@
       localStorage.setItem('dan_tranh_reports', JSON.stringify([]));
       syncOwnerHeaderFeedbackBadge();
       renderOwnerFeedbackInbox();
+      if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.syncReportsToCloud === 'function') {
+        window.DanTranhCloudSync.syncReportsToCloud([]);
+      }
     }
     window.clearAllOwnerFeedbacks = clearAllOwnerFeedbacks;
 
@@ -11910,7 +12008,11 @@
     function saveAllRedditPosts(posts) {
       try {
         localStorage.setItem(getRedditPostsStorageKey(), JSON.stringify(posts));
+        localStorage.setItem('dan_tranh_forum_posts', JSON.stringify(posts));
       } catch (e) {}
+      if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.syncForumPostsToCloud === 'function') {
+        window.DanTranhCloudSync.syncForumPostsToCloud(posts);
+      }
     }
 
     /* Xóa bài viết khỏi diễn đàn thực tế */
@@ -12109,17 +12211,21 @@
     window.initRedditForumUI = initRedditForumUI;
     window.initCommunityForumUI = initRedditForumUI;
 
-    /* Chọn mục điều hướng diễn đàn (Home, Popular, News, Explore) */
+    /* Chọn mục điều hướng diễn đàn (Home, Popular, News, Explore, History) - YÊU CẦU 3 */
     function selectRedditNav(key) {
-      const navItems = ['home', 'popular', 'news', 'explore'];
+      const navItems = ['home', 'popular', 'news', 'explore', 'history'];
       navItems.forEach(k => {
         const el = document.getElementById('redditNavItem' + k.charAt(0).toUpperCase() + k.slice(1));
         if (el) {
           if (k === key) el.classList.add('active');
           else el.classList.remove('active');
         }
+      });
+
+      const btnTbHistory = document.getElementById('btnTaskbarForumHistory');
+      if (btnTbHistory) {
+        btnTbHistory.classList.toggle('active', key === 'history');
       }
-);
 
       // Đồng bộ thanh taskbar MIT ở trên
       const taskbarPills = {
@@ -12131,8 +12237,23 @@
         if (taskbarPills[k]) {
           taskbarPills[k].classList.toggle('active', k === key);
         }
+      });
+
+      const feedContainer = document.getElementById('redditFeedContainer');
+      const historyContainer = document.getElementById('redditHistoryContainer');
+      const aiTopicPanel = document.getElementById('mitAiTopicClusterPanel');
+
+      if (key === 'history') {
+        if (feedContainer) feedContainer.style.display = 'none';
+        if (aiTopicPanel) aiTopicPanel.style.display = 'none';
+        if (historyContainer) historyContainer.style.display = 'flex';
+        renderRedditHistoryTab();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
       }
-);
+
+      if (historyContainer) historyContainer.style.display = 'none';
+      if (feedContainer) feedContainer.style.display = 'flex';
 
       if (key === 'popular') {
         setRedditSort('top');
@@ -12143,6 +12264,197 @@
       }
     }
     window.selectRedditNav = selectRedditNav;
+
+    // =========================================================
+    // YÊU CẦU 3: LOGIC TAB ĐỘC LẬP "LỊCH SỬ ĐĂNG BÀI" DIỄN ĐÀN
+    // =========================================================
+    window.forumHistoryScope = 'my'; // 'my' | 'all'
+    window.forumHistoryAuthorFilter = '';
+
+    function setHistoryFilterScope(scope) {
+      window.forumHistoryScope = scope || 'my';
+      window.forumHistoryAuthorFilter = '';
+      const sel = document.getElementById('selHistoryAuthorFilter');
+      if (sel) sel.value = '';
+      renderRedditHistoryTab();
+    }
+    window.setHistoryFilterScope = setHistoryFilterScope;
+
+    function onHistoryAuthorSelectChange(authorVal) {
+      window.forumHistoryAuthorFilter = (authorVal || '').trim();
+      renderRedditHistoryTab();
+    }
+    window.onHistoryAuthorSelectChange = onHistoryAuthorSelectChange;
+
+    function renderRedditHistoryTab() {
+      const container = document.getElementById('forumHistoryListContainer');
+      if (!container) return;
+
+      const activeUser = (typeof getActiveUserAccount === 'function') ? getActiveUserAccount() : null;
+      const myUsername = (activeUser && activeUser.username) ? activeUser.username.toLowerCase() : '';
+      const myDisplayName = (activeUser && activeUser.displayName) ? activeUser.displayName.toLowerCase() : '';
+      const isOwner = activeUser && (activeUser.role === 'admin' || myUsername === 'admin' || myUsername === 'owner');
+
+      const allPosts = getAllRedditPosts();
+      const sortedPosts = allPosts.slice().sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+      // Lọc các bài do chính người dùng hiện tại đăng
+      const myPosts = sortedPosts.filter(p => {
+        const aHandle = (p.author || '').replace('@', '').toLowerCase();
+        const aName = (p.authorName || '').toLowerCase();
+        const aUser = (p.authorUsername || '').toLowerCase();
+        return (myUsername && (aHandle === myUsername || aUser === myUsername)) || (myDisplayName && aName === myDisplayName);
+      });
+
+      const countMyEl = document.getElementById('lblHistoryCountMy');
+      const countAllEl = document.getElementById('lblHistoryCountAll');
+      if (countMyEl) countMyEl.textContent = myPosts.length;
+      if (countAllEl) countAllEl.textContent = sortedPosts.length;
+
+      // Cập nhật giao diện nút Segmented
+      const btnMy = document.getElementById('btnHistoryFilterMy');
+      const btnAll = document.getElementById('btnHistoryFilterAll');
+      if (btnMy && btnAll) {
+        const isMy = (window.forumHistoryScope === 'my');
+        btnMy.style.background = isMy ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'transparent';
+        btnMy.style.color = isMy ? '#111' : '#c8baa6';
+        btnAll.style.background = !isMy ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'transparent';
+        btnAll.style.color = !isMy ? '#111' : '#c8baa6';
+      }
+
+      // Nạp danh sách các tác giả duy nhất vào dropdown
+      const selAuthor = document.getElementById('selHistoryAuthorFilter');
+      if (selAuthor) {
+        const authorsSet = new Set();
+        sortedPosts.forEach(p => {
+          const name = p.authorName || (p.author ? p.author.replace('@', '') : '');
+          if (name) authorsSet.add(name);
+        });
+        const curVal = window.forumHistoryAuthorFilter;
+        let optHtml = '<option value="">-- Tất cả tác giả --</option>';
+        Array.from(authorsSet).sort().forEach(authorName => {
+          const isSelected = (curVal === authorName) ? 'selected' : '';
+          optHtml += `<option value="${escapeRedditHtml(authorName)}" ${isSelected}>${escapeRedditHtml(authorName)}</option>`;
+        });
+        selAuthor.innerHTML = optHtml;
+      }
+
+      // Xác định danh sách bài cần hiển thị theo bộ lọc
+      let displayPosts = (window.forumHistoryScope === 'my') ? myPosts : sortedPosts;
+      if (window.forumHistoryAuthorFilter) {
+        const targetA = window.forumHistoryAuthorFilter.toLowerCase();
+        displayPosts = sortedPosts.filter(p => {
+          const aName = (p.authorName || '').toLowerCase();
+          const aHandle = (p.author || '').replace('@', '').toLowerCase();
+          return aName === targetA || aHandle === targetA;
+        });
+      }
+
+      if (displayPosts.length === 0) {
+        const emptyMsg = (window.forumHistoryScope === 'my')
+          ? 'Bạn chưa xuất bản bài viết nào trên Diễn đàn. Hãy nhấn nút <strong>"Đăng bài viết mới"</strong> ở trên để chia sẻ bản nhạc nốt số hoặc trao đổi kinh nghiệm nhé!'
+          : 'Chưa tìm thấy bài viết nào theo bộ lọc tác giả đã chọn.';
+        container.innerHTML = `
+          <div style="text-align: center; padding: 48px 20px; background: rgba(26, 12, 18, 0.95); border: 1px dashed rgba(239, 196, 123, 0.35); border-radius: 16px; color: #d1c7b7;">
+            <div style="font-size: 42px; margin-bottom: 10px;">📜</div>
+            <h3 style="color: #ffea9f; font-size: 17px; margin-bottom: 6px;">Không có bài viết trong lịch sử</h3>
+            <p style="font-size: 13px; max-width: 480px; margin: 0 auto 18px; line-height: 1.5;">${emptyMsg}</p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="openRedditComposer()" style="border-radius: 999px; font-weight: 700; padding: 8px 22px; background: linear-gradient(135deg, #ef4444, #f97316); border: none; cursor: pointer;">
+              ✍️ Đăng bài viết ngay
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = displayPosts.map(post => {
+        const d = new Date(post.timestamp || Date.now());
+        const timeFull = d.toLocaleString('vi-VN');
+        const timeAgo = formatRedditTimeAgo(post.timestamp);
+        const subKey = normalizeSubredditKey(post.subreddit);
+        const subName = getSubredditDisplayName(subKey);
+        const subIcon = getSubredditIcon(subKey);
+        const comments = Array.isArray(post.comments) ? post.comments : [];
+        const authorDisplay = post.authorName || formatUserHandle(post.author);
+        const isMyPost = (myUsername && ((post.author || '').replace('@','').toLowerCase() === myUsername || (post.authorUsername||'').toLowerCase() === myUsername)) || (myDisplayName && (post.authorName||'').toLowerCase() === myDisplayName);
+        const canDelete = isMyPost || isOwner;
+
+        return `
+          <article class="forum-history-post-card" style="background: rgba(26, 10, 16, 0.95); border: 1px solid rgba(239, 196, 123, 0.28); border-radius: 14px; padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; transition: border-color 0.2s, box-shadow 0.2s; box-shadow: 0 4px 16px rgba(0,0,0,0.4);">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 38px; height: 38px; border-radius: 50% !important; overflow: hidden !important; display: inline-flex; align-items: center; justify-content: center; background: rgba(239, 196, 123, 0.15); border: 1.5px solid rgba(239, 196, 123, 0.45); flex-shrink: 0;">
+                  ${formatAvatarMediaHtml(post.authorAvatar || '🪕', '🪕')}
+                </div>
+                <div>
+                  <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <strong style="color: #fff8eb; font-size: 14px;">${escapeRedditHtml(authorDisplay)}</strong>
+                    ${isMyPost ? '<span style="background: rgba(16, 185, 129, 0.2); color: #6ee7b7; font-size: 10.5px; padding: 1px 8px; border-radius: 999px; font-weight: 700; border: 1px solid rgba(16, 185, 129, 0.35);">Của bạn</span>' : ''}
+                    <span style="background: rgba(239, 196, 123, 0.15); color: #ffea9f; font-size: 11px; padding: 1px 8px; border-radius: 999px; border: 1px solid rgba(239, 196, 123, 0.25);">§ ${subIcon} ${escapeRedditHtml(subName)}</span>
+                    ${post.flair ? `<span style="background: rgba(255,255,255,0.06); color: #e5e7eb; font-size: 11px; padding: 1px 8px; border-radius: 999px;">${escapeRedditHtml(post.flair)}</span>` : ''}
+                  </div>
+                  <div style="font-size: 11.5px; color: #a1a1aa; margin-top: 2px;">
+                    🕒 Đăng lúc: <span style="color: #e5e7eb;">${timeFull}</span> (${timeAgo})
+                  </div>
+                </div>
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <button type="button" class="btn btn-secondary btn-xs" onclick="viewHistoryPostOnFeed('${post.id}')" title="Xem bài viết này trên bảng tin chính" style="border-radius: 999px; padding: 5px 12px; font-weight: 700; cursor: pointer;">
+                  👁️ Xem bài viết
+                </button>
+                ${canDelete ? `
+                  <button type="button" class="btn btn-secondary btn-xs" onclick="handleDeleteRedditPost('${post.id}')" title="Xóa bài viết này khỏi diễn đàn" style="border-radius: 999px; padding: 5px 10px; color: #fca5a5; border-color: rgba(239, 68, 68, 0.35); cursor: pointer;">
+                    🗑️ Xóa
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+
+            <div style="cursor: pointer;" onclick="viewHistoryPostOnFeed('${post.id}')">
+              <h3 style="margin: 0 0 6px 0; font-size: 16px; font-weight: 700; color: #ffea9f; line-height: 1.4;">
+                ${escapeRedditHtml(post.title || 'Bài viết thảo luận')}
+              </h3>
+              <p style="margin: 0; font-size: 13px; color: #d8cbb8; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                ${escapeRedditHtml(post.content || '')}
+              </p>
+            </div>
+
+            ${post.image ? `
+              <div style="margin-top: 4px;">
+                <img src="${escapeRedditHtml(post.image)}" alt="Ảnh bài viết" style="max-height: 140px; border-radius: 8px; border: 1px solid rgba(239, 196, 123, 0.2); cursor: pointer;" onclick="openImageViewerModal('${escapeRedditHtml(post.image)}')" title="Nhấn để phóng to ảnh" />
+              </div>
+            ` : ''}
+
+            <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 8px; font-size: 12px; color: #9ca3af;">
+              <div style="display: flex; gap: 14px;">
+                <span>⇧ <strong>${post.upvotes || 0}</strong> lượt vote</span>
+                <span>💬 <strong>${comments.length}</strong> bình luận</span>
+              </div>
+              <span style="color: #efc47b; cursor: pointer; text-decoration: underline;" onclick="viewHistoryPostOnFeed('${post.id}')">
+                Mở thảo luận &amp; bình luận →
+              </span>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+    window.renderRedditHistoryTab = renderRedditHistoryTab;
+
+    function viewHistoryPostOnFeed(postId) {
+      selectRedditNav('home');
+      setTimeout(() => {
+        const el = document.getElementById('redditPost_' + postId);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          el.style.boxShadow = '0 0 25px rgba(239, 196, 123, 0.7)';
+          setTimeout(() => {
+            el.style.boxShadow = '';
+          }, 2000);
+        }
+      }, 150);
+    }
+    window.viewHistoryPostOnFeed = viewHistoryPostOnFeed;
 
     /* Lọc theo Danh mục chủ đề (Hoàn toàn không có r/ - Yêu Cầu 2 & Image 3) */
     function filterBySubreddit(sub) {
@@ -13478,7 +13790,20 @@
       if (h === 'dantranh' || h === 'stage' || h === 'nhaccu') {
         switchNavTab('dantranh');
       } else if (h === 'forum' || h === 'diendan' || h === 'mit') {
-        switchNavTab('forum');
+        const curAcc = (typeof getActiveUserAccount === 'function') ? getActiveUserAccount() : null;
+        const isGuest = !curAcc || curAcc.role === 'guest' || curAcc.username === 'guest';
+        if (isGuest) {
+          if (typeof showActionToast === 'function') {
+            showActionToast('🔒 Vui lòng đăng nhập để truy cập Diễn đàn MIT!');
+          }
+          if (typeof openUnifiedLoginModal === 'function') {
+            openUnifiedLoginModal();
+          }
+          window.location.hash = '#home';
+          switchNavTab('encyclopedia');
+        } else {
+          switchNavTab('forum');
+        }
       } else if (h === 'lookup' || h === 'thongtin') {
         switchNavTab('lookup');
       } else if (h === 'heritage' || h === 'nghiencuu') {

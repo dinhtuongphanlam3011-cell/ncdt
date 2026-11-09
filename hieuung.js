@@ -640,6 +640,9 @@
 
   function saveUsers(users) {
     localStorage.setItem("dan_tranh_users", JSON.stringify(users));
+    if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.syncUsersToCloud === "function") {
+      window.DanTranhCloudSync.syncUsersToCloud(users);
+    }
   }
 
   function escapeHtml(str) {
@@ -679,6 +682,9 @@
   function saveReports(reports) {
     localStorage.setItem("dan_tranh_reports", JSON.stringify(reports));
     updateReportBadges();
+    if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.syncReportsToCloud === "function") {
+      window.DanTranhCloudSync.syncReportsToCloud(reports);
+    }
   }
 
   function updateReportBadges() {

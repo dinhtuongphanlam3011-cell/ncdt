@@ -1,23 +1,28 @@
 /**
  * ============================================================================
- * DanTranhCloudSync - HỆ THỐNG ĐỒNG BỘ CLOUD, REALTIME & QUẢN LÝ THÔNG BÁO, ÂM THANH
+ * DanTranhCloudSync - HỆ THỐNG ĐỒNG BỘ CLOUD, REALTIME & QUẢN LÝ DỮ LIỆU TẬP TRUNG
  * ============================================================================
- * Giải quyết triệt để 3 yêu cầu hệ thống:
- * 1. Đồng bộ file âm thanh dùng chung giữa tất cả người dùng và thiết bị
- * 2. Hệ thống đếm thông báo chưa đọc chuẩn xác (Gắn riêng với từng tài khoản,
- *    đồng bộ đa thiết bị, tự reset khi đọc và tự tăng số đỏ khi có thông báo mới)
- * 3. Phân phối thông báo từ Admin theo thời gian thực (Realtime / Polling Ticker)
- *    mà không cần tải lại trang.
+ * Đồng bộ dữ liệu tập trung trên Server Cloud Relay đa thiết bị:
+ * 1. Hòm thư Admin (Admin Mailbox / Báo cáo & Lời nhắn người dùng - Phản hồi)
+ * 2. Hệ thống Thông báo hệ thống (Announcements & Trạng thái đã đọc riêng từng tài khoản)
+ * 3. Diễn đàn thảo luận (Forum Posts, Comments, Upvotes, Attachments)
+ * 4. Tài khoản người dùng (Registered Users) & Cấu hình âm thanh nhạc cụ
  * ============================================================================
  */
 
 (function (window) {
   'use strict';
 
+  // Endpoint Cloud Relay trung tâm chính thức phục vụ đồng bộ đa máy tính & thiết bị
+  var DEFAULT_RELAY_ENDPOINT = 'https://extendsclass.com/api/json-storage/bin/caeeabe';
+
   // Các khóa lưu trữ cục bộ (Local / Shared Cache)
   var STORAGE_KEYS = {
     ANNOUNCEMENTS: 'dan_tranh_announcements',
     ANNOUNCEMENT_READS: 'dan_tranh_announcement_reads',
+    REPORTS: 'dan_tranh_reports',
+    FORUM_POSTS: 'mit_forum_real_posts_v5',
+    FORUM_POSTS_ALT: 'dan_tranh_forum_posts',
     SERVER_AUDIO: 'dan_tranh_server_audio_config',
     CLOUD_CONFIG: 'dan_tranh_cloud_config',
     USER_SESSION: 'dan_tranh_user_session',
@@ -102,11 +107,17 @@
   function getCloudConfig() {
     try {
       var raw = localStorage.getItem(STORAGE_KEYS.CLOUD_CONFIG);
-      if (raw) return JSON.parse(raw);
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        if (!parsed.relayEndpoint) {
+          parsed.relayEndpoint = DEFAULT_RELAY_ENDPOINT;
+        }
+        return parsed;
+      }
     } catch (e) {}
     return {
       provider: 'relay', // 'relay' | 'supabase' | 'firebase'
-      relayEndpoint: '', // URL cloud relay nếu tự dựng
+      relayEndpoint: DEFAULT_RELAY_ENDPOINT,
       supabaseUrl: '',
       supabaseAnonKey: '',
       supabaseBucket: 'dan_tranh_audio',
@@ -314,7 +325,7 @@
       id: announcementData.id || Date.now(),
       title: announcementData.title || 'Thông báo hệ thống',
       content: announcementData.content || announcementData.body || '',
-      body: announcementData.content || announcementData.body || '', // Đồng bộ cả 2 trường
+      body: announcementData.content || announcementData.body || '',
       tag: announcementData.tag || 'new',
       tagLabel: tagMap[announcementData.tag] || '📢 Thông báo',
       time: announcementData.time || timeStr,
@@ -554,7 +565,6 @@
     return new Promise(function (resolve) {
       var cfg = getCloudConfig();
 
-      // 1. Nếu có Supabase cấu hình:
       if (cfg.supabaseUrl && cfg.supabaseAnonKey && window.supabase) {
         try {
           var client = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
@@ -581,7 +591,6 @@
         }
       }
 
-      // 2. Nếu có Firebase Storage:
       if (window.firebase && window.firebase.storage && cfg.firebaseStorageBucket) {
         try {
           var storageRef = window.firebase.storage().ref();
@@ -600,7 +609,6 @@
         }
       }
 
-      // Mặc định trả về null để sử dụng URL nội bộ đã đồng bộ
       resolve(null);
     });
   }
@@ -625,31 +633,17 @@
       var data = e.data;
       if (!data || !data.type) return;
 
-      if (data.type === 'NEW_ANNOUNCEMENT') {
-        // Cập nhật danh sách thông báo và cập nhật số đỏ ngay lập tức
+      if (data.type === 'NEW_ANNOUNCEMENT' || data.type === 'DELETE_ANNOUNCEMENT') {
         updateNotificationBadgeUI();
-        if (typeof window.renderOwnerAnnouncements === 'function') {
-          window.renderOwnerAnnouncements();
-        }
-        if (typeof window.renderWpAnnouncementsList === 'function') {
-          window.renderWpAnnouncementsList();
-        }
-      } else if (data.type === 'DELETE_ANNOUNCEMENT') {
-        updateNotificationBadgeUI();
-        if (typeof window.renderOwnerAnnouncements === 'function') {
-          window.renderOwnerAnnouncements();
-        }
-        if (typeof window.renderWpAnnouncementsList === 'function') {
-          window.renderWpAnnouncementsList();
-        }
+        if (typeof window.renderOwnerAnnouncements === 'function') window.renderOwnerAnnouncements();
+        if (typeof window.renderWpAnnouncementsList === 'function') window.renderWpAnnouncementsList();
       } else if (data.type === 'READS_UPDATED') {
-        // Nếu cùng tài khoản ở tab khác đọc xong, tắt số đỏ ở tab này luôn
         if (data.username === getCurrentUsername()) {
           updateNotificationBadgeUI();
         }
       } else if (data.type === 'AUDIO_CONFIG_UPDATED') {
         _audioConfigCache = data.config;
-        _audioPool = {}; // Xóa audio pool cũ để nạp URL mới
+        _audioPool = {};
         if (typeof window.renderOwnerInstStringsAudioTable === 'function') {
           var targetId = window.currentOwnerSelectedInstId || 'dantranh';
           window.renderOwnerInstStringsAudioTable(targetId);
@@ -660,6 +654,13 @@
         if (typeof window.renderUserReplies === 'function') window.renderUserReplies();
         if (typeof window.renderUserSentReportsHistory === 'function') window.renderUserSentReportsHistory();
         if (typeof window.updateReportBadges === 'function') window.updateReportBadges();
+      } else if (data.type === 'FORUM_POSTS_UPDATED') {
+        if (typeof window.renderRedditFeed === 'function') window.renderRedditFeed();
+        if (typeof window.renderRedditRecentPosts === 'function') window.renderRedditRecentPosts();
+        if (typeof window.renderRedditHistoryTab === 'function') window.renderRedditHistoryTab();
+        if (typeof window.updateForumRealStats === 'function') window.updateForumRealStats();
+      } else if (data.type === 'USERS_UPDATED') {
+        if (typeof window.renderWpUsersList === 'function') window.renderWpUsersList();
       }
     };
   }
@@ -668,12 +669,8 @@
   window.addEventListener('storage', function (e) {
     if (e.key === STORAGE_KEYS.ANNOUNCEMENTS || e.key === STORAGE_KEYS.ANNOUNCEMENT_READS) {
       updateNotificationBadgeUI();
-      if (typeof window.renderOwnerAnnouncements === 'function') {
-        window.renderOwnerAnnouncements();
-      }
-      if (typeof window.renderWpAnnouncementsList === 'function') {
-        window.renderWpAnnouncementsList();
-      }
+      if (typeof window.renderOwnerAnnouncements === 'function') window.renderOwnerAnnouncements();
+      if (typeof window.renderWpAnnouncementsList === 'function') window.renderWpAnnouncementsList();
     } else if (e.key === STORAGE_KEYS.SERVER_AUDIO) {
       _audioConfigCache = null;
       _audioPool = {};
@@ -681,12 +678,19 @@
         var targetId = window.currentOwnerSelectedInstId || 'dantranh';
         window.renderOwnerInstStringsAudioTable(targetId);
       }
-    } else if (e.key === 'dan_tranh_reports') {
+    } else if (e.key === STORAGE_KEYS.REPORTS) {
       if (typeof window.syncOwnerHeaderFeedbackBadge === 'function') window.syncOwnerHeaderFeedbackBadge();
       if (typeof window.renderOwnerFeedbackInbox === 'function') window.renderOwnerFeedbackInbox();
       if (typeof window.renderUserReplies === 'function') window.renderUserReplies();
       if (typeof window.renderUserSentReportsHistory === 'function') window.renderUserSentReportsHistory();
       if (typeof window.updateReportBadges === 'function') window.updateReportBadges();
+    } else if (e.key === STORAGE_KEYS.FORUM_POSTS || e.key === STORAGE_KEYS.FORUM_POSTS_ALT) {
+      if (typeof window.renderRedditFeed === 'function') window.renderRedditFeed();
+      if (typeof window.renderRedditRecentPosts === 'function') window.renderRedditRecentPosts();
+      if (typeof window.renderRedditHistoryTab === 'function') window.renderRedditHistoryTab();
+      if (typeof window.updateForumRealStats === 'function') window.updateForumRealStats();
+    } else if (e.key === STORAGE_KEYS.USERS) {
+      if (typeof window.renderWpUsersList === 'function') window.renderWpUsersList();
     }
   });
 
@@ -706,35 +710,24 @@
   }
 
   function triggerCloudHeartbeatSync() {
-    if (isSyncing) return;
+    if (isSyncing) return Promise.resolve(false);
     isSyncing = true;
 
-    fetchCloudUpdates().then(function (hasChanges) {
+    return fetchCloudUpdates().then(function (hasChanges) {
       isSyncing = false;
-      if (hasChanges) {
-        updateNotificationBadgeUI();
-        if (typeof window.renderOwnerAnnouncements === 'function') {
-          window.renderOwnerAnnouncements();
-        }
-        if (typeof window.renderWpAnnouncementsList === 'function') {
-          window.renderWpAnnouncementsList();
-        }
-        if (typeof window.renderOwnerInstStringsAudioTable === 'function') {
-          var targetId = window.currentOwnerSelectedInstId || 'dantranh';
-          window.renderOwnerInstStringsAudioTable(targetId);
-        }
-      }
+      return hasChanges;
     }).catch(function () {
       isSyncing = false;
+      return false;
     });
   }
 
-  // Kéo dữ liệu mới nhất từ Cloud (Thông báo, Trạng thái đọc, Cấu hình âm thanh)
+  // Kéo dữ liệu mới nhất từ Cloud (Hòm thư Admin, Thông báo, Diễn đàn, Users, Âm thanh)
   function fetchCloudUpdates() {
     return new Promise(function (resolve) {
       var cfg = getCloudConfig();
 
-      // 1. Nếu kết nối Firebase Realtime Database
+      // 1. Firebase Realtime Database
       if (cfg.firebaseDbUrl && window.firebase && window.firebase.database) {
         try {
           var db = window.firebase.database();
@@ -756,7 +749,7 @@
         }
       }
 
-      // 2. Nếu kết nối Supabase
+      // 2. Supabase
       if (cfg.supabaseUrl && cfg.supabaseAnonKey && window.supabase) {
         try {
           var client = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
@@ -777,15 +770,21 @@
         }
       }
 
-      // 3. Nếu kết nối Cloud Relay Endpoint tự động
-      if (cfg.relayEndpoint) {
-        fetch(cfg.relayEndpoint, { method: 'GET', cache: 'no-cache' })
-          .then(function (res) { return res.json(); })
+      // 3. Cloud Relay Endpoint tự động (Mặc định ExtendsClass JSON Storage)
+      var endpoint = cfg.relayEndpoint || DEFAULT_RELAY_ENDPOINT;
+      if (endpoint) {
+        fetch(endpoint, { method: 'GET', cache: 'no-cache' })
+          .then(function (res) {
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            return res.json();
+          })
           .then(function (data) {
-            var changed = applyCloudPayload(data);
+            // ExtendsClass trả về dữ liệu nằm trực tiếp trong body
+            var payload = (data && data.data && typeof data.data === 'string') ? JSON.parse(data.data) : data;
+            var changed = applyCloudPayload(payload);
             resolve(changed);
           })
-          .catch(function () {
+          .catch(function (err) {
             resolve(false);
           });
         return;
@@ -800,26 +799,173 @@
     if (!payload || typeof payload !== 'object') return false;
     var changed = false;
 
-    // A. Cập nhật thông báo
+    // A. Cập nhật thông báo hệ thống (Announcements)
     if (Array.isArray(payload.announcements)) {
       var localAnn = getStoredAnnouncements();
-      if (JSON.stringify(localAnn) !== JSON.stringify(payload.announcements)) {
-        saveStoredAnnouncements(payload.announcements);
+      var annMap = {};
+      localAnn.forEach(function (item) { if (item && item.id) annMap[String(item.id)] = item; });
+      var annChanged = false;
+
+      payload.announcements.forEach(function (cloudItem) {
+        if (!cloudItem || !cloudItem.id) return;
+        var k = String(cloudItem.id);
+        if (!annMap[k]) {
+          annMap[k] = cloudItem;
+          annChanged = true;
+        }
+      });
+
+      if (annChanged || localAnn.length !== Object.keys(annMap).length) {
+        var mergedAnn = Object.values(annMap).sort(function (a, b) {
+          return (b.createdAt || b.id || 0) - (a.createdAt || a.id || 0);
+        });
+        saveStoredAnnouncements(mergedAnn);
         changed = true;
+        updateNotificationBadgeUI();
+        if (typeof window.renderOwnerAnnouncements === 'function') window.renderOwnerAnnouncements();
+        if (typeof window.renderWpAnnouncementsList === 'function') window.renderWpAnnouncementsList();
       }
     }
 
-    // B. Cập nhật trạng thái đọc của người dùng
+    // B. Cập nhật trạng thái đọc của từng người dùng (Per-user read state)
     if (payload.announcement_reads && typeof payload.announcement_reads === 'object') {
       var localReads = getStoredReadsMap();
-      var mergedReads = Object.assign({}, localReads, payload.announcement_reads);
-      if (JSON.stringify(localReads) !== JSON.stringify(mergedReads)) {
-        saveStoredReadsMap(mergedReads);
+      var readsChanged = false;
+      var curUser = getCurrentUsername();
+
+      Object.keys(payload.announcement_reads).forEach(function (u) {
+        var cloudArr = Array.isArray(payload.announcement_reads[u]) ? payload.announcement_reads[u] : [];
+        var localArr = Array.isArray(localReads[u]) ? localReads[u] : [];
+        var mergedSet = new Set(localArr.concat(cloudArr).map(function (id) { return String(id); }));
+        if (mergedSet.size !== localArr.length) {
+          localReads[u] = Array.from(mergedSet);
+          readsChanged = true;
+        }
+      });
+
+      if (readsChanged) {
+        saveStoredReadsMap(localReads);
         changed = true;
+        updateNotificationBadgeUI();
       }
     }
 
-    // C. Cập nhật cấu hình âm thanh Server
+    // C. Cập nhật hòm thư Admin (Reports / Feedback & Phản hồi)
+    if (Array.isArray(payload.reports)) {
+      var localRepRaw = localStorage.getItem(STORAGE_KEYS.REPORTS);
+      var localReports = [];
+      try { localReports = JSON.parse(localRepRaw) || []; } catch (e) {}
+      var repMap = {};
+      localReports.forEach(function (r) { if (r && r.id) repMap[String(r.id)] = r; });
+      var repChanged = false;
+
+      payload.reports.forEach(function (cloudR) {
+        if (!cloudR || !cloudR.id) return;
+        var k = String(cloudR.id);
+        if (!repMap[k]) {
+          repMap[k] = cloudR;
+          repChanged = true;
+        } else {
+          var curR = repMap[k];
+          // Đồng bộ nội dung phản hồi của Admin nếu Cloud có phản hồi mới hơn
+          if (cloudR.adminReply && cloudR.adminReply !== curR.adminReply) {
+            curR.adminReply = cloudR.adminReply;
+            curR.replyTime = cloudR.replyTime || curR.replyTime;
+            curR.unreadUserReply = (cloudR.unreadUserReply !== undefined) ? cloudR.unreadUserReply : true;
+            repChanged = true;
+          }
+          if (cloudR.unread !== curR.unread) {
+            curR.unread = cloudR.unread;
+            repChanged = true;
+          }
+        }
+      });
+
+      if (repChanged || localReports.length !== Object.keys(repMap).length) {
+        var mergedReports = Object.values(repMap).sort(function (a, b) {
+          return String(b.time || '').localeCompare(String(a.time || ''));
+        });
+        localStorage.setItem(STORAGE_KEYS.REPORTS, JSON.stringify(mergedReports));
+        changed = true;
+        if (typeof window.updateReportBadges === 'function') window.updateReportBadges();
+        if (typeof window.syncOwnerHeaderFeedbackBadge === 'function') window.syncOwnerHeaderFeedbackBadge();
+        if (typeof window.renderOwnerFeedbackInbox === 'function') window.renderOwnerFeedbackInbox();
+        if (typeof window.renderUserReplies === 'function') window.renderUserReplies();
+        if (typeof window.renderUserSentReportsHistory === 'function') window.renderUserSentReportsHistory();
+      }
+    }
+
+    // D. Cập nhật Diễn đàn (Forum Posts, Comments, Upvotes)
+    if (Array.isArray(payload.forum_posts)) {
+      var localPostsRaw = localStorage.getItem(STORAGE_KEYS.FORUM_POSTS) || localStorage.getItem(STORAGE_KEYS.FORUM_POSTS_ALT);
+      var localPosts = [];
+      try { localPosts = JSON.parse(localPostsRaw) || []; } catch (e) {}
+      var postMap = {};
+      localPosts.forEach(function (p) { if (p && p.id) postMap[String(p.id)] = p; });
+      var postChanged = false;
+
+      payload.forum_posts.forEach(function (cloudP) {
+        if (!cloudP || !cloudP.id) return;
+        var k = String(cloudP.id);
+        if (!postMap[k]) {
+          postMap[k] = cloudP;
+          postChanged = true;
+        } else {
+          var curP = postMap[k];
+          var cloudCmts = Array.isArray(cloudP.comments) ? cloudP.comments : [];
+          var curCmts = Array.isArray(curP.comments) ? curP.comments : [];
+          if (cloudCmts.length > curCmts.length) {
+            curP.comments = cloudCmts;
+            postChanged = true;
+          }
+          if (cloudP.upvotes !== undefined && cloudP.upvotes !== curP.upvotes) {
+            curP.upvotes = Math.max(curP.upvotes || 0, cloudP.upvotes);
+            postChanged = true;
+          }
+        }
+      });
+
+      if (postChanged || localPosts.length !== Object.keys(postMap).length) {
+        var mergedPosts = Object.values(postMap).sort(function (a, b) {
+          return (b.timestamp || 0) - (a.timestamp || 0);
+        });
+        localStorage.setItem(STORAGE_KEYS.FORUM_POSTS, JSON.stringify(mergedPosts));
+        localStorage.setItem(STORAGE_KEYS.FORUM_POSTS_ALT, JSON.stringify(mergedPosts));
+        changed = true;
+        if (typeof window.renderRedditFeed === 'function') window.renderRedditFeed();
+        if (typeof window.renderRedditRecentPosts === 'function') window.renderRedditRecentPosts();
+        if (typeof window.renderRedditHistoryTab === 'function') window.renderRedditHistoryTab();
+        if (typeof window.updateForumRealStats === 'function') window.updateForumRealStats();
+      }
+    }
+
+    // E. Cập nhật danh sách người dùng đăng ký (Registered Users)
+    if (Array.isArray(payload.users)) {
+      var localUsersRaw = localStorage.getItem(STORAGE_KEYS.USERS);
+      var localUsers = [];
+      try { localUsers = JSON.parse(localUsersRaw) || []; } catch (e) {}
+      var userMap = {};
+      localUsers.forEach(function (u) { if (u && u.username) userMap[u.username.toLowerCase()] = u; });
+      var userChanged = false;
+
+      payload.users.forEach(function (cloudU) {
+        if (!cloudU || !cloudU.username) return;
+        var k = cloudU.username.toLowerCase();
+        if (!userMap[k]) {
+          userMap[k] = cloudU;
+          userChanged = true;
+        }
+      });
+
+      if (userChanged || localUsers.length !== Object.keys(userMap).length) {
+        var mergedUsers = Object.values(userMap);
+        localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(mergedUsers));
+        changed = true;
+        if (typeof window.renderWpUsersList === 'function') window.renderWpUsersList();
+      }
+    }
+
+    // F. Cập nhật cấu hình âm thanh Server
     if (payload.server_audio && typeof payload.server_audio === 'object') {
       var localAudio = getServerAudioConfig();
       if (JSON.stringify(localAudio) !== JSON.stringify(payload.server_audio)) {
@@ -835,6 +981,10 @@
     return changed;
   }
 
+  // ============================================================================
+  // CÁC HÀM ĐẨY DỮ LIỆU LÊN SERVER CLOUD TẬP TRUNG
+  // ============================================================================
+
   // Đẩy thông báo lên Cloud
   function syncAnnouncementsToCloud(announcementsList) {
     pushPartialToCloud({ announcements: announcementsList, updatedAt: Date.now() });
@@ -847,12 +997,27 @@
     pushPartialToCloud({ announcement_reads: readsMap, updatedAt: Date.now() });
   }
 
+  // Đẩy hòm thư Admin (reports) lên Cloud
+  function syncReportsToCloud(reportsList) {
+    pushPartialToCloud({ reports: reportsList, updatedAt: Date.now() });
+  }
+
+  // Đẩy bài viết diễn đàn lên Cloud
+  function syncForumPostsToCloud(postsList) {
+    pushPartialToCloud({ forum_posts: postsList, updatedAt: Date.now() });
+  }
+
+  // Đẩy danh sách người dùng đăng ký lên Cloud
+  function syncUsersToCloud(usersList) {
+    pushPartialToCloud({ users: usersList, updatedAt: Date.now() });
+  }
+
   // Đẩy cấu hình âm thanh lên Cloud
   function syncAudioConfigToCloud(audioConfig) {
     pushPartialToCloud({ server_audio: audioConfig, updatedAt: Date.now() });
   }
 
-  // Đẩy một phần dữ liệu lên Cloud
+  // Đẩy một phần dữ liệu lên Cloud qua PATCH hoặc PUT
   function pushPartialToCloud(partialData) {
     var cfg = getCloudConfig();
 
@@ -873,14 +1038,22 @@
       return;
     }
 
-    // 3. Relay Endpoint
-    if (cfg.relayEndpoint) {
+    // 3. Relay Endpoint tự động (ExtendsClass JSON Storage)
+    var endpoint = cfg.relayEndpoint || DEFAULT_RELAY_ENDPOINT;
+    if (endpoint) {
       try {
-        fetch(cfg.relayEndpoint, {
-          method: 'POST',
+        fetch(endpoint, {
+          method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(partialData)
-        }).catch(function () {});
+        }).catch(function () {
+          // Thử lại bằng POST / PUT nếu PATCH không khả dụng
+          fetch(endpoint, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(partialData)
+          }).catch(function () {});
+        });
       } catch (e) {}
     }
   }
@@ -888,17 +1061,13 @@
   // ============================================================================
   // XỬ LÝ SỰ KIỆN KHI MỞ VÀ ĐÓNG MODAL THÔNG BÁO (YÊU CẦU 2 & 3)
   // ============================================================================
-  // Khi mở bảng thông báo: hiển thị thông báo, nhận diện đã đọc
   function onNotificationModalOpened() {
     if (typeof window.renderOwnerAnnouncements === 'function') {
       window.renderOwnerAnnouncements();
     }
-    // Ghi nhớ rằng người dùng đang mở xem bảng thông báo
     window._isViewingNotificationModal = true;
   }
 
-  // Khi đóng bảng thông báo: Đánh dấu TẤT CẢ các thông báo hiển thị là ĐÃ ĐỌC
-  // Tự động xóa/reset số màu đỏ trên chuông về 0 ngay lập tức!
   function onNotificationModalClosed() {
     window._isViewingNotificationModal = false;
     var curUser = getCurrentUsername();
@@ -919,6 +1088,15 @@
     onModalOpened: onNotificationModalOpened,
     onModalClosed: onNotificationModalClosed,
 
+    // Hòm thư Admin & Góp ý
+    syncReportsToCloud: syncReportsToCloud,
+
+    // Diễn đàn
+    syncForumPostsToCloud: syncForumPostsToCloud,
+
+    // Người dùng
+    syncUsersToCloud: syncUsersToCloud,
+
     // Âm thanh Server
     getAudioConfig: getServerAudioConfig,
     saveAudioConfig: saveServerAudioConfig,
@@ -937,10 +1115,19 @@
     getCurrentUsername: getCurrentUsername
   };
 
-  // Tự động kích hoạt khi tài liệu sẵn sàng
+  // Tự động kích hoạt khi tải trang
   function initCloudSync() {
     updateNotificationBadgeUI();
-    startPeriodicSyncTicker(3500); // Bắt đầu vòng lặp đồng bộ 3.5s
+    triggerCloudHeartbeatSync(); // Đồng bộ ngay khi tải trang
+    startPeriodicSyncTicker(3500); // Vòng lặp đồng bộ 3.5s
+
+    // Kích hoạt đồng bộ ngay khi người dùng quay lại tab trình duyệt hoặc online
+    window.addEventListener('focus', function () {
+      triggerCloudHeartbeatSync();
+    });
+    window.addEventListener('online', function () {
+      triggerCloudHeartbeatSync();
+    });
   }
 
   if (document.readyState === 'loading') {
