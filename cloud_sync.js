@@ -722,6 +722,53 @@
     });
   }
 
+  // Trích xuất JSON hợp lệ từ chuỗi phản hồi (loại bỏ mã HTML thừa nếu có từ Cloud Relay)
+  function extractCleanJson(raw) {
+    if (!raw || typeof raw !== 'string') return null;
+    var trimmed = raw.trim();
+    try {
+      return JSON.parse(trimmed);
+    } catch (e) {}
+
+    var first = trimmed.indexOf('{');
+    if (first === -1) return null;
+
+    var depth = 0;
+    var inString = false;
+    var escape = false;
+    for (var i = first; i < trimmed.length; i++) {
+      var c = trimmed.charAt(i);
+      if (escape) {
+        escape = false;
+        continue;
+      }
+      if (c === '\\') {
+        escape = true;
+        continue;
+      }
+      if (c === '"') {
+        inString = !inString;
+        continue;
+      }
+      if (!inString) {
+        if (c === '{') {
+          depth++;
+        } else if (c === '}') {
+          depth--;
+          if (depth === 0) {
+            var candidate = trimmed.substring(first, i + 1);
+            try {
+              return JSON.parse(candidate);
+            } catch (err) {
+              return null;
+            }
+          }
+        }
+      }
+    }
+    return null;
+  }
+
   // Kéo dữ liệu mới nhất từ Cloud (Hòm thư Admin, Thông báo, Diễn đàn, Users, Âm thanh)
   function fetchCloudUpdates() {
     return new Promise(function (resolve) {
@@ -776,11 +823,18 @@
         fetch(endpoint, { method: 'GET', cache: 'no-cache' })
           .then(function (res) {
             if (!res.ok) throw new Error('HTTP ' + res.status);
-            return res.json();
+            return res.text();
           })
-          .then(function (data) {
-            // ExtendsClass trả về dữ liệu nằm trực tiếp trong body
-            var payload = (data && data.data && typeof data.data === 'string') ? JSON.parse(data.data) : data;
+          .then(function (rawText) {
+            var payload = extractCleanJson(rawText);
+            if (!payload) {
+              resolve(false);
+              return;
+            }
+            if (payload.data && typeof payload.data === 'string') {
+              var inner = extractCleanJson(payload.data);
+              if (inner) payload = inner;
+            }
             var changed = applyCloudPayload(payload);
             resolve(changed);
           })
@@ -897,9 +951,14 @@
 
     // D. Cập nhật Diễn đàn (Forum Posts, Comments, Upvotes)
     if (Array.isArray(payload.forum_posts)) {
-      var localPostsRaw = localStorage.getItem(STORAGE_KEYS.FORUM_POSTS) || localStorage.getItem(STORAGE_KEYS.FORUM_POSTS_ALT);
       var localPosts = [];
-      try { localPosts = JSON.parse(localPostsRaw) || []; } catch (e) {}
+      if (typeof window.getAllRedditPosts === 'function') {
+        try { localPosts = window.getAllRedditPosts(); } catch (e) {}
+      }
+      if (!localPosts || localPosts.length === 0) {
+        var localPostsRaw = localStorage.getItem(STORAGE_KEYS.FORUM_POSTS) || localStorage.getItem(STORAGE_KEYS.FORUM_POSTS_ALT);
+        try { localPosts = JSON.parse(localPostsRaw) || []; } catch (e) {}
+      }
       var postMap = {};
       localPosts.forEach(function (p) { if (p && p.id) postMap[String(p.id)] = p; });
       var postChanged = false;
@@ -1004,7 +1063,15 @@
 
   // Đẩy bài viết diễn đàn lên Cloud
   function syncForumPostsToCloud(postsList) {
-    pushPartialToCloud({ forum_posts: postsList, updatedAt: Date.now() });
+    if (!Array.isArray(postsList)) return;
+    // Lọc các bài viết người dùng tạo hoặc có tương tác để payload gọn nhẹ và đồng bộ tức thì
+    var userPosts = postsList.filter(function (p) {
+      if (!p) return false;
+      return p.isUserCreated || !String(p.id).startsWith('post_seed_') || (Array.isArray(p.comments) && p.comments.length > 0) || (p.upvotes && p.upvotes > 0);
+    });
+    var toSync = userPosts.length > 0 ? userPosts : postsList.slice(0, 10);
+    pushPartialToCloud({ forum_posts: toSync, updatedAt: Date.now() });
+    broadcastSyncMessage({ type: 'FORUM_POSTS_UPDATED', timestamp: Date.now() });
   }
 
   // Đẩy danh sách người dùng đăng ký lên Cloud
@@ -1056,6 +1123,9 @@
         });
       } catch (e) {}
     }
+
+    // Thông báo tức thì qua BroadcastChannel tới các Tab/Cửa sổ khác cùng trình duyệt
+    broadcastSyncMessage({ type: 'CLOUD_PUSH', data: partialData, timestamp: Date.now() });
   }
 
   // ============================================================================
