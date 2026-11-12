@@ -41,6 +41,20 @@
       display: none !important;
     }
 
+    /* Nút lựa chọn trong Modal Nhạc Cụ: Tiếp tục chơi hoặc Đổi nhạc cụ */
+    .btn-inst-choice-action {
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+    .btn-inst-choice-action:hover {
+      transform: translateY(-2px) !important;
+      filter: brightness(1.15) !important;
+      border-color: #efc47b !important;
+      box-shadow: 0 8px 24px rgba(222, 25, 75, 0.45) !important;
+    }
+    .btn-inst-choice-action:active {
+      transform: translateY(0) !important;
+    }
+
     /* Thu nhỏ tỉ lệ trang tổng thể về 85% chuẩn hiển thị cân đối, vừa vặn màn hình */
     html {
       zoom: 0.85;
@@ -386,7 +400,7 @@
         <button type="button" class="nav-link tttt-plain-tab active" id="navTabEncyclopedia" onclick="switchNavTab('encyclopedia')">
           Trang chủ
         </button>
-        <button type="button" class="nav-link tttt-plain-tab" id="navTabDanTranh" onclick="handleHomeInstrumentNavClick(event)" title="Nhấn để vào nhạc cụ (hoặc chọn nhạc cụ nếu chưa chọn)" style="display: none !important;">
+        <button type="button" class="nav-link tttt-plain-tab" id="navTabDanTranh" onclick="handleHomeInstrumentNavClick(event)" title="Nhấn để mở khu vực Nhạc cụ (Tiếp tục chơi hoặc Đổi nhạc cụ)">
           <span id="navTabInstIcon">🪕</span>
           <span id="navTabInstText">Nhạc cụ</span>
         </button>
@@ -488,6 +502,10 @@
             <span class="mit-brand-tag">Cộng Đồng</span>
           </div>
         </div>
+
+        <button type="button" class="nav-link tttt-plain-tab" id="forumNavBtnInstrument" onclick="handleHomeInstrumentNavClick(event)" title="Khu vực Nhạc cụ: Tiếp tục chơi hoặc Đổi nhạc cụ" style="margin-left: 8px; border-radius: 999px; height: 36px; padding: 0 14px; font-weight: 700; color: #ffea9f; border: 1px solid rgba(239, 196, 123, 0.4); background: rgba(239, 196, 123, 0.1); display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
+          <span>🪕</span> <span>Nhạc cụ</span>
+        </button>
       </div>
 
       <!-- Cụm giữa: Ô Tìm kiếm bài viết -->
@@ -632,7 +650,7 @@
         </div>
 
         <!-- Cột Phải: Key Visual 3D Tự Động Xoay 360° (Three.js WebGL) -->
-        <div class="tttt-hero-right" id="hero3DStageContainer">
+        <div class="tttt-hero-right" id="hero3DStageContainer" onclick="handleHomeInstrumentNavClick(event)" title="Nhấn vào mô hình 3D để vào khu vực Nhạc cụ (Tiếp tục chơi hoặc Đổi nhạc cụ)" style="cursor: pointer;">
           <div class="tttt-hero-aura-circle"></div>
           <div class="hero-3d-model-stage" id="hero3DModelStage">
             <canvas id="hero3DModelCanvas"></canvas>
@@ -1155,7 +1173,7 @@
           <div class="reddit-divider"></div>
 
           <div class="reddit-sidebar-section-title">TRẢI NGHIỆM TƯƠNG TÁC</div>
-          <div class="reddit-game-card" onclick="switchNavTab('dantranh')">
+          <div class="reddit-game-card" onclick="handleHomeInstrumentNavClick(event)" title="Nhấn để mở khu vực Nhạc cụ (Tiếp tục chơi hoặc Đổi nhạc cụ)" style="cursor: pointer;">
             <div class="reddit-game-thumb">🪕</div>
             <div class="reddit-game-info">
               <h4>Hòa Tấu Đàn Tranh 3D</h4>
@@ -2144,6 +2162,71 @@
   <!-- =========================================================
        TAB 8: TÀI KHOẢN NGƯỜI DÙNG, BÀI ĐÃ ĐÁNH & LỊCH SỬ SỬ DỤNG WEB
        ========================================================= -->
+  <!-- =========================================================
+       MODAL: LỰA CHỌN KHU VỰC NHẠC CỤ (TIẾP TỤC CHƠI HOẶC ĐỔI NHẠC CỤ)
+       ========================================================= -->
+  <div class="modal-overlay" id="modalInstrumentChoiceDialog" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.82); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 100005 !important; align-items: center; justify-content: center;" onclick="if(event.target === this) closeModal('modalInstrumentChoiceDialog')">
+    <div class="modal-content" style="max-width: 480px; width: 92%; background: linear-gradient(165deg, rgba(34, 3, 15, 0.98) 0%, rgba(18, 1, 8, 0.99) 100%); border: 1.5px solid rgba(239, 196, 123, 0.55); border-radius: 20px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85), 0 0 35px rgba(222, 25, 75, 0.28); color: #fff8eb; overflow: hidden;" onclick="event.stopPropagation()">
+
+      <!-- HEADER MODAL -->
+      <div class="modal-header" style="background: linear-gradient(135deg, #de194b 0%, #990c2f 55%, #59041a 100%); border-bottom: 1.5px solid rgba(239, 196, 123, 0.4); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between;">
+        <h2 style="display: flex; align-items: center; gap: 8px; font-size: 17px; font-family: var(--font-serif); font-weight: 700; color: #efc47b; margin: 0; text-shadow: 0 2px 6px rgba(0,0,0,0.5);">
+          <span>🪕</span> Khu Vực Nhạc Cụ
+        </h2>
+        <button type="button" class="modal-close" onclick="closeModal('modalInstrumentChoiceDialog')" style="color: #efc47b; font-size: 18px; cursor: pointer; background: transparent; border: none; padding: 4px 8px;" title="Đóng">✕</button>
+      </div>
+
+      <!-- BODY MODAL -->
+      <div class="modal-body" style="padding: 22px 20px 24px 20px; text-align: center;">
+
+        <!-- THẺ THÔNG TIN NHẠC CỤ HIỆN TẠI -->
+        <div style="background: rgba(239, 196, 123, 0.08); border: 1px solid rgba(239, 196, 123, 0.3); border-radius: 14px; padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: center; gap: 14px; text-align: left;">
+          <div id="instChoiceCurrentIcon" style="width: 52px; height: 52px; border-radius: 12px; background: linear-gradient(135deg, rgba(222, 25, 75, 0.3) 0%, rgba(239, 196, 123, 0.2) 100%); border: 1.5px solid rgba(239, 196, 123, 0.5); display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+            🪕
+          </div>
+          <div style="flex: 1; min-width: 0;">
+            <div style="font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.08em; color: #ff8da1; font-weight: 700;">Nhạc cụ hiện tại</div>
+            <div id="instChoiceCurrentName" style="font-size: 18px; font-weight: 800; color: #ffea9f; font-family: var(--font-serif); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+              Đàn Tranh
+            </div>
+            <div id="instChoiceCurrentCat" style="font-size: 12px; color: #d8cbb8; margin-top: 1px;">
+              Bộ Đàn Dây (13 nhạc cụ)
+            </div>
+          </div>
+        </div>
+
+        <p style="font-size: 13.5px; color: #d8cbb8; margin: 0 0 18px 0; line-height: 1.5;">
+          Bạn muốn tiếp tục diễn tấu với nhạc cụ hiện tại hay đổi sang nhạc cụ khác?
+        </p>
+
+        <!-- 2 NÚT LỰA CHỌN CHÍNH -->
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <!-- NÚT 1: TIẾP TỤC CHƠI NHẠC CỤ HIỆN TẠI -->
+          <button type="button" class="btn-inst-choice-action" id="btnInstChoiceContinue" onclick="handleInstrumentChoiceContinue()" style="width: 100%; padding: 13px 18px; border-radius: 12px; background: linear-gradient(135deg, #de194b 0%, #b20e36 50%, #870826 100%); border: 1.5px solid rgba(239, 196, 123, 0.6); color: #ffffff; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 14px; box-shadow: 0 6px 18px rgba(222, 25, 75, 0.35); transition: all 0.2s ease;">
+            <span style="font-size: 24px; flex-shrink: 0;">▶️</span>
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-size: 15px; font-weight: 800; color: #fff; line-height: 1.25;">Tiếp tục chơi nhạc cụ hiện tại</div>
+              <div style="font-size: 12px; color: #ffea9f; margin-top: 2px;">Vào thẳng tab chơi <span id="instChoiceCurrentSubName">Đàn Tranh</span> (3D)</div>
+            </div>
+            <span style="font-size: 16px; color: #efc47b;">➔</span>
+          </button>
+
+          <!-- NÚT 2: ĐỔI NHẠC CỤ -->
+          <button type="button" class="btn-inst-choice-action" id="btnInstChoiceSwitch" onclick="handleInstrumentChoiceSwitch()" style="width: 100%; padding: 13px 18px; border-radius: 12px; background: rgba(239, 196, 123, 0.1); border: 1.5px solid rgba(239, 196, 123, 0.45); color: #ffea9f; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 14px; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25); transition: all 0.2s ease;">
+            <span style="font-size: 24px; flex-shrink: 0;">🔄</span>
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-size: 15px; font-weight: 800; color: #ffea9f; line-height: 1.25;">Đổi nhạc cụ</div>
+              <div style="font-size: 12px; color: #d8cbb8; margin-top: 2px;">Hiện bộ lọc để chọn nhạc cụ khác trong 38 đại nhạc cụ</div>
+            </div>
+            <span style="font-size: 16px; color: #efc47b;">➔</span>
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
   <!-- =========================================================
        MODAL CÀI ĐẶT TÀI KHOẢN (ACCOUNT SETTINGS POPUP MODAL)
        BỎ TAB CỦA ACC TRÊN TRANG, THAY BẰNG NÚT NỔI RIÊNG VÀ CỬA SỔ POPUP
@@ -4913,20 +4996,80 @@
     window.switchInstrumentSubMode = switchInstrumentSubMode;
 
     // =========================================================================
-    // XỬ LÝ NHẤN NÚT NHẠC CỤ Ở SẢNH CHỜ TRANG CHỦ
-    // - Khi CHƯA chọn nhạc cụ: Bắt buộc mở bộ lọc để chọn nhạc cụ trước khi vào.
-    // - Khi ĐÃ chọn nhạc cụ rồi (lần sau): Vào thẳng tab nhạc cụ 3D của nhạc cụ đó,
-    //   việc đổi/chỉnh nhạc cụ được thực hiện ngay bên trong tab nhạc cụ!
+    // XỬ LÝ NHẤN NÚT NHẠC CỤ Ở TRANG CHỦ & DIỄN ĐÀN:
+    // Hiển thị 2 lựa chọn:
+    // 1. "Tiếp tục chơi nhạc cụ hiện tại" -> Vào thẳng tab chơi nhạc cụ (3D)
+    // 2. "Đổi nhạc cụ" -> Mở bộ lọc để chọn nhạc cụ khác trong 38 đại nhạc cụ
     // =========================================================================
     function handleHomeInstrumentNavClick(e) {
       if (e) {
         if (typeof e.stopPropagation === 'function') e.stopPropagation();
         if (typeof e.preventDefault === 'function') e.preventDefault();
       }
-      toggleMegaFilterPanel(false);
+      openInstrumentChoiceModal();
+    }
+    window.handleHomeInstrumentNavClick = handleHomeInstrumentNavClick;
+
+    function openInstrumentChoiceModal() {
+      const curId = window.currentActiveInstrument || 'dantranh';
+      const encMap = window.INSTRUMENT_ENCYCLOPEDIA || {};
+      const itemObj = (typeof ALL_38_INST_LIST !== 'undefined') ? ALL_38_INST_LIST.find(i => i.id === curId) : null;
+      const enc = encMap[curId] || {};
+      const instName = enc.name || (itemObj && itemObj.name) || 'Đàn Tranh';
+      const instIcon = enc.icon || (itemObj && itemObj.icon) || '🪕';
+      const instCat = enc.cat || (itemObj && itemObj.cat) || 'day';
+
+      const catMap = {
+        day: 'Bộ Đàn Dây (13 nhạc cụ)',
+        hoi: 'Bộ Sáo, Kèn & Hơi (11 nhạc cụ)',
+        go: 'Bộ Tự Thân Vang / Gõ (8 nhạc cụ)',
+        trong: 'Bộ Trống Dân Tộc (4 nhạc cụ)'
+      };
+      const catName = catMap[instCat] || 'Nhạc cụ Dân tộc Việt Nam';
+
+      const nameEl = document.getElementById('instChoiceCurrentName');
+      if (nameEl) nameEl.textContent = instName;
+      const subNameEl = document.getElementById('instChoiceCurrentSubName');
+      if (subNameEl) subNameEl.textContent = instName;
+      const iconEl = document.getElementById('instChoiceCurrentIcon');
+      if (iconEl) iconEl.textContent = instIcon;
+      const catEl = document.getElementById('instChoiceCurrentCat');
+      if (catEl) catEl.textContent = catName;
+
+      if (typeof openModal === 'function') {
+        openModal('modalInstrumentChoiceDialog');
+      } else {
+        const m = document.getElementById('modalInstrumentChoiceDialog');
+        if (m) {
+          m.style.display = 'flex';
+          m.classList.add('active');
+        }
+      }
+    }
+    window.openInstrumentChoiceModal = openInstrumentChoiceModal;
+
+    function handleInstrumentChoiceContinue() {
+      if (typeof closeModal === 'function') {
+        closeModal('modalInstrumentChoiceDialog');
+      } else {
+        const m = document.getElementById('modalInstrumentChoiceDialog');
+        if (m) {
+          m.style.display = 'none';
+          m.classList.remove('active');
+        }
+      }
+      if (typeof toggleMegaFilterPanel === 'function') {
+        toggleMegaFilterPanel(false);
+      }
+
       const targetInst = window.currentActiveInstrument || 'dantranh';
       window.currentActiveInstrument = targetInst;
       window.hasSelectedInstrument = true;
+      try {
+        sessionStorage.setItem('hasSelectedInstrument', 'true');
+        sessionStorage.setItem('currentActiveInstrument', targetInst);
+      } catch (e) {}
+
       if (typeof switchInstrument === 'function') {
         switchInstrument(targetInst);
       }
@@ -4935,7 +5078,26 @@
         switchInstrumentSubMode('3d');
       }
     }
-    window.handleHomeInstrumentNavClick = handleHomeInstrumentNavClick;
+    window.handleInstrumentChoiceContinue = handleInstrumentChoiceContinue;
+
+    function handleInstrumentChoiceSwitch() {
+      if (typeof closeModal === 'function') {
+        closeModal('modalInstrumentChoiceDialog');
+      } else {
+        const m = document.getElementById('modalInstrumentChoiceDialog');
+        if (m) {
+          m.style.display = 'none';
+          m.classList.remove('active');
+        }
+      }
+
+      // Mở bộ lọc để chọn nhạc cụ khác
+      if (typeof toggleMegaFilterPanel === 'function') {
+        toggleMegaFilterPanel(true);
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    window.handleInstrumentChoiceSwitch = handleInstrumentChoiceSwitch;
 
     window.currentActiveNavTab = 'encyclopedia';
 
