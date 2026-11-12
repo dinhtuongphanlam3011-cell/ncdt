@@ -228,29 +228,30 @@
 
 .admin-video-table thead th {
   background: rgba(14, 7, 4, 0.98);
-  padding: 12px 14px;
-  font-size: 12px;
+  padding: 14px 16px;
+  font-size: 12.5px;
   font-weight: 700;
   text-transform: uppercase;
-  color: #efc47b;
-  letter-spacing: 0.05em;
-  border-bottom: 1.5px solid rgba(239, 196, 123, 0.25);
+  color: #ffea9f;
+  letter-spacing: 0.04em;
+  border-bottom: 1.5px solid rgba(239, 196, 123, 0.28);
 }
 
 .admin-video-table tbody tr {
-  border-bottom: 1px solid rgba(239, 196, 123, 0.1);
+  border-bottom: 1px solid rgba(239, 196, 123, 0.12);
   transition: background 0.15s ease;
 }
 
 .admin-video-table tbody tr:hover {
-  background: rgba(239, 196, 123, 0.05);
+  background: rgba(239, 196, 123, 0.06);
 }
 
 .admin-video-table tbody td {
-  padding: 12px 14px;
+  padding: 14px 16px;
   vertical-align: middle;
-  font-size: 13px;
-  color: #f3ece1;
+  font-size: 13.5px;
+  color: #f7f1e6;
+  line-height: 1.45;
 }
 
 /* Thumbnail trong bảng */
@@ -300,26 +301,26 @@
 .admin-table-title {
   font-weight: 700;
   color: #ffea9f;
-  font-size: 13.5px;
-  line-height: 1.35;
+  font-size: 14.5px;
+  line-height: 1.4;
   cursor: pointer;
   transition: color 0.15s ease;
 }
 
 .admin-table-title:hover {
-  color: #fff;
+  color: #ffffff;
   text-decoration: underline;
 }
 
 .admin-table-desc {
-  font-size: 11.5px;
-  color: #a89a88;
-  margin-top: 3px;
+  font-size: 12.5px;
+  color: #c4b5a3;
+  margin-top: 4px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  line-height: 1.4;
+  line-height: 1.45;
 }
 
 .admin-table-submeta {
@@ -412,62 +413,77 @@
 .admin-actions-flex {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 .admin-tbl-btn {
-  padding: 5px 10px;
-  border-radius: 6px;
-  font-size: 11.5px;
-  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
   cursor: pointer;
   border: 1px solid transparent;
-  transition: all 0.15s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  line-height: 1.2;
+}
+
+.admin-tbl-btn:hover {
+  transform: translateY(-1px);
 }
 
 .admin-tbl-btn.preview {
-  background: rgba(239, 196, 123, 0.12);
+  background: rgba(239, 196, 123, 0.14);
   color: #ffea9f;
-  border-color: rgba(239, 196, 123, 0.3);
+  border-color: rgba(239, 196, 123, 0.35);
 }
 
 .admin-tbl-btn.preview:hover {
-  background: rgba(239, 196, 123, 0.25);
-  color: #fff;
+  background: rgba(239, 196, 123, 0.28);
+  color: #ffffff;
+  border-color: #efc47b;
+  box-shadow: 0 4px 12px rgba(239, 196, 123, 0.25);
 }
 
 .admin-tbl-btn.edit {
-  background: rgba(59, 130, 246, 0.12);
+  background: rgba(59, 130, 246, 0.15);
   color: #93c5fd;
-  border-color: rgba(59, 130, 246, 0.3);
+  border-color: rgba(59, 130, 246, 0.35);
 }
 
 .admin-tbl-btn.edit:hover {
-  background: rgba(59, 130, 246, 0.25);
-  color: #fff;
+  background: rgba(59, 130, 246, 0.3);
+  color: #ffffff;
+  border-color: #60a5fa;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
 }
 
 .admin-tbl-btn.delete {
-  background: rgba(239, 68, 68, 0.12);
+  background: rgba(239, 68, 68, 0.15);
   color: #fca5a5;
-  border-color: rgba(239, 68, 68, 0.3);
+  border-color: rgba(239, 68, 68, 0.35);
 }
 
 .admin-tbl-btn.delete:hover {
-  background: rgba(239, 68, 68, 0.25);
-  color: #fff;
+  background: rgba(239, 68, 68, 0.3);
+  color: #ffffff;
+  border-color: #f87171;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
 }
 
 /* =========================================================
    3. MODAL TẢI LÊN & CHỈNH SỬA VIDEO (#modalAdminVideoUpload)
+   Căn chỉnh chữ chuẩn mực, thân thiện, dễ nhìn và sang trọng
    ========================================================= */
 .admin-upload-modal-overlay {
   position: fixed;
   inset: 0;
   z-index: 100010;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   display: none;
   align-items: center;
   justify-content: center;
@@ -480,100 +496,110 @@
 }
 
 .admin-upload-modal {
-  background: linear-gradient(180deg, #1c0e09 0%, #120805 100%);
-  border: 1.5px solid rgba(239, 196, 123, 0.45);
-  border-radius: 16px;
+  background: linear-gradient(165deg, rgba(34, 16, 11, 0.98) 0%, rgba(18, 8, 6, 0.99) 100%);
+  border: 1.5px solid rgba(239, 196, 123, 0.48);
+  border-radius: 20px;
   width: 100%;
-  max-width: 640px;
+  max-width: 680px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(239, 196, 123, 0.15);
-  padding: 24px 28px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.88), 0 0 35px rgba(222, 25, 75, 0.2), 0 0 1px rgba(239, 196, 123, 0.5);
+  padding: 26px 30px;
   box-sizing: border-box;
-  color: #f5eedc;
+  color: #fff9ed;
   position: relative;
+  animation: adminModalFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes adminModalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .admin-modal-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  padding-bottom: 14px;
-  border-bottom: 1px solid rgba(239, 196, 123, 0.2);
-  margin-bottom: 18px;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1.5px solid rgba(239, 196, 123, 0.25);
+  margin-bottom: 20px;
 }
 
 .admin-modal-title {
   margin: 0;
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 800;
   color: #ffea9f;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  letter-spacing: 0.01em;
+  line-height: 1.35;
+}
+
+.admin-modal-subtitle {
+  margin: 4px 0 0 0;
+  font-size: 13px;
+  color: #cfbeab;
+  line-height: 1.45;
+  font-weight: 400;
 }
 
 .admin-modal-close-btn {
-  background: transparent;
-  border: none;
-  color: #a89a88;
-  font-size: 20px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(239, 196, 123, 0.3);
+  color: #ffea9f;
+  font-size: 16px;
   cursor: pointer;
-  padding: 4px;
-  transition: color 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  line-height: 1;
+  padding: 0;
 }
 
 .admin-modal-close-btn:hover {
-  color: #fff;
+  background: rgba(222, 25, 75, 0.4);
+  border-color: rgba(222, 25, 75, 0.7);
+  color: #ffffff;
+  transform: rotate(90deg);
 }
 
-/* Dropzone chọn video */
-.admin-file-dropzone {
-  border: 2px dashed rgba(239, 196, 123, 0.4);
-  border-radius: 12px;
-  padding: 22px 18px;
-  text-align: center;
-  background: rgba(0, 0, 0, 0.3);
-  cursor: pointer;
-  transition: all 0.2s ease;
+/* Các trường form & nhãn */
+.admin-form-group {
   margin-bottom: 18px;
 }
 
-.admin-file-dropzone:hover {
-  border-color: #efc47b;
-  background: rgba(239, 196, 123, 0.08);
-}
-
-.admin-dropzone-icon {
-  font-size: 36px;
-  margin-bottom: 8px;
-}
-
-.admin-dropzone-text {
-  font-size: 13px;
-  color: #ffea9f;
-  font-weight: 600;
-}
-
-.admin-dropzone-sub {
-  font-size: 11.5px;
-  color: #a89a88;
-  margin-top: 4px;
-}
-
-/* Các trường nhập liệu form */
-.admin-form-group {
-  margin-bottom: 14px;
-}
-
 .admin-form-label {
-  display: block;
-  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13.5px;
   font-weight: 700;
-  color: #dfa037;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-bottom: 6px;
+  color: #ffea9f;
+  letter-spacing: 0.01em;
+  margin-bottom: 8px;
+  line-height: 1.35;
+  text-transform: none;
+}
+
+.admin-form-req {
+  color: #ef4444;
+  font-size: 14px;
+  font-weight: 800;
+  margin-left: 2px;
 }
 
 .admin-form-input,
@@ -581,57 +607,165 @@
 .admin-form-select {
   width: 100%;
   box-sizing: border-box;
-  background: rgba(14, 7, 4, 0.95);
-  border: 1px solid rgba(239, 196, 123, 0.3);
-  border-radius: 8px;
-  padding: 9px 14px;
-  color: #fff;
-  font-size: 13px;
+  background: rgba(12, 6, 4, 0.9);
+  border: 1.5px solid rgba(239, 196, 123, 0.3);
+  border-radius: 10px;
+  padding: 11px 15px;
+  color: #ffffff;
+  font-size: 14px;
+  line-height: 1.5;
+  font-family: inherit;
   outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.admin-form-input::placeholder,
+.admin-form-textarea::placeholder {
+  color: #8c7e6e;
+  font-size: 13.5px;
 }
 
 .admin-form-input:focus,
 .admin-form-textarea:focus,
 .admin-form-select:focus {
   border-color: #efc47b;
-  box-shadow: 0 0 10px rgba(239, 196, 123, 0.3);
+  box-shadow: 0 0 0 3px rgba(239, 196, 123, 0.2);
+  background: rgba(18, 9, 6, 0.98);
+}
+
+.admin-form-textarea {
+  min-height: 82px;
+  resize: vertical;
+  line-height: 1.55;
+}
+
+.admin-form-select {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23efc47b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 14px 14px;
+  padding-right: 38px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
 }
 
 .admin-form-row-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 16px;
+}
+
+/* Dropzone chọn video */
+.admin-file-dropzone {
+  border: 2px dashed rgba(239, 196, 123, 0.4);
+  border-radius: 14px;
+  padding: 20px 22px;
+  text-align: center;
+  background: linear-gradient(180deg, rgba(239, 196, 123, 0.04) 0%, rgba(0, 0, 0, 0.3) 100%);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-file-dropzone:hover {
+  border-color: #efc47b;
+  background: rgba(239, 196, 123, 0.09);
+  transform: translateY(-1px);
+}
+
+.admin-dropzone-icon {
+  font-size: 32px;
+  margin-bottom: 6px;
+  line-height: 1;
+}
+
+.admin-dropzone-text {
+  font-size: 13.5px;
+  color: #ffea9f;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.admin-dropzone-sub {
+  font-size: 12px;
+  color: #a89a88;
+  margin-top: 5px;
+  line-height: 1.4;
 }
 
 /* Khung preview thumbnail & snapshot */
 .admin-thumb-preview-box {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 12px;
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(239, 196, 123, 0.2);
-  border-radius: 10px;
-  margin-bottom: 16px;
+  gap: 16px;
+  padding: 14px 16px;
+  background: rgba(22, 11, 7, 0.85);
+  border: 1px solid rgba(239, 196, 123, 0.3);
+  border-radius: 12px;
+  margin-bottom: 18px;
 }
 
 .admin-thumb-preview-img {
-  width: 120px;
-  height: 68px;
+  width: 136px;
+  height: 76px;
   object-fit: cover;
-  border-radius: 6px;
-  border: 1px solid rgba(239, 196, 123, 0.35);
+  border-radius: 8px;
+  border: 1.5px solid rgba(239, 196, 123, 0.4);
   background: #000;
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+}
+
+.admin-thumb-preview-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #ffea9f;
+  margin-bottom: 2px;
+  line-height: 1.35;
+}
+
+.admin-thumb-preview-badge {
+  font-size: 12px;
+  color: #d8cbb8;
+  background: rgba(239, 196, 123, 0.1);
+  border: 1px solid rgba(239, 196, 123, 0.25);
+  border-radius: 6px;
+  padding: 3px 8px;
+  margin: 5px 0 8px 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-thumb-btn-change {
+  background: rgba(239, 196, 123, 0.14);
+  border: 1px solid rgba(239, 196, 123, 0.4);
+  color: #ffea9f;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-thumb-btn-change:hover {
+  background: rgba(239, 196, 123, 0.28);
+  color: #ffffff;
+  border-color: #efc47b;
 }
 
 /* Thanh tiến trình tải lên (Progress Bar) */
 .admin-upload-progress-wrap {
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(239, 196, 123, 0.3);
-  border-radius: 10px;
-  padding: 14px;
-  margin-bottom: 16px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1.5px solid rgba(239, 196, 123, 0.35);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
 }
 
 .admin-progress-header {
@@ -639,12 +773,13 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
-  font-size: 12.5px;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .admin-progress-bar-bg {
   width: 100%;
-  height: 10px;
+  height: 9px;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 999px;
   overflow: hidden;
@@ -654,10 +789,71 @@
 .admin-progress-bar-fill {
   height: 100%;
   width: 0%;
-  background: linear-gradient(90deg, #e8a742, #10b981);
+  background: linear-gradient(90deg, #e8a742 0%, #10b981 100%);
   border-radius: 999px;
-  transition: width 0.15s ease-out;
-  box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+  transition: width 0.18s ease-out;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
+}
+
+/* Chân trang nút bấm hành động */
+.admin-modal-actions-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1.5px solid rgba(239, 196, 123, 0.22);
+}
+
+.admin-btn-cancel {
+  padding: 10px 20px;
+  font-size: 13.5px;
+  font-weight: 600;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1.5px solid rgba(239, 196, 123, 0.3);
+  color: #d8cbb8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border-color: rgba(239, 196, 123, 0.55);
+}
+
+.admin-btn-save {
+  padding: 10px 24px;
+  font-size: 13.5px;
+  font-weight: 700;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #de194b 0%, #b20e36 50%, #870826 100%);
+  border: 1.5px solid rgba(239, 196, 123, 0.65);
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(222, 25, 75, 0.38);
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-btn-save:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(222, 25, 75, 0.5);
+  border-color: #efc47b;
+}
+
+.admin-btn-save:active,
+.admin-btn-cancel:active {
+  transform: translateY(0);
+}
 }
 
 /* =========================================================

@@ -620,17 +620,20 @@
 
     var overlay = document.getElementById('modalAdminVideoUpload');
     var heading = document.getElementById('adminUploadModalTitle');
+    var subtitle = document.getElementById('adminUploadModalSubtitle');
     var form = document.getElementById('formAdminVideoUpload');
     var progressWrap = document.getElementById('adminUploadProgressWrap');
     var previewWrap = document.getElementById('adminUploadPreviewWrap');
     var dropzoneText = document.getElementById('adminDropzoneText');
+    var dropzoneSub = document.getElementById('adminDropzoneSub');
+    var dropzoneLabel = document.getElementById('adminVideoDropzoneLabel');
+    var durationText = document.getElementById('adminUploadDurationText');
 
     if (!overlay) return;
 
     if (form) form.reset();
     if (progressWrap) progressWrap.style.display = 'none';
     if (previewWrap) previewWrap.style.display = 'none';
-    if (dropzoneText) dropzoneText.textContent = 'Kéo thả tệp video vào đây hoặc nhấn để chọn (MP4, WebM, MOV)';
 
     // Điền danh sách 38 nhạc cụ vào Select nếu chưa có
     populateInstrumentSelect('adminUploadInstSelect');
@@ -640,6 +643,11 @@
       var item = videos.find(function (v) { return v.id === currentEditingId; });
       if (item) {
         if (heading) heading.innerHTML = '<span>✏️</span> <span>Chỉnh Sửa Thông Tin Video Hướng Dẫn</span>';
+        if (subtitle) subtitle.textContent = 'Cập nhật tiêu đề, nhạc cụ tương ứng, danh mục và ảnh đại diện';
+        if (dropzoneLabel) dropzoneLabel.innerHTML = '<span>🎥</span> <span>Thay thế tệp video (Tùy chọn):</span>';
+        if (dropzoneText) dropzoneText.innerHTML = '📁 <strong>Video đang dùng:</strong> <span style="color:#6ee7b7; font-weight:700;">' + escapeHtml(item.filename || (item.title + '.mp4')) + '</span>';
+        if (dropzoneSub) dropzoneSub.textContent = 'Nhấn vào đây nếu bạn muốn chọn tệp video mới từ máy để thay thế (không bắt buộc)';
+
         document.getElementById('adminUploadTitle').value = item.title || '';
         document.getElementById('adminUploadDesc').value = item.description || '';
         document.getElementById('adminUploadInstSelect').value = item.instrumentId || 'dantranh';
@@ -651,14 +659,23 @@
           if (imgEl) imgEl.src = item.thumbnailUrl;
           if (previewWrap) previewWrap.style.display = 'flex';
         }
+        if (durationText) {
+          durationText.innerHTML = '⏱️ Thời lượng: <strong>' + (item.duration || '--:--') + '</strong> • 💾 Dung lượng: <strong>' + (item.fileSize || 'HD MP4') + '</strong>';
+        }
 
         var btnSubmit = document.getElementById('btnAdminSubmitUploadText');
-        if (btnSubmit) btnSubmit.textContent = 'Lưu Thay Đổi';
+        if (btnSubmit) btnSubmit.textContent = '💾 Lưu Thay Đổi';
       }
     } else {
-      if (heading) heading.innerHTML = '<span>➕</span> <span>Tải Lên Video Hướng Dẫn Mới (Admin)</span>';
+      if (heading) heading.innerHTML = '<span>➕</span> <span>Tải Lên Video Hướng Dẫn Mới</span>';
+      if (subtitle) subtitle.textContent = 'Hỗ trợ video MP4, WebM, MOV; tự động trích xuất ảnh đại diện và phân loại theo 38 nhạc cụ';
+      if (dropzoneLabel) dropzoneLabel.innerHTML = '<span>🎥</span> <span>Tệp Video Từ Máy Tính:</span>';
+      if (dropzoneText) dropzoneText.textContent = 'Kéo thả tệp video vào đây hoặc nhấn để chọn (MP4, WebM, MOV)';
+      if (dropzoneSub) dropzoneSub.textContent = 'Hệ thống hỗ trợ tệp dung lượng lớn, tự động chụp thumbnail & phân loại nhạc cụ';
+      if (durationText) durationText.textContent = 'Thời lượng: Đang tính...';
+
       var btnSubmit = document.getElementById('btnAdminSubmitUploadText');
-      if (btnSubmit) btnSubmit.textContent = 'Bắt Đầu Tải Lên & Lưu Trữ';
+      if (btnSubmit) btnSubmit.textContent = '🚀 Bắt Đầu Tải Lên & Lưu Trữ';
 
       // Mặc định chọn cây đàn người dùng đang xem nếu có
       var curInst = window.currentActiveInstrument || 'dantranh';
