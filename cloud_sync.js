@@ -661,6 +661,16 @@
         if (typeof window.updateForumRealStats === 'function') window.updateForumRealStats();
       } else if (data.type === 'USERS_UPDATED') {
         if (typeof window.renderWpUsersList === 'function') window.renderWpUsersList();
+      } else if (data.type === 'HDNC_VIDEOS_UPDATED') {
+        if (window.DanTranhAdminVideos && typeof window.DanTranhAdminVideos.renderAdminVideoTable === 'function') {
+          window.DanTranhAdminVideos.renderAdminVideoTable();
+        }
+        if (window.DanTranhAdminVideos && typeof window.DanTranhAdminVideos.renderAdminVideoTable === 'function') {
+          window.DanTranhAdminVideos.renderAdminVideoTable();
+        }
+        if (window.DanTranhVideoHdnc && typeof window.DanTranhVideoHdnc.renderGrid === 'function') {
+          window.DanTranhVideoHdnc.renderGrid();
+        }
       }
     };
   }
@@ -1037,6 +1047,36 @@
       }
     }
 
+    // G. Cập nhật Video Hướng Dẫn Nhạc Cụ (HDNC Videos)
+    if (Array.isArray(payload.hdnc_videos)) {
+      var localVideosRaw = localStorage.getItem('dan_tranh_hdnc_videos_v1');
+      var localVideos = [];
+      try { localVideos = JSON.parse(localVideosRaw) || []; } catch (e) {}
+      var vidMap = {};
+      localVideos.forEach(function (v) { if (v && v.id) vidMap[v.id] = v; });
+      var vidChanged = false;
+
+      payload.hdnc_videos.forEach(function (cloudV) {
+        if (!cloudV || !cloudV.id) return;
+        if (!vidMap[cloudV.id] || JSON.stringify(vidMap[cloudV.id]) !== JSON.stringify(cloudV)) {
+          vidMap[cloudV.id] = cloudV;
+          vidChanged = true;
+        }
+      });
+
+      if (vidChanged) {
+        var mergedVids = Object.values(vidMap);
+        localStorage.setItem('dan_tranh_hdnc_videos_v1', JSON.stringify(mergedVids));
+        changed = true;
+        if (window.DanTranhAdminVideos && typeof window.DanTranhAdminVideos.renderAdminVideoTable === 'function') {
+          window.DanTranhAdminVideos.renderAdminVideoTable();
+        }
+        if (window.DanTranhVideoHdnc && typeof window.DanTranhVideoHdnc.renderGrid === 'function') {
+          window.DanTranhVideoHdnc.renderGrid();
+        }
+      }
+    }
+
     return changed;
   }
 
@@ -1059,6 +1099,13 @@
   // Đẩy hòm thư Admin (reports) lên Cloud
   function syncReportsToCloud(reportsList) {
     pushPartialToCloud({ reports: reportsList, updatedAt: Date.now() });
+  }
+
+  // Đẩy danh sách video hướng dẫn lên Cloud
+  function syncHdncVideosToCloud(videosList) {
+    if (!Array.isArray(videosList)) return;
+    pushPartialToCloud({ hdnc_videos: videosList, updatedAt: Date.now() });
+    broadcastSyncMessage({ type: 'HDNC_VIDEOS_UPDATED', timestamp: Date.now() });
   }
 
   // Đẩy bài viết diễn đàn lên Cloud
@@ -1163,6 +1210,9 @@
 
     // Diễn đàn
     syncForumPostsToCloud: syncForumPostsToCloud,
+
+    // Video Hướng Dẫn
+    syncHdncVideosToCloud: syncHdncVideosToCloud,
 
     // Người dùng
     syncUsersToCloud: syncUsersToCloud,

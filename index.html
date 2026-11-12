@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Charm:wght@400;700&family=Charmonman:wght@400;700&family=Cinzel+Decorative:wght@700;900&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600;1,700&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Manrope:wght@300;400;500;600;700;800&family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,600;0,700;1,400&family=Patrick+Hand&family=Itim&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="dohoa.css?v=20261024_hide_lookup_tab" />
+  <link rel="stylesheet" href="video_hdnc.css" />
   <style id="criticalContextualTaskbarStyle">
     /* =========================================================================
        QUY TẮC HIỂN THỊ ĐỘC QUYỀN 3 TASKBAR THEO VỊ TRÍ (TUYỆT ĐỐI KHÔNG CHỒNG NHAU)
@@ -385,7 +386,7 @@
         <button type="button" class="nav-link tttt-plain-tab active" id="navTabEncyclopedia" onclick="switchNavTab('encyclopedia')">
           Trang chủ
         </button>
-        <button type="button" class="nav-link tttt-plain-tab" id="navTabDanTranh" onclick="handleHomeInstrumentNavClick(event)" title="Nhấn để vào nhạc cụ (hoặc chọn nhạc cụ nếu chưa chọn)">
+        <button type="button" class="nav-link tttt-plain-tab" id="navTabDanTranh" onclick="handleHomeInstrumentNavClick(event)" title="Nhấn để vào nhạc cụ (hoặc chọn nhạc cụ nếu chưa chọn)" style="display: none !important;">
           <span id="navTabInstIcon">🪕</span>
           <span id="navTabInstText">Nhạc cụ</span>
         </button>
@@ -459,6 +460,9 @@
         </button>
         <button type="button" class="inst-action-btn inst-mode-tab-btn" id="btnInstModeInfo" onclick="switchInstrumentSubMode('info')" title="Xem thông tin chi tiết, cấu tạo &amp; lịch sử của cây đàn này">
           <span>📖</span> <span id="lblInstModeInfoTitle">Thông tin &amp; Cấu tạo</span>
+        </button>
+        <button type="button" class="inst-action-btn inst-mode-tab-btn" id="btnInstModeTutorial" onclick="switchInstrumentSubMode('hdnc')" title="Xem kho video hướng dẫn kỹ thuật &amp; diễn tấu cây đàn này" style="display: none !important;">
+          <span>🎬</span> <span id="lblInstModeTutorialTitle">Hướng dẫn</span>
         </button>
       </div>
 
@@ -823,6 +827,9 @@
             <button type="button" class="lux-gold-cta-btn" style="width:auto; padding:8px 16px; font-size:12.5px;" onclick="openInstrumentResearchTab(window.currentActiveInstrument || 'dantranh')" title="Đi tìm hiểu thông tin cây đàn này">
               📖 Đi tìm hiểu thông tin cây đàn →
             </button>
+            <button type="button" class="lux-gold-cta-btn" style="display: none !important; width:auto; padding:8px 16px; font-size:12.5px; background: rgba(239, 196, 123, 0.15); border: 1px solid rgba(239, 196, 123, 0.45); color: #ffea9f;" onclick="scrollToHdncSection()" title="Cuộn xuống xem các video hướng dẫn nhạc cụ">
+              🎬 Video Hướng Dẫn ↓
+            </button>
             <button type="button" id="btnStageToggleFavorite" class="lux-icon-circle-btn lux-heart-btn" onclick="toggleFavoriteCurrentInstrument(this)" title="Lưu nhạc cụ vào danh sách Yêu thích trong Tài khoản">
               ♥
             </button>
@@ -848,8 +855,8 @@
                 </button>
               </div>
 
-              <!-- BÊN PHẢI: TẤU BÀI MẪU & KỸ THUẬT LƯỚT NỐT (GLISSANDO) -->
-              <div id="controlsAudioGroup" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <!-- BÊN PHẢI: TẤU BÀI MẪU & KỸ THUẬT LƯỚT NỐT (TẠM ẨN THEO YÊU CẦU MỚI) -->
+              <div id="controlsAudioGroup" style="display: none !important; gap:8px; align-items:center; flex-wrap:wrap;">
                 <button type="button" id="btnPlayInstrumentDemo" class="btn btn-secondary btn-xs" onclick="playInstrumentDemoTrack()" title="Tấu khúc nhạc mẫu của cây đàn này">
                   ▶ <span id="lblDemoSongBtn">Tấu bài mẫu</span>
                 </button>
@@ -937,7 +944,118 @@
 
         </div>
 
-      </div>
+      </div> <!-- /.stage-card -->
+
+      <!-- =========================================================
+           KHU VỰC HƯỚNG DẪN VIDEO CHUYÊN SÂU (TẠM THỜI ẨN THEO YÊU CẦU MỚI)
+           ========================================================= -->
+      <section class="hdnc-section-container" id="sectionHdncTutorials" aria-label="Khu vực Video Hướng Dẫn Nhạc Cụ" style="display: none !important;">
+        <!-- Header -->
+        <div class="hdnc-section-header">
+          <div class="hdnc-header-left">
+            <div class="hdnc-header-icon-wrap">🎬</div>
+            <div>
+              <h2 class="hdnc-title">HƯỚNG DẪN</h2>
+              <p class="hdnc-subtitle">Kho video hướng dẫn kỹ thuật gảy đàn, phương pháp diễn tấu, cấu tạo và nghệ thuật trình diễn nhạc cụ truyền thống Việt Nam</p>
+            </div>
+          </div>
+          <div class="hdnc-header-actions">
+            <button type="button" class="hdnc-btn-secondary" onclick="syncHdncWithCurrentStageInstrument()" title="Lọc các video hướng dẫn của cây đàn đang diễn tấu">
+              <span>🎯</span> <span>Lọc theo cây đàn hiện tại</span>
+            </button>
+            <button type="button" class="hdnc-btn-primary" onclick="openHdncUploadModal()" title="Tải video hướng dẫn mới lên hệ thống (Tự động nhận diện phân loại)">
+              <span>➕</span> <span>Tải Video Lên</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filters Wrap -->
+        <div class="hdnc-filters-wrap">
+          <!-- Hàng 1: Lọc theo Nhạc Cụ -->
+          <div class="hdnc-filter-row">
+            <div class="hdnc-filter-label">🎵 Nhạc Cụ:</div>
+            <div class="hdnc-pill-group">
+              <button type="button" class="hdnc-pill-btn active" data-hdnc-filter-inst="all" onclick="filterHdncByInstrument('all')">
+                <span>Tất cả</span> <span class="hdnc-pill-count">12</span>
+              </button>
+              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="dantranh" onclick="filterHdncByInstrument('dantranh')">
+                <span>🪕 Đàn Tranh</span> <span class="hdnc-pill-count">1</span>
+              </button>
+              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="danbau" onclick="filterHdncByInstrument('danbau')">
+                <span>🎻 Đàn Bầu</span> <span class="hdnc-pill-count">1</span>
+              </button>
+              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="dannguyet" onclick="filterHdncByInstrument('dannguyet')">
+                <span>🌕 Đàn Nguyệt</span> <span class="hdnc-pill-count">1</span>
+              </button>
+              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="dantiba" onclick="filterHdncByInstrument('dantiba')">
+                <span>🪕 Đàn Tì Bà</span> <span class="hdnc-pill-count">1</span>
+              </button>
+              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="saotruc" onclick="filterHdncByInstrument('saotruc')">
+                <span>🎋 Sáo &amp; Tiêu</span> <span class="hdnc-pill-count">2</span>
+              </button>
+              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="dantam" onclick="filterHdncByInstrument('dantam')">
+                <span>🪕 Đàn Tam</span> <span class="hdnc-pill-count">1</span>
+              </button>
+              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="kenbau" onclick="filterHdncByInstrument('kenbau')">
+                <span>📯 Kèn Bầu</span> <span class="hdnc-pill-count">1</span>
+              </button>
+              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="kenmong" onclick="filterHdncByInstrument('kenmong')">
+                <span>📯 Kèn Mông</span> <span class="hdnc-pill-count">1</span>
+              </button>
+              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="chapi" onclick="filterHdncByInstrument('chapi')">
+                <span>🎋 Đàn Chapi</span> <span class="hdnc-pill-count">1</span>
+              </button>
+              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="dangoong" onclick="filterHdncByInstrument('dangoong')">
+                <span>🪕 Đàn Goong</span> <span class="hdnc-pill-count">1</span>
+              </button>
+              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="danmoi" onclick="filterHdncByInstrument('danmoi')">
+                <span>👄 Đàn Môi</span> <span class="hdnc-pill-count">1</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Hàng 2: Lọc theo Chủ Đề Nội Dung -->
+          <div class="hdnc-filter-row">
+            <div class="hdnc-filter-label">📚 Chủ Đề:</div>
+            <div class="hdnc-pill-group">
+              <button type="button" class="hdnc-pill-btn active" data-hdnc-filter-cat="all" onclick="filterHdncByCategory('all')">
+                <span>🌐 Tất cả nội dung</span> <span class="hdnc-pill-count">12</span>
+              </button>
+              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-cat="technique" onclick="filterHdncByCategory('technique')">
+                <span>✨ Kỹ thuật đánh đàn</span> <span class="hdnc-pill-count">5</span>
+              </button>
+              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-cat="how_to_play" onclick="filterHdncByCategory('how_to_play')">
+                <span>🖐️ Hướng dẫn cách chơi</span> <span class="hdnc-pill-count">2</span>
+              </button>
+              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-cat="usage" onclick="filterHdncByCategory('usage')">
+                <span>🛠️ Hướng dẫn sử dụng</span> <span class="hdnc-pill-count">2</span>
+              </button>
+              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-cat="intro" onclick="filterHdncByCategory('intro')">
+                <span>📖 Giới thiệu &amp; Tìm hiểu</span> <span class="hdnc-pill-count">3</span>
+              </button>
+              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-cat="performance" onclick="filterHdncByCategory('performance')">
+                <span>🎭 Biểu diễn</span> <span class="hdnc-pill-count">0</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Hàng 3: Tìm Kiếm & Thống Kê -->
+          <div class="hdnc-filter-row" style="margin-top: 4px;">
+            <div style="font-size: 12.5px; color: #a89a88;">
+              Đang hiển thị <strong id="hdncStatCount" style="color: #6ee7b7;">12</strong> video hướng dẫn
+            </div>
+            <div class="hdnc-search-box">
+              <span class="hdnc-search-icon">🔍</span>
+              <input type="text" id="hdncSearchInput" class="hdnc-search-input" placeholder="Tìm kiếm theo tên bài, kỹ thuật, nhạc cụ..." oninput="searchHdncVideos(this.value)" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Lưới Thẻ Video -->
+        <div class="hdnc-video-grid" id="hdncVideoGrid">
+          <!-- Render dynamically by video_hdnc.js -->
+        </div>
+      </section>
     </main>
   </div> <!-- /tabContentDanTranh -->
 
@@ -2096,6 +2214,9 @@
                   <button type="button" class="btn btn-primary btn-sm" id="btnAccPageToggleOwnerWindow" onclick="toggleOwnerFloatingWindow()" style="display: none;">
                     👑 Mở Bảng Owner
                   </button>
+                  <button type="button" class="btn btn-secondary btn-sm" id="btnAccPageVideoManager" onclick="openAdminVideoManager()" style="display: none; color: #ffea9f; border-color: rgba(239, 196, 123, 0.45); font-weight: 700;">
+                    🎬 Quản Lý Video
+                  </button>
                   <button type="button" class="btn btn-secondary btn-sm" onclick="openAccountAuthBox('edit')">
                     ✏️ Đổi tên hiển thị
                   </button>
@@ -3075,6 +3196,9 @@
           Howdy, <strong id="wpAdminBarUserName">owner</strong> 👤
         </span>
         <div class="wp-bar-actions">
+          <button type="button" class="wp-bar-action-btn" onclick="switchWpAdminView('videos')" title="Mở Quản lý Video Hướng Dẫn" style="background: rgba(239, 196, 123, 0.2); color: #ffea9f; border-color: rgba(239, 196, 123, 0.5);">
+            🎬 Quản Lý Video
+          </button>
           <button type="button" class="wp-bar-action-btn" id="btnMinimizeOwnerWin" onclick="toggleMinimizeOwnerWindow()" title="Thu gọn / Mở rộng">
             ─ Thu gọn
           </button>
@@ -3151,6 +3275,17 @@
                 <span class="wp-menu-icon">⚡</span>
                 <span class="wp-menu-text">Cloud & Realtime</span>
               </div>
+            </a>
+          </li>
+
+          <!-- Quản lý Video (Admin Video Manager - Yêu Cầu Mới) -->
+          <li class="wp-menu-item-wrap" id="wpMenuItemVideos">
+            <a class="wp-menu-item-link" onclick="switchWpAdminView('videos')" title="Quản lý & Tải lên Video Nhạc Cụ">
+              <div class="wp-menu-item-inner">
+                <span class="wp-menu-icon">🎬</span>
+                <span class="wp-menu-text">Video Manager</span>
+              </div>
+              <span class="wp-menu-badge" id="wpMenuVideosBadge">12</span>
             </a>
           </li>
 
@@ -3614,6 +3749,102 @@
         </div>
 
         <!-- =========================================================
+             VIEW: QUẢN LÝ VIDEO DÀNH CHO ADMIN (#wpViewVideos)
+             ========================================================= -->
+        <div id="wpViewVideos" class="wp-view-section" style="display: none;">
+          <!-- Card Tiêu đề -->
+          <div class="admin-video-header-card">
+            <div class="admin-video-header-flex">
+              <div>
+                <h1 class="admin-video-heading-title">🎬 Quản Lý Video Hướng Dẫn (Admin Video Studio)</h1>
+                <p class="admin-video-heading-desc">Hệ thống lưu trữ trên Server &amp; Database, hỗ trợ tải video MP4/WebM/MOV, tự động trích xuất thumbnail và phân loại 38 nhạc cụ.</p>
+              </div>
+              <div>
+                <button type="button" class="admin-btn-primary" onclick="openAdminVideoUploadModal()" title="Tải tệp video mới từ máy tính lên hệ thống">
+                  <span>➕</span> <span>Tải Video Mới Lên</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Thẻ Thống kê Kho Video -->
+          <div class="admin-video-stats-grid">
+            <div class="admin-stat-card">
+              <div class="admin-stat-icon">🎬</div>
+              <div>
+                <div class="admin-stat-val" id="adminStatTotalVideos">12</div>
+                <div class="admin-stat-label">Tổng video lưu trữ</div>
+              </div>
+            </div>
+            <div class="admin-stat-card">
+              <div class="admin-stat-icon">🪕</div>
+              <div>
+                <div class="admin-stat-val" id="adminStatInstCount">11 / 38</div>
+                <div class="admin-stat-label">Nhạc cụ có video</div>
+              </div>
+            </div>
+            <div class="admin-stat-card">
+              <div class="admin-stat-icon">💾</div>
+              <div>
+                <div class="admin-stat-val" id="adminStatTotalSize">1.2 GB+</div>
+                <div class="admin-stat-label">Dung lượng Server</div>
+              </div>
+            </div>
+            <div class="admin-stat-card">
+              <div class="admin-stat-icon">☁️</div>
+              <div>
+                <div class="admin-stat-val" style="color: #6ee7b7; font-size: 15px;">Đang hoạt động</div>
+                <div class="admin-stat-label">Đồng bộ Cloud Relay</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Thanh công cụ lọc & tìm kiếm -->
+          <div class="admin-video-toolbar">
+            <div class="admin-toolbar-left">
+              <label style="font-size: 12px; font-weight: 700; color: #dfa037;">Lọc theo:</label>
+              <select id="adminFilterInstSelect" class="admin-filter-select" onchange="filterAdminVideosByInstrument(this.value)">
+                <option value="all">🌐 Tất cả nhạc cụ</option>
+              </select>
+              <select id="adminFilterCatSelect" class="admin-filter-select" onchange="filterAdminVideosByCategory(this.value)">
+                <option value="all">📑 Tất cả danh mục</option>
+                <option value="usage">🛠️ Hướng dẫn sử dụng</option>
+                <option value="technique">✨ Hướng dẫn kỹ thuật chơi</option>
+                <option value="practice">🎯 Hướng dẫn thực hành</option>
+                <option value="performance">🎭 Biểu diễn nhạc cụ</option>
+                <option value="intro">📖 Giới thiệu nhạc cụ</option>
+              </select>
+              <input type="text" id="adminSearchInput" class="admin-search-input" placeholder="🔍 Tìm kiếm video..." oninput="searchAdminVideos(this.value)" />
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button type="button" class="admin-btn-secondary" onclick="resetAdminVideoFilters()" title="Đặt lại bộ lọc tìm kiếm">
+                🔄 Đặt lại
+              </button>
+            </div>
+          </div>
+
+          <!-- Bảng danh sách video -->
+          <div class="admin-video-table-wrap">
+            <table class="admin-video-table">
+              <thead>
+                <tr>
+                  <th style="width: 40px; text-align: center;">STT</th>
+                  <th style="width: 110px;">Thumbnail</th>
+                  <th>Tiêu đề &amp; Thông tin</th>
+                  <th>Nhạc cụ</th>
+                  <th>Danh mục</th>
+                  <th>Thời lượng &amp; Dung lượng</th>
+                  <th style="text-align: right;">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="wpAdminVideoTableBody">
+                <!-- Render động bởi video_hdnc.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- =========================================================
              VIEW 7: SETTINGS (CÀI ĐẶT HỆ THỐNG)
              ========================================================= -->
         <div id="wpViewSettings" class="wp-view-section" style="display: none;">
@@ -3912,6 +4143,145 @@
   <script src="encyclopedia_data.js"></script>
   <script src="cloud_sync.js"></script>
   <script src="hieuung.js"></script>
+  <script src="video_hdnc.js"></script>
+
+  <!-- =========================================================
+       MODAL 1: PREVIEW VIDEO CHO ADMIN (#modalAdminVideoPreview & #modalHdncPlayer)
+       ========================================================= -->
+  <div class="admin-preview-modal-overlay hdnc-player-overlay" id="modalAdminVideoPreview" onclick="if(event.target === this) closeAdminVideoPreview()">
+    <div class="admin-preview-modal hdnc-player-modal" onclick="event.stopPropagation()">
+      <div class="admin-preview-header hdnc-player-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 20px;">🎬</span>
+          <div style="font-weight: 800; font-size: 15px; color: #ffea9f;" id="adminPreviewTitle">Xem Thử Video (Admin Preview)</div>
+        </div>
+        <button type="button" class="admin-modal-close-btn hdnc-player-close-btn" onclick="closeAdminVideoPreview()" title="Đóng video (Phím Esc)">✕</button>
+      </div>
+
+      <div class="admin-preview-video-wrap hdnc-player-video-wrap">
+        <video id="adminPreviewVideoPlayer" class="admin-preview-video-player" controls playsinline></video>
+      </div>
+
+      <div class="admin-preview-body hdnc-player-info-body">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+          <span class="admin-inst-badge" id="adminPreviewInstBadge">🪕 Đàn Tranh</span>
+          <span class="admin-cat-badge admin-badge-cat-usage" id="adminPreviewCatBadge">Hướng dẫn sử dụng</span>
+        </div>
+        <p style="font-size: 13px; color: #d4c5b3; margin: 0; line-height: 1.5;" id="adminPreviewDesc"></p>
+      </div>
+    </div>
+  </div>
+  <div id="modalHdncPlayer" style="display: none;"></div>
+
+  <!-- =========================================================
+       MODAL 2: TẢI LÊN & CHỈNH SỬA PHÂN LOẠI VIDEO DÀNH CHO ADMIN (#modalAdminVideoUpload & #modalHdncUpload)
+       ========================================================= -->
+  <div class="admin-upload-modal-overlay hdnc-upload-overlay" id="modalAdminVideoUpload" onclick="if(event.target === this) closeAdminVideoUploadModal()">
+    <div class="admin-upload-modal hdnc-upload-modal" onclick="event.stopPropagation()">
+      <div class="admin-modal-header">
+        <h3 class="admin-modal-title" id="adminUploadModalTitle">
+          <span>➕</span> <span>Tải Lên Video Hướng Dẫn Mới (Admin)</span>
+        </h3>
+        <button type="button" class="admin-modal-close-btn hdnc-player-close-btn" onclick="closeAdminVideoUploadModal()" title="Đóng">✕</button>
+      </div>
+
+      <form id="formAdminVideoUpload" onsubmit="handleAdminSubmitUpload(event)">
+        <!-- 1. Dropzone Chọn tệp video -->
+        <div class="admin-form-group">
+          <label class="admin-form-label">Tệp Video Từ Máy Tính (.MP4, .WebM, .MOV):</label>
+          <div class="admin-file-dropzone" onclick="document.getElementById('adminVideoFileInput').click()">
+            <div class="admin-dropzone-icon">📁</div>
+            <div class="admin-dropzone-text" id="adminDropzoneText">Kéo thả tệp video vào đây hoặc nhấn để chọn (MP4, WebM, MOV)</div>
+            <div class="admin-dropzone-sub">Hệ thống hỗ trợ tệp dung lượng lớn, tự động chụp thumbnail &amp; phân loại nhạc cụ</div>
+          </div>
+          <input type="file" id="adminVideoFileInput" accept="video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov" style="display: none;" onchange="handleAdminVideoFileChosen(event)" />
+        </div>
+
+        <!-- 2. Preview Thumbnail & Snapshot tự động -->
+        <div class="admin-thumb-preview-box" id="adminUploadPreviewWrap" style="display: none;">
+          <img id="adminUploadThumbImg" class="admin-thumb-preview-img" src="" alt="Thumbnail" />
+          <div style="flex: 1;">
+            <div style="font-size: 13px; font-weight: 700; color: #ffea9f; margin-bottom: 2px;">🖼️ Ảnh đại diện Video (Thumbnail)</div>
+            <div style="font-size: 11.5px; color: #a89a88; margin-bottom: 6px;" id="adminUploadDurationText">Thời lượng: Đang tính...</div>
+            <div style="display: flex; gap: 8px;">
+              <button type="button" class="admin-tbl-btn preview" onclick="document.getElementById('adminVideoThumbInput').click()">
+                📂 Chọn ảnh riêng từ máy
+              </button>
+            </div>
+            <input type="file" id="adminVideoThumbInput" accept="image/png,image/jpeg,image/webp" style="display: none;" onchange="handleAdminCustomThumbnailChosen(event)" />
+          </div>
+        </div>
+
+        <!-- 3. Tiêu đề Video -->
+        <div class="admin-form-group">
+          <label class="admin-form-label" for="adminUploadTitle">Tiêu Đề Video:</label>
+          <input type="text" id="adminUploadTitle" class="admin-form-input" placeholder="Ví dụ: Hướng dẫn kỹ thuật vê ngón Đàn Tranh ngũ cung..." required maxlength="250" />
+        </div>
+
+        <!-- 4. Nhạc cụ & Danh mục phân loại -->
+        <div class="admin-form-row-2">
+          <div class="admin-form-group">
+            <label class="admin-form-label" for="adminUploadInstSelect">Nhạc Cụ Tương Ứng (38 Nhạc Cụ):</label>
+            <select id="adminUploadInstSelect" class="admin-form-select">
+              <option value="dantranh">🪕 Đàn Tranh</option>
+              <option value="danbau">🎻 Đàn Bầu</option>
+              <option value="dannguyet">🌕 Đàn Nguyệt</option>
+              <option value="dantiba">🪕 Đàn Tì Bà</option>
+              <option value="saotruc">🎋 Sáo Trúc &amp; Tiêu</option>
+              <option value="dantam">🪕 Đàn Tam</option>
+              <option value="kenbau">📯 Kèn Bầu</option>
+              <option value="kenmong">📯 Kèn Mông</option>
+              <option value="chapi">🎋 Đàn Chapi</option>
+              <option value="dangoong">🪕 Đàn Goong</option>
+              <option value="danmoi">👄 Đàn Môi</option>
+              <option value="dannhi">🎻 Đàn Nhị</option>
+              <option value="danday">🎸 Đàn Đáy</option>
+              <option value="trung">🪵 Đàn T'rưng</option>
+              <option value="klongput">🎋 Đàn Klông Pút</option>
+              <option value="trongcom">🥁 Trống Cơm</option>
+            </select>
+          </div>
+
+          <div class="admin-form-group">
+            <label class="admin-form-label" for="adminUploadCategorySelect">Phân Loại Danh Mục Nội Dung:</label>
+            <select id="adminUploadCategorySelect" class="admin-form-select">
+              <option value="usage">🛠️ Hướng dẫn sử dụng</option>
+              <option value="technique">✨ Hướng dẫn kỹ thuật chơi</option>
+              <option value="practice">🎯 Hướng dẫn thực hành</option>
+              <option value="performance">🎭 Biểu diễn nhạc cụ</option>
+              <option value="intro">📖 Giới thiệu nhạc cụ</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 5. Mô tả video -->
+        <div class="admin-form-group">
+          <label class="admin-form-label" for="adminUploadDesc">Mô Tả Nội Dung Video:</label>
+          <textarea id="adminUploadDesc" class="admin-form-textarea" rows="3" placeholder="Nhập tóm tắt nội dung hướng dẫn, các thế ngón, lưu ý khi tập luyện..."></textarea>
+        </div>
+
+        <!-- 6. Thanh tiến trình tải lên (Progress Bar) -->
+        <div class="admin-upload-progress-wrap" id="adminUploadProgressWrap" style="display: none;">
+          <div class="admin-progress-header">
+            <span id="adminUploadProgressStatus" style="color: #ffea9f; font-weight: 600;">⏳ Đang đọc tệp video...</span>
+            <span id="adminUploadProgressPct" style="color: #6ee7b7; font-weight: 700;">0%</span>
+          </div>
+          <div class="admin-progress-bar-bg">
+            <div class="admin-progress-bar-fill" id="adminUploadProgressBar"></div>
+          </div>
+        </div>
+
+        <!-- 7. Nút hành động -->
+        <div style="display: flex; align-items: center; justify-content: flex-end; gap: 12px; margin-top: 20px; padding-top: 14px; border-top: 1px solid rgba(239, 196, 123, 0.2);">
+          <button type="button" class="admin-btn-secondary hdnc-btn-secondary" onclick="closeAdminVideoUploadModal()">Hủy Bỏ</button>
+          <button type="submit" class="admin-btn-primary hdnc-btn-primary" id="btnAdminSubmitUpload">
+            <span id="btnAdminSubmitUploadText">Bắt Đầu Tải Lên &amp; Lưu Trữ</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div id="modalHdncUpload" style="display: none;"></div>
 
   <!-- Script điều khiển giao diện & Bộ lọc Mega-Menu 4 Loại Nhạc Cụ -->
   <script>
@@ -4470,12 +4840,25 @@
       const activeId = window.currentActiveInstrument || 'dantranh';
 
       // 1. Cập nhật nút active trên taskbarInstrument
+      const btnTutorial = document.getElementById('btnInstModeTutorial');
       if (btn3D) btn3D.classList.toggle('active', mode === '3d');
       if (btnInfo) btnInfo.classList.toggle('active', mode === 'info');
+      if (btnTutorial) btnTutorial.classList.toggle('active', mode === 'hdnc');
 
       // 2. Luôn giữ chắc chắn taskbarInstrument hiển thị độc quyền (Yêu Cầu 1)
       setExclusiveTaskbar('taskbarInstrument');
       syncInstrumentTaskbarInfo();
+
+      if (mode === 'hdnc') {
+        if (lookupPane) lookupPane.style.display = 'none';
+        if (stagePane) stagePane.style.display = 'block';
+        if (typeof syncHdncWithCurrentStageInstrument === 'function') {
+          syncHdncWithCurrentStageInstrument();
+        } else if (typeof scrollToHdncSection === 'function') {
+          setTimeout(scrollToHdncSection, 80);
+        }
+        return;
+      }
 
       if (mode === 'info') {
         if (stagePane) stagePane.style.display = 'none';
@@ -8642,6 +9025,8 @@
       if (bellUserSendBox) bellUserSendBox.style.display = 'block';
       if (bellOwnerViewBox) bellOwnerViewBox.style.display = isOwner ? 'block' : 'none';
       if (btnAccToggleOwnerWin) btnAccToggleOwnerWin.style.display = isOwner ? 'inline-flex' : 'none';
+      const btnAccVideoManager = document.getElementById('btnAccPageVideoManager');
+      if (btnAccVideoManager) btnAccVideoManager.style.display = isOwner ? 'inline-flex' : 'none';
       const btnToggleOwnerAnnounce = document.getElementById('btnToggleOwnerPostAnnounce');
       if (btnToggleOwnerAnnounce) btnToggleOwnerAnnounce.style.display = isOwner ? 'inline-flex' : 'none';
 
@@ -10258,7 +10643,7 @@
       window.currentWpAdminView = viewKey || 'posts';
 
       // 1. Ẩn tất cả các view section
-      const viewIds = ['wpViewPosts', 'wpViewDashboard', 'wpViewSoundMaster', 'wpViewAnnouncements', 'wpViewFeedback', 'wpViewUsers', 'wpViewSettings', 'wpViewCloud'];
+      const viewIds = ['wpViewPosts', 'wpViewDashboard', 'wpViewSoundMaster', 'wpViewAnnouncements', 'wpViewFeedback', 'wpViewUsers', 'wpViewSettings', 'wpViewCloud', 'wpViewVideos'];
       viewIds.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.display = 'none';
@@ -10273,13 +10658,14 @@
         feedback: 'wpViewFeedback',
         users: 'wpViewUsers',
         settings: 'wpViewSettings',
-        cloud: 'wpViewCloud'
+        cloud: 'wpViewCloud',
+        videos: 'wpViewVideos'
       };
       const activeEl = document.getElementById(targetViewMap[window.currentWpAdminView] || 'wpViewPosts');
       if (activeEl) activeEl.style.display = 'block';
 
       // 3. Highlight menu item tương ứng
-      const menuIds = ['wpMenuItemDashboard', 'wpMenuItemPosts', 'wpMenuItemAnnouncements', 'wpMenuItemFeedback', 'wpMenuItemUsers', 'wpMenuItemSettings', 'wpMenuItemCloud'];
+      const menuIds = ['wpMenuItemDashboard', 'wpMenuItemPosts', 'wpMenuItemAnnouncements', 'wpMenuItemFeedback', 'wpMenuItemUsers', 'wpMenuItemSettings', 'wpMenuItemCloud', 'wpMenuItemVideos'];
       menuIds.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.remove('active');
@@ -10292,7 +10678,8 @@
         feedback: 'wpMenuItemFeedback',
         users: 'wpMenuItemUsers',
         settings: 'wpMenuItemSettings',
-        cloud: 'wpMenuItemCloud'
+        cloud: 'wpMenuItemCloud',
+        videos: 'wpMenuItemVideos'
       };
       const activeMenuEl = document.getElementById(activeMenuMap[window.currentWpAdminView]);
       if (activeMenuEl) activeMenuEl.classList.add('active');
@@ -10313,10 +10700,20 @@
         }
       } else if (window.currentWpAdminView === 'cloud') {
         adminLoadCloudSettingsToUI();
+      } else if (window.currentWpAdminView === 'videos') {
+        if (window.DanTranhAdminVideos && typeof window.DanTranhAdminVideos.renderAdminVideoTable === 'function') {
+          window.DanTranhAdminVideos.renderAdminVideoTable();
+        }
       }
 
     }
     window.switchWpAdminView = switchWpAdminView;
+
+    function openAdminVideoManager() {
+      toggleOwnerFloatingWindow(true, 'videos');
+      switchWpAdminView('videos');
+    }
+    window.openAdminVideoManager = openAdminVideoManager;
 
     function adminLoadCloudSettingsToUI() {
       if (!window.DanTranhCloudSync) return;

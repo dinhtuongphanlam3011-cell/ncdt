@@ -1,0 +1,31 @@
+# Audio and Video files (Prevent uploading large media binaries to GitHub)
+*.mp4
+*.webm
+*.mov
+*.avi
+*.mkv
+*.wmv
+*.flv
+*.mp3
+*.wav
+*.ogg
+*.flac
+*.m4a
+*.aac
+*.opus
+*.mid
+*.midi
+
+# Media directories
+video_hdnc/
+Video_hdnc/
+videos/
+audios/
+
+# OS and Editor metadata
+.DS_Store
+Thumbs.db
+*.swp
+*.bak
+.vscode/
+.idea/
