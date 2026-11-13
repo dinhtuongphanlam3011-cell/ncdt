@@ -517,32 +517,30 @@
 
       return [
         '<tr data-video-id="' + v.id + '">',
-        '  <td style="width: 40px; text-align: center; color: #71717a; font-size: 12px;">' + (idx + 1) + '</td>',
-        '  <td style="width: 110px;">',
+        '  <td style="width: 50px; text-align: center; color: #a1a1aa; font-size: 13px; font-weight: 600;">' + (idx + 1) + '</td>',
+        '  <td style="width: 120px; text-align: center;">',
         '    <div class="admin-table-thumb-wrap" onclick="openAdminVideoPreview(\'' + v.id + '\')" title="Nhấn để xem thử video">' +
                thumbHtml +
         '      <div class="admin-thumb-play-icon">▶</div>',
         '    </div>',
         '  </td>',
-        '  <td>',
+        '  <td style="vertical-align: top; padding: 12px 16px;">',
+        '    <!-- TÊN Ở TRÊN -->',
         '    <div class="admin-table-title" onclick="openAdminVideoPreview(\'' + v.id + '\')" title="' + escapeHtml(v.title) + '">' +
                escapeHtml(v.title) +
         '    </div>',
-        '    <div class="admin-table-desc">' + escapeHtml(v.description || 'Chưa có mô tả chi tiết') + '</div>',
-        '    <div class="admin-table-submeta">Tệp: <code>' + escapeHtml(v.filename || 'video.mp4') + '</code> • ' + storageLabel + '</div>',
+        '    <!-- THÔNG TIN Ở DƯỚI -->',
+        (v.description ? '    <div class="admin-table-desc">' + escapeHtml(v.description) + '</div>' : ''),
+        '    <div class="admin-table-info-meta-row">',
+        '      <span class="admin-inst-badge">' + (v.instrumentIcon || '🪕') + ' ' + escapeHtml(v.instrumentName || 'Nhạc cụ') + '</span>',
+        '      <span class="admin-cat-badge ' + catClass + '">' + catName + '</span>',
+        '      <span class="admin-meta-tag">⏱️ <strong>' + (v.duration || '--:--') + '</strong></span>',
+        '      <span class="admin-meta-tag">💾 ' + (v.fileSize || 'HD MP4') + '</span>',
+        '      <span class="admin-meta-tag admin-meta-tag-file">' + storageLabel + ' (<code>' + escapeHtml(v.filename || 'video.mp4') + '</code>)</span>',
+        '    </div>',
         '  </td>',
-        '  <td style="white-space: nowrap;">',
-        '    <span class="admin-inst-badge">' + (v.instrumentIcon || '🪕') + ' ' + escapeHtml(v.instrumentName || 'Nhạc cụ') + '</span>',
-        '  </td>',
-        '  <td style="white-space: nowrap;">',
-        '    <span class="admin-cat-badge ' + catClass + '">' + catName + '</span>',
-        '  </td>',
-        '  <td style="white-space: nowrap; font-size: 12.5px; color: #d4d4d8;">',
-        '    <div>⏱️ <strong>' + (v.duration || '--:--') + '</strong></div>',
-        '    <div style="font-size: 11px; color: #9ca3af; margin-top: 2px;">💾 ' + (v.fileSize || 'HD MP4') + '</div>',
-        '  </td>',
-        '  <td style="white-space: nowrap; text-align: right;">',
-        '    <div class="admin-actions-flex">',
+        '  <td style="width: 180px; text-align: right; vertical-align: middle;">',
+        '    <div class="admin-actions-flex" style="justify-content: flex-end;">',
         '      <button type="button" class="admin-tbl-btn preview" onclick="openAdminVideoPreview(\'' + v.id + '\')" title="Xem thử video">' +
         '        ▶ Xem',
         '      </button>',
@@ -991,19 +989,41 @@
     var overlay = document.getElementById('modalAdminVideoPreview');
     var player = document.getElementById('adminPreviewVideoPlayer');
     var titleEl = document.getElementById('adminPreviewTitle');
+    var subtitleEl = document.getElementById('adminPreviewSubtitle');
     var badgeInstEl = document.getElementById('adminPreviewInstBadge');
     var badgeCatEl = document.getElementById('adminPreviewCatBadge');
+    var durationEl = document.getElementById('adminPreviewDurationBadge');
+    var storageEl = document.getElementById('adminPreviewStorageBadge');
     var descEl = document.getElementById('adminPreviewDesc');
 
     if (!overlay || !player) return;
 
-    if (titleEl) titleEl.textContent = video.title;
-    if (badgeInstEl) badgeInstEl.innerHTML = (video.instrumentIcon || '🪕') + ' ' + (video.instrumentName || 'Nhạc cụ');
+    // TÊN Ở TRÊN (Title on top in modal header)
+    if (titleEl) {
+      titleEl.textContent = video.title || 'Xem Thử Video';
+      titleEl.title = video.title || '';
+    }
+    if (subtitleEl) {
+      subtitleEl.textContent = (video.instrumentName ? ('Nhạc cụ: ' + video.instrumentName + ' • ') : '') + (video.categoryName || 'Video Hướng Dẫn Diễn Tấu');
+    }
+
+    // THÔNG TIN Ở DƯỚI (Information underneath video player)
+    if (badgeInstEl) {
+      badgeInstEl.innerHTML = (video.instrumentIcon || '🪕') + ' ' + (video.instrumentName || 'Nhạc cụ');
+    }
     if (badgeCatEl) {
       badgeCatEl.textContent = video.categoryName || 'Hướng dẫn';
       badgeCatEl.className = 'admin-cat-badge admin-badge-cat-' + (video.category || 'usage');
     }
-    if (descEl) descEl.textContent = video.description || '';
+    if (durationEl) {
+      durationEl.innerHTML = '⏱️ <strong>' + (video.duration || '--:--') + '</strong>' + (video.fileSize ? (' • 💾 ' + video.fileSize) : '');
+    }
+    if (storageEl) {
+      storageEl.innerHTML = video.isPreset ? '📁 Server video_hdnc' : '☁️ Database &amp; Storage';
+    }
+    if (descEl) {
+      descEl.textContent = video.description || 'Chưa có mô tả chi tiết cho video này.';
+    }
 
     if (video.videoUrl && video.videoUrl.indexOf('indexeddb://') === 0) {
       var blobId = video.videoUrl.replace('indexeddb://', '');
