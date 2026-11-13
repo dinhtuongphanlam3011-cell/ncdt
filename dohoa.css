@@ -9180,7 +9180,7 @@ h1.hero-brand-title,
 h1.hero-brand-title,
 .tich-tich-title-font {
   font-family: 'ThuPhapThienAn', 'ThuPhap', 'UTM ThuPhap Thien An', 'Charm', 'Charmonman', 'MTD AlFresco', cursive, serif !important;
-  font-size: clamp(27px, 3.9vw, 50px) !important;
+  font-size: clamp(40px, 5.85vw, 75px) !important;
   font-weight: normal !important;
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff !important;
