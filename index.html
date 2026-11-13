@@ -641,16 +641,16 @@
             Không gian Bảo tàng Số
           </p>
 
-          <div class="hero-brand-title-wrap" style="margin: 12px 0 20px 0; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; cursor: default;">
-            <h1 class="hero-brand-title tich-tich-title-font" style="font-family: 'ThuPhapThienAn', 'ThuPhap', 'UTM ThuPhap Thien An', 'Charm', 'Charmonman', 'MTD AlFresco', cursive, serif !important; font-size: clamp(54px, 7.8vw, 100px) !important; font-weight: normal; color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; text-shadow: 0 4px 28px rgba(0, 0, 0, 0.9), 0 2px 10px rgba(0, 0, 0, 0.95), 0 0 40px rgba(239, 196, 123, 0.35); line-height: 1.25; letter-spacing: 0.04em; margin: 0; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; cursor: default;">
+          <div class="hero-brand-title-wrap" style="margin: 12px 0 12px 0; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; cursor: default;">
+            <h1 class="hero-brand-title tich-tich-title-font" style="font-family: 'ThuPhapThienAn', 'ThuPhap', 'UTM ThuPhap Thien An', 'Charm', 'Charmonman', 'MTD AlFresco', cursive, serif !important; font-size: clamp(27px, 3.9vw, 50px) !important; font-weight: normal; color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; text-shadow: 0 4px 28px rgba(0, 0, 0, 0.9), 0 2px 10px rgba(0, 0, 0, 0.95), 0 0 40px rgba(239, 196, 123, 0.35); line-height: 1.25; letter-spacing: 0.04em; margin: 0; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; cursor: default;">
               <span class="hero-title-phrase" style="display: inline-block; white-space: nowrap; text-transform: uppercase; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; cursor: default;">Thanh âm cội nguồn</span>
             </h1>
           </div>
           <div class="lux-search-hint-text" id="luxSearchHintText" style="display:none;"></div>
         </div>
 
-        <!-- Cột Phải: Key Visual 3D Tự Động Xoay 360° (Three.js WebGL) -->
-        <div class="tttt-hero-right" id="hero3DStageContainer" onclick="handleHomeInstrumentNavClick(event)" title="Nhấn vào mô hình 3D để vào khu vực Nhạc cụ (Tiếp tục chơi hoặc Đổi nhạc cụ)" style="cursor: pointer;">
+        <!-- Cột Phải: Key Visual 3D Tự Động Xoay 360° (Three.js WebGL) - Không thể chọn/click theo yêu cầu -->
+        <div class="tttt-hero-right" id="hero3DStageContainer" style="cursor: default; user-select: none; -webkit-user-select: none; -moz-user-select: none; pointer-events: none;">
           <div class="tttt-hero-aura-circle"></div>
           <div class="hero-3d-model-stage" id="hero3DModelStage">
             <canvas id="hero3DModelCanvas"></canvas>
@@ -683,7 +683,7 @@
         <div class="lux-catalog-header" style="margin-bottom: 22px; border-bottom: 1px solid rgba(239, 196, 123, 0.2); padding-bottom: 16px;">
           <div>
             <div class="lux-greeting-sub" style="margin-bottom: 6px; font-size: 14px; font-weight: 700; color: #ffea9f; letter-spacing: 0.04em;">📖 THÔNG TIN VĂN HÓA &amp; NHẠC KHÍ HỌC CỔ TRUYỀN</div>
-            <h2 style="font-family: var(--font-serif); font-size: 16px; font-weight: 800; color: #ffea9f; margin: 0; line-height: 1.35;">
+            <h2 style="font-family: var(--font-serif); font-size: 32px; font-weight: 800; color: #ffea9f; margin: 0; line-height: 1.35;">
               Thông Tin Tổng Quan Về Âm Nhạc &amp; Nhạc Cụ Dân Tộc <span style="white-space: nowrap;">Việt Nam</span>
             </h2>
           </div>
@@ -965,115 +965,9 @@
       </div> <!-- /.stage-card -->
 
       <!-- =========================================================
-           KHU VỰC HƯỚNG DẪN VIDEO CHUYÊN SÂU (TẠM THỜI ẨN THEO YÊU CẦU MỚI)
+           KHU VỰC HƯỚNG DẪN VIDEO CHUYÊN SÂU (ĐÃ GỠ BỎ KHỎI GIAO DIỆN THEO YÊU CẦU: CHỈ DÀNH RIÊNG QUẢN TRỊ ADMIN)
            ========================================================= -->
-      <section class="hdnc-section-container" id="sectionHdncTutorials" aria-label="Khu vực Video Hướng Dẫn Nhạc Cụ" style="display: none !important;">
-        <!-- Header -->
-        <div class="hdnc-section-header">
-          <div class="hdnc-header-left">
-            <div class="hdnc-header-icon-wrap">🎬</div>
-            <div>
-              <h2 class="hdnc-title">HƯỚNG DẪN</h2>
-              <p class="hdnc-subtitle">Kho video hướng dẫn kỹ thuật gảy đàn, phương pháp diễn tấu, cấu tạo và nghệ thuật trình diễn nhạc cụ truyền thống Việt Nam</p>
-            </div>
-          </div>
-          <div class="hdnc-header-actions">
-            <button type="button" class="hdnc-btn-secondary" onclick="syncHdncWithCurrentStageInstrument()" title="Lọc các video hướng dẫn của cây đàn đang diễn tấu">
-              <span>🎯</span> <span>Lọc theo cây đàn hiện tại</span>
-            </button>
-            <button type="button" class="hdnc-btn-primary" onclick="openHdncUploadModal()" title="Tải video hướng dẫn mới lên hệ thống (Tự động nhận diện phân loại)">
-              <span>➕</span> <span>Tải Video Lên</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Filters Wrap -->
-        <div class="hdnc-filters-wrap">
-          <!-- Hàng 1: Lọc theo Nhạc Cụ -->
-          <div class="hdnc-filter-row">
-            <div class="hdnc-filter-label">🎵 Nhạc Cụ:</div>
-            <div class="hdnc-pill-group">
-              <button type="button" class="hdnc-pill-btn active" data-hdnc-filter-inst="all" onclick="filterHdncByInstrument('all')">
-                <span>Tất cả</span> <span class="hdnc-pill-count">12</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="dantranh" onclick="filterHdncByInstrument('dantranh')">
-                <span>🪕 Đàn Tranh</span> <span class="hdnc-pill-count">1</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="danbau" onclick="filterHdncByInstrument('danbau')">
-                <span>🎻 Đàn Bầu</span> <span class="hdnc-pill-count">1</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="dannguyet" onclick="filterHdncByInstrument('dannguyet')">
-                <span>🌕 Đàn Nguyệt</span> <span class="hdnc-pill-count">1</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="dantiba" onclick="filterHdncByInstrument('dantiba')">
-                <span>🪕 Đàn Tì Bà</span> <span class="hdnc-pill-count">1</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="saotruc" onclick="filterHdncByInstrument('saotruc')">
-                <span>🎋 Sáo &amp; Tiêu</span> <span class="hdnc-pill-count">2</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="dantam" onclick="filterHdncByInstrument('dantam')">
-                <span>🪕 Đàn Tam</span> <span class="hdnc-pill-count">1</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="kenbau" onclick="filterHdncByInstrument('kenbau')">
-                <span>📯 Kèn Bầu</span> <span class="hdnc-pill-count">1</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="kenmong" onclick="filterHdncByInstrument('kenmong')">
-                <span>📯 Kèn Mông</span> <span class="hdnc-pill-count">1</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="chapi" onclick="filterHdncByInstrument('chapi')">
-                <span>🎋 Đàn Chapi</span> <span class="hdnc-pill-count">1</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="dangoong" onclick="filterHdncByInstrument('dangoong')">
-                <span>🪕 Đàn Goong</span> <span class="hdnc-pill-count">1</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="danmoi" onclick="filterHdncByInstrument('danmoi')">
-                <span>👄 Đàn Môi</span> <span class="hdnc-pill-count">1</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Hàng 2: Lọc theo Chủ Đề Nội Dung -->
-          <div class="hdnc-filter-row">
-            <div class="hdnc-filter-label">📚 Chủ Đề:</div>
-            <div class="hdnc-pill-group">
-              <button type="button" class="hdnc-pill-btn active" data-hdnc-filter-cat="all" onclick="filterHdncByCategory('all')">
-                <span>🌐 Tất cả nội dung</span> <span class="hdnc-pill-count">12</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-cat="technique" onclick="filterHdncByCategory('technique')">
-                <span>✨ Kỹ thuật đánh đàn</span> <span class="hdnc-pill-count">5</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-cat="how_to_play" onclick="filterHdncByCategory('how_to_play')">
-                <span>🖐️ Hướng dẫn cách chơi</span> <span class="hdnc-pill-count">2</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-cat="usage" onclick="filterHdncByCategory('usage')">
-                <span>🛠️ Hướng dẫn sử dụng</span> <span class="hdnc-pill-count">2</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-cat="intro" onclick="filterHdncByCategory('intro')">
-                <span>📖 Giới thiệu &amp; Tìm hiểu</span> <span class="hdnc-pill-count">3</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-cat="performance" onclick="filterHdncByCategory('performance')">
-                <span>🎭 Biểu diễn</span> <span class="hdnc-pill-count">0</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Hàng 3: Tìm Kiếm & Thống Kê -->
-          <div class="hdnc-filter-row" style="margin-top: 4px;">
-            <div style="font-size: 12.5px; color: #a89a88;">
-              Đang hiển thị <strong id="hdncStatCount" style="color: #6ee7b7;">12</strong> video hướng dẫn
-            </div>
-            <div class="hdnc-search-box">
-              <span class="hdnc-search-icon">🔍</span>
-              <input type="text" id="hdncSearchInput" class="hdnc-search-input" placeholder="Tìm kiếm theo tên bài, kỹ thuật, nhạc cụ..." oninput="searchHdncVideos(this.value)" />
-            </div>
-          </div>
-        </div>
-
-        <!-- Lưới Thẻ Video -->
-        <div class="hdnc-video-grid" id="hdncVideoGrid">
-          <!-- Render dynamically by video_hdnc.js -->
-        </div>
-      </section>
+      <div id="sectionHdncTutorials" style="display: none !important;"></div>
     </main>
   </div> <!-- /tabContentDanTranh -->
 

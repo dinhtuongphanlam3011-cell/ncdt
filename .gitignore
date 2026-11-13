@@ -29,3 +29,4 @@ Thumbs.db
 *.bak
 .vscode/
 .idea/
+oracleJdk-27/
