@@ -9180,7 +9180,7 @@ h1.hero-brand-title,
 h1.hero-brand-title,
 .tich-tich-title-font {
   font-family: 'ThuPhapThienAn', 'ThuPhap', 'UTM ThuPhap Thien An', 'Charm', 'Charmonman', 'MTD AlFresco', cursive, serif !important;
-  font-size: clamp(54px, 7.8vw, 100px) !important;
+  font-size: clamp(62px, 9vw, 118px) !important;
   font-weight: normal !important;
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff !important;
@@ -11608,4 +11608,11 @@ label {
 
 .floating-songs-header:active {
   cursor: grabbing !important;
+}
+
+/* Hero: đẩy khối tiêu đề Thanh Âm Cội Nguồn lên cao, giảm khoảng trống phía trên */
+@media (min-width: 1025px) {
+  #luxIntroHeroCard .tttt-hero-left {
+    transform: translateY(-70px);
+  }
 }
