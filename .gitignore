@@ -30,3 +30,6 @@ Thumbs.db
 .vscode/
 .idea/
 oracleJdk-27/
+
+# Ngoại lệ: âm thanh đàn tranh (file nhỏ, cần có trên server)
+!audio/dantranh/*.mp3

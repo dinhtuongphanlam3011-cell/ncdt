@@ -474,10 +474,69 @@
     });
   }
 
+  // ============================================================================
+  // ÂM THANH MẶC ĐỊNH TRÊN SERVER CHO ĐÀN TRANH (thư mục audio/dantranh/)
+  // Tệp string_{i}.mp3 ứng với dây số i+1 (string_0 = dây 1 ... string_15 = dây 16).
+  // Chỉ dùng khi Admin CHƯA gán file riêng cho dây đó. Dây nào chưa có file
+  // (tải lỗi / 404) sẽ tự động quay về âm tổng hợp như cũ.
+  // ============================================================================
+  var BUILTIN_AUDIO_DIR = { dantranh: 'audio/dantranh/' };
+  var BUILTIN_AUDIO_COUNT = { dantranh: 16 };
+  var _builtinAudio = {}; // key -> { audio, ok: true|false|null }
+
+  function preloadBuiltinAudio(instId) {
+    var dir = BUILTIN_AUDIO_DIR[instId];
+    var count = BUILTIN_AUDIO_COUNT[instId] || 0;
+    if (!dir || typeof Audio === 'undefined') return;
+    for (var i = 0; i < count; i++) {
+      (function (idx) {
+        var key = instId + '_' + idx;
+        if (_builtinAudio[key]) return;
+        var entry = { audio: null, ok: null };
+        _builtinAudio[key] = entry;
+        try {
+          var a = new Audio();
+          a.preload = 'auto';
+          a.addEventListener('canplaythrough', function () { entry.ok = true; }, { once: true });
+          a.addEventListener('loadeddata', function () { entry.ok = true; }, { once: true });
+          a.addEventListener('error', function () { entry.ok = false; }, { once: true });
+          a.src = dir + 'string_' + idx + '.mp3';
+          a.load();
+          entry.audio = a;
+        } catch (e) {
+          entry.ok = false;
+        }
+      })(i);
+    }
+  }
+
+  function playBuiltinAudioForNote(instId, noteIdx) {
+    if (!BUILTIN_AUDIO_DIR[instId]) return false;
+    preloadBuiltinAudio(instId);
+    var entry = _builtinAudio[instId + '_' + noteIdx];
+    if (!entry || entry.ok !== true || !entry.audio) return false;
+    try {
+      var masterVol = typeof window.currentMasterVol === 'number' ? window.currentMasterVol : 0.85;
+      var instVol = typeof window._activeOwnerInstVolFactor === 'number' ? window._activeOwnerInstVolFactor : 1.0;
+      // Dây đang ngân thì dùng bản sao để các lần gảy liên tiếp không cắt ngang nhau
+      var a = (entry.audio.paused || entry.audio.ended) ? entry.audio : entry.audio.cloneNode(true);
+      a.volume = Math.max(0, Math.min(1.0, masterVol * instVol));
+      a.currentTime = 0;
+      var p = a.play();
+      if (p && p.catch) p.catch(function () {});
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
+
+  // Nạp sẵn âm thanh đàn tranh ngay khi trang tải
+  try { preloadBuiltinAudio('dantranh'); } catch (e) {}
+
   // Phát file âm thanh tùy chỉnh server cho nốt
   function playServerCustomAudioForNote(instId, noteIdx) {
     var noteCustom = getServerAudioForNote(instId, noteIdx);
-    if (!noteCustom || !noteCustom.fileUrl) return false;
+    if (!noteCustom || !noteCustom.fileUrl) return playBuiltinAudioForNote(instId, noteIdx);
 
     try {
       var poolKey = instId + '_' + noteIdx;
