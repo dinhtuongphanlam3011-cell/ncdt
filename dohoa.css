@@ -6219,7 +6219,7 @@ body.tttt-theme-body.light-theme .padlet-composer-body {
 }
 
 .tttt-intro-title {
-  font-size: 42px;
+  font-size: 21px;
   font-weight: 800;
   color: #efc47b;
   margin: 0 0 14px;
@@ -6571,7 +6571,7 @@ body.tttt-theme-body.light-theme .padlet-composer-body {
 
 .tttt-cream-roadmap-title {
   font-family: var(--font-serif);
-  font-size: 38px;
+  font-size: 19px;
   font-weight: 800;
   color: #ffea9f;
   margin: 0 0 8px;
@@ -6920,9 +6920,11 @@ body.tttt-theme-body .lux-4cat-card-btn.active .lux-4cat-info small {
     grid-template-columns: 1fr;
   }
   .tttt-cream-heading,
-  .tttt-section-big-title,
-  .tttt-cream-roadmap-title {
+  .tttt-section-big-title {
     font-size: 30px;
+  }
+  .tttt-cream-roadmap-title {
+    font-size: 16px;
   }
 }
 
@@ -9180,13 +9182,13 @@ h1.hero-brand-title,
 h1.hero-brand-title,
 .tich-tich-title-font {
   font-family: 'ThuPhapThienAn', 'ThuPhap', 'UTM ThuPhap Thien An', 'Charm', 'Charmonman', 'MTD AlFresco', cursive, serif !important;
-  font-size: clamp(62px, 9vw, 118px) !important;
+  font-size: clamp(54px, 7.8vw, 200px) !important;
   font-weight: normal !important;
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff !important;
   text-shadow: 0 4px 28px rgba(0, 0, 0, 0.9), 0 2px 10px rgba(0, 0, 0, 0.95), 0 0 40px rgba(239, 196, 123, 0.35) !important;
-  line-height: 1.2 !important;
-  letter-spacing: 0.01em !important;
+  line-height: 1.25 !important;
+  letter-spacing: 0.04em !important;
 }
 
 .brand-title {
@@ -11608,11 +11610,4 @@ label {
 
 .floating-songs-header:active {
   cursor: grabbing !important;
-}
-
-/* Hero: đẩy khối tiêu đề Thanh Âm Cội Nguồn lên cao, giảm khoảng trống phía trên */
-@media (min-width: 1025px) {
-  #luxIntroHeroCard .tttt-hero-left {
-    transform: translateY(-70px);
-  }
 }
