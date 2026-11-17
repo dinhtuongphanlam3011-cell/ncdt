@@ -117,214 +117,342 @@
       display: none !important;
     }
 
-    /* Yêu cầu 4: Bỏ làm mờ màn hình khi tạo bài viết diễn đàn và làm tab nổi di chuyển được */
-    .reddit-composer-expanded.padlet-composer-modal {
+    /* Khung tạo bài viết diễn đàn theo bố cục Gmail New Message */
+    .reddit-composer-expanded.padlet-composer-modal,
+    body.tttt-theme-body.light-theme .reddit-composer-expanded.padlet-composer-modal {
       position: fixed !important;
       inset: 0 !important;
       width: 100vw !important;
       height: 100vh !important;
       background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
       backdrop-filter: none !important;
       -webkit-backdrop-filter: none !important;
       z-index: 100000 !important;
       pointer-events: none !important;
       display: none !important;
     }
-    .reddit-composer-expanded.padlet-composer-modal.open {
+    .reddit-composer-expanded.padlet-composer-modal.open,
+    body.tttt-theme-body.light-theme .reddit-composer-expanded.padlet-composer-modal.open {
       display: block !important;
     }
     .padlet-composer-card {
       pointer-events: auto !important;
       position: fixed !important;
-      top: 90px;
-      left: calc(50% - 330px);
-      width: 660px;
-      max-width: calc(100vw - 32px);
-      max-height: calc(100vh - 110px);
-      overflow-y: auto;
-      background: linear-gradient(155deg, rgba(32, 22, 17, 0.98) 0%, rgba(18, 12, 10, 0.99) 100%) !important;
-      border: 1.5px solid rgba(239, 196, 123, 0.45) !important;
-      border-radius: 18px !important;
-      padding: 20px 24px !important;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85), 0 0 35px rgba(239, 196, 123, 0.2) !important;
+      top: 88px;
+      left: calc(50% - 290px);
+      width: 580px;
+      max-width: calc(100vw - 24px);
+      max-height: calc(100vh - 104px);
+      display: flex;
+      flex-direction: column;
+      background: #ffffff !important;
+      color: #1f2937 !important;
+      border: 1px solid #dadce0 !important;
+      border-radius: 10px !important;
+      padding: 0 !important;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35), 0 4px 12px rgba(0, 0, 0, 0.18) !important;
       box-sizing: border-box !important;
+      overflow: hidden;
       z-index: 100001 !important;
+      font-family: 'Be Vietnam Pro', 'Manrope', system-ui, -apple-system, sans-serif;
     }
-    .padlet-composer-header {
+    .reddit-composer-expanded.padlet-fullscreen .padlet-composer-card {
+      width: min(860px, calc(100vw - 32px)) !important;
+      height: min(680px, calc(100vh - 64px)) !important;
+      top: 32px !important;
+      left: calc(50% - min(430px, calc(50vw - 16px))) !important;
+    }
+    .padlet-composer-header,
+    body.tttt-theme-body.light-theme .padlet-composer-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 14px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid rgba(239, 196, 123, 0.25);
+      background: #f2f6fc !important;
+      color: #041e49 !important;
+      padding: 10px 16px !important;
+      margin: 0 !important;
+      border-bottom: 1px solid #e6ebf2 !important;
       cursor: grab;
       user-select: none;
     }
     .padlet-composer-header:active {
       cursor: grabbing;
     }
+    .gmail-composer-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #041e49;
+      letter-spacing: -0.01em;
+    }
     .padlet-header-window-btns {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
     }
     .padlet-win-btn {
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      border: 1px solid rgba(239, 196, 123, 0.35);
-      background: rgba(255, 255, 255, 0.08);
-      color: #fff;
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      border: none;
+      background: transparent;
+      color: #444746;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      font-size: 11px;
-      transition: all 0.16s ease;
+      font-size: 13px;
+      font-weight: 600;
+      transition: background 0.15s ease, color 0.15s ease;
     }
     .padlet-win-btn:hover {
-      background: rgba(222, 25, 75, 0.6);
-      transform: scale(1.08);
+      background: rgba(68, 71, 70, 0.1);
+      color: #1f1f1f;
     }
-    .padlet-top-submit-btn {
-      background: rgba(239, 196, 123, 0.15);
-      color: #ffea9f;
-      border: 1px solid rgba(239, 196, 123, 0.4);
-      border-radius: 999px;
-      padding: 4px 14px;
-      font-size: 12px;
-      font-weight: 700;
+    #formRedditCreatePost {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+      background: #ffffff;
+    }
+    .gmail-row-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-bottom: 1px solid #eceff1;
+      flex-wrap: wrap;
+    }
+    .gmail-meta-select {
+      border: none;
+      background: #f1f3f4;
+      color: #3c4043;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 12.5px;
+      font-weight: 500;
+      outline: none;
       cursor: pointer;
-      transition: all 0.2s ease;
     }
-    .padlet-top-submit-btn:hover {
-      background: #efc47b;
-      color: #111;
+    .gmail-meta-select:hover,
+    .gmail-meta-select:focus {
+      background: #e8eaed;
+    }
+    .gmail-author-input {
+      flex: 1;
+      min-width: 110px;
+      border: none;
+      background: transparent;
+      color: #1f2937;
+      font-size: 13px;
+      padding: 4px 6px;
+      outline: none;
+    }
+    .gmail-author-input::placeholder,
+    .padlet-subject-input::placeholder,
+    .padlet-body-textarea::placeholder {
+      color: #747775;
     }
     .padlet-subject-input {
       width: 100%;
-      height: 42px;
-      background: rgba(0, 0, 0, 0.4);
-      border: 1.5px solid rgba(239, 196, 123, 0.35);
-      border-radius: 10px;
-      color: #fff8eb;
-      font-size: 15px;
-      font-weight: 700;
-      padding: 0 14px;
+      height: 26px;
+      background: transparent;
+      border: none;
+      color: #1f1f1f;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 0;
       box-sizing: border-box;
       outline: none;
-      margin-bottom: 12px;
+      margin: 0;
     }
-    .padlet-subject-input:focus {
-      border-color: #efc47b;
-      box-shadow: 0 0 10px rgba(239, 196, 123, 0.3);
-    }
-    .padlet-media-toolbar {
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(239, 196, 123, 0.2);
-      border-radius: 10px;
-      padding: 10px 14px;
-      margin-bottom: 12px;
-    }
-    .padlet-media-bar-inner {
+    .gmail-body-wrap {
+      flex: 1;
+      min-height: 200px;
+      padding: 12px 16px 8px;
+      overflow-y: auto;
       display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 6px;
-    }
-    .padlet-tool-btn {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(239, 196, 123, 0.3);
-      border-radius: 8px;
-      color: #ffea9f;
-      padding: 5px 12px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s;
-    }
-    .padlet-tool-btn:hover {
-      background: rgba(239, 196, 123, 0.2);
-      border-color: #efc47b;
-    }
-    .padlet-tool-hint {
-      font-size: 11.5px;
-      color: #a1a1aa;
+      flex-direction: column;
+      gap: 10px;
     }
     .padlet-body-textarea {
       width: 100%;
-      min-height: 120px;
-      background: rgba(0, 0, 0, 0.4);
-      border: 1.5px solid rgba(239, 196, 123, 0.35);
-      border-radius: 10px;
-      color: #fff5e4;
-      font-size: 13.5px;
-      line-height: 1.6;
-      padding: 12px 14px;
+      min-height: 170px;
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #1f1f1f;
+      font-size: 14px;
+      line-height: 1.55;
+      padding: 0;
       box-sizing: border-box;
       outline: none;
       resize: vertical;
-      margin-bottom: 14px;
+      margin: 0;
       font-family: inherit;
     }
-    .padlet-body-textarea:focus {
-      border-color: #efc47b;
-      box-shadow: 0 0 10px rgba(239, 196, 123, 0.3);
+    .gmail-font-toolbar {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      padding: 7px 14px;
+      margin: 0 16px 6px;
+      background: #f8fafd;
+      border: 1px solid #e1e3e1;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    }
+    .gmail-font-toolbar.open {
+      display: flex;
+    }
+    .gmail-fmt-select {
+      border: 1px solid #dadce0;
+      background: #ffffff;
+      color: #3c4043;
+      border-radius: 5px;
+      padding: 3px 6px;
+      font-size: 12px;
+      outline: none;
+      cursor: pointer;
+    }
+    .gmail-fmt-btn {
+      min-width: 26px;
+      height: 26px;
+      border: none;
+      border-radius: 4px;
+      background: transparent;
+      color: #444746;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.12s ease;
+    }
+    .gmail-fmt-btn:hover {
+      background: #e8eaed;
+    }
+    .gmail-fmt-btn.active {
+      background: #d3e3fd;
+      color: #0b57d0;
+    }
+    .gmail-emoji-popover {
+      display: none;
+      position: relative;
+      margin: 0 16px 6px;
+      padding: 8px 10px;
+      background: #ffffff;
+      border: 1px solid #dadce0;
+      border-radius: 10px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.14);
+      flex-wrap: wrap;
+      gap: 4px;
+      max-width: 310px;
+    }
+    .gmail-emoji-popover.open {
+      display: flex;
+    }
+    .gmail-emoji-item {
+      width: 32px;
+      height: 32px;
+      border: none;
+      border-radius: 6px;
+      background: transparent;
+      font-size: 18px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .gmail-emoji-item:hover {
+      background: #f1f3f4;
+    }
+    .gmail-file-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: #f5f5f5;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 7px 11px;
+      font-size: 12.5px;
+      color: #1f1f1f;
+      max-width: 100%;
     }
     .padlet-composer-footer {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
+      gap: 10px;
+      padding: 10px 16px 14px;
+      background: #ffffff;
     }
     .padlet-footer-left {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 6px;
       flex-wrap: wrap;
     }
-    .padlet-section-selector, .padlet-section-select, .padlet-flair-select {
-      background: rgba(20, 10, 15, 0.9);
-      border: 1px solid rgba(239, 196, 123, 0.35);
-      color: #ffea9f;
-      border-radius: 8px;
-      height: 34px;
-      padding: 0 10px;
-      font-size: 12px;
-      outline: none;
-    }
-    .padlet-color-picker {
-      display: flex;
-      gap: 6px;
+    .gmail-upload-pill {
+      display: inline-flex;
       align-items: center;
-    }
-    .padlet-color-dot {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      cursor: pointer;
-      border: 2px solid transparent;
-      transition: transform 0.15s;
-    }
-    .padlet-color-dot.active {
-      border-color: #efc47b;
-      transform: scale(1.15);
-    }
-    .padlet-link-input {
-      width: 100%;
       height: 36px;
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(239, 196, 123, 0.35);
-      border-radius: 8px;
-      color: #fff8eb;
-      font-size: 12.5px;
-      padding: 0 12px;
-      box-sizing: border-box;
-      outline: none;
+      padding: 0;
+      border: none;
+      border-radius: 999px;
+      background: #0b57d0;
+      color: #ffffff;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      overflow: hidden;
+      margin-right: 6px;
+      transition: background 0.15s ease, box-shadow 0.15s ease;
+    }
+    .gmail-upload-pill:hover {
+      background: #0842a0;
+      box-shadow: 0 2px 6px rgba(11, 87, 208, 0.35);
+    }
+    .gmail-upload-pill-label {
+      padding: 0 14px 0 18px;
+      line-height: 36px;
+    }
+    .gmail-upload-pill-sep {
+      width: 1px;
+      height: 20px;
+      background: rgba(255, 255, 255, 0.35);
+    }
+    .gmail-upload-pill-caret {
+      padding: 0 11px 0 9px;
+      font-size: 11px;
+      line-height: 36px;
+    }
+    .gmail-icon-btn {
+      width: 34px;
+      height: 34px;
+      border: none;
+      border-radius: 6px;
+      background: transparent;
+      color: #444746;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 600;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .gmail-icon-btn:hover {
+      background: rgba(68, 71, 70, 0.1);
+      color: #1f1f1f;
+    }
+    .gmail-icon-btn.active {
+      background: #d3e3fd;
+      color: #0b57d0;
     }
 
     /* Yêu cầu 1: Làm mọi thứ trong trang giới thiệu không thể chọn (no selected / unselectable) */
@@ -404,7 +532,7 @@
           <span id="navTabInstIcon">🪕</span>
           <span id="navTabInstText">Nhạc cụ</span>
         </button>
-        <button type="button" class="nav-link tttt-plain-tab" id="navTabForum" onclick="switchNavTab('forum')" style="display: none !important;">
+        <button type="button" class="nav-link tttt-plain-tab" id="navTabForum" onclick="switchNavTab('forum')">
           💬 Diễn đàn MIT
         </button>
         <button type="button" class="nav-link tttt-plain-tab" id="navTabLookup" onclick="switchNavTab('lookup')" style="display: none !important;">
@@ -965,115 +1093,9 @@
       </div> <!-- /.stage-card -->
 
       <!-- =========================================================
-           KHU VỰC HƯỚNG DẪN VIDEO CHUYÊN SÂU (TẠM THỜI ẨN THEO YÊU CẦU MỚI)
+           KHU VỰC HƯỚNG DẪN VIDEO CHUYÊN SÂU (ĐÃ TẠM THỜI GỠ BỎ KHỎI GIAO DIỆN)
            ========================================================= -->
-      <section class="hdnc-section-container" id="sectionHdncTutorials" aria-label="Khu vực Video Hướng Dẫn Nhạc Cụ" style="display: none !important;">
-        <!-- Header -->
-        <div class="hdnc-section-header">
-          <div class="hdnc-header-left">
-            <div class="hdnc-header-icon-wrap">🎬</div>
-            <div>
-              <h2 class="hdnc-title">HƯỚNG DẪN</h2>
-              <p class="hdnc-subtitle">Kho video hướng dẫn kỹ thuật gảy đàn, phương pháp diễn tấu, cấu tạo và nghệ thuật trình diễn nhạc cụ truyền thống Việt Nam</p>
-            </div>
-          </div>
-          <div class="hdnc-header-actions">
-            <button type="button" class="hdnc-btn-secondary" onclick="syncHdncWithCurrentStageInstrument()" title="Lọc các video hướng dẫn của cây đàn đang diễn tấu">
-              <span>🎯</span> <span>Lọc theo cây đàn hiện tại</span>
-            </button>
-            <button type="button" class="hdnc-btn-primary" onclick="openHdncUploadModal()" title="Tải video hướng dẫn mới lên hệ thống (Tự động nhận diện phân loại)">
-              <span>➕</span> <span>Tải Video Lên</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Filters Wrap -->
-        <div class="hdnc-filters-wrap">
-          <!-- Hàng 1: Lọc theo Nhạc Cụ -->
-          <div class="hdnc-filter-row">
-            <div class="hdnc-filter-label">🎵 Nhạc Cụ:</div>
-            <div class="hdnc-pill-group">
-              <button type="button" class="hdnc-pill-btn active" data-hdnc-filter-inst="all" onclick="filterHdncByInstrument('all')">
-                <span>Tất cả</span> <span class="hdnc-pill-count">12</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="dantranh" onclick="filterHdncByInstrument('dantranh')">
-                <span>🪕 Đàn Tranh</span> <span class="hdnc-pill-count">1</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="danbau" onclick="filterHdncByInstrument('danbau')">
-                <span>🎻 Đàn Bầu</span> <span class="hdnc-pill-count">1</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="dannguyet" onclick="filterHdncByInstrument('dannguyet')">
-                <span>🌕 Đàn Nguyệt</span> <span class="hdnc-pill-count">1</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="dantiba" onclick="filterHdncByInstrument('dantiba')">
-                <span>🪕 Đàn Tì Bà</span> <span class="hdnc-pill-count">1</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="saotruc" onclick="filterHdncByInstrument('saotruc')">
-                <span>🎋 Sáo &amp; Tiêu</span> <span class="hdnc-pill-count">2</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="dantam" onclick="filterHdncByInstrument('dantam')">
-                <span>🪕 Đàn Tam</span> <span class="hdnc-pill-count">1</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="kenbau" onclick="filterHdncByInstrument('kenbau')">
-                <span>📯 Kèn Bầu</span> <span class="hdnc-pill-count">1</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="kenmong" onclick="filterHdncByInstrument('kenmong')">
-                <span>📯 Kèn Mông</span> <span class="hdnc-pill-count">1</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="chapi" onclick="filterHdncByInstrument('chapi')">
-                <span>🎋 Đàn Chapi</span> <span class="hdnc-pill-count">1</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="dangoong" onclick="filterHdncByInstrument('dangoong')">
-                <span>🪕 Đàn Goong</span> <span class="hdnc-pill-count">1</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-inst="danmoi" onclick="filterHdncByInstrument('danmoi')">
-                <span>👄 Đàn Môi</span> <span class="hdnc-pill-count">1</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Hàng 2: Lọc theo Chủ Đề Nội Dung -->
-          <div class="hdnc-filter-row">
-            <div class="hdnc-filter-label">📚 Chủ Đề:</div>
-            <div class="hdnc-pill-group">
-              <button type="button" class="hdnc-pill-btn active" data-hdnc-filter-cat="all" onclick="filterHdncByCategory('all')">
-                <span>🌐 Tất cả nội dung</span> <span class="hdnc-pill-count">12</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-cat="technique" onclick="filterHdncByCategory('technique')">
-                <span>✨ Kỹ thuật đánh đàn</span> <span class="hdnc-pill-count">5</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-cat="how_to_play" onclick="filterHdncByCategory('how_to_play')">
-                <span>🖐️ Hướng dẫn cách chơi</span> <span class="hdnc-pill-count">2</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-cat="usage" onclick="filterHdncByCategory('usage')">
-                <span>🛠️ Hướng dẫn sử dụng</span> <span class="hdnc-pill-count">2</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-cat="intro" onclick="filterHdncByCategory('intro')">
-                <span>📖 Giới thiệu &amp; Tìm hiểu</span> <span class="hdnc-pill-count">3</span>
-              </button>
-              <button type="button" class="hdnc-pill-btn" data-hdnc-filter-cat="performance" onclick="filterHdncByCategory('performance')">
-                <span>🎭 Biểu diễn</span> <span class="hdnc-pill-count">0</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Hàng 3: Tìm Kiếm & Thống Kê -->
-          <div class="hdnc-filter-row" style="margin-top: 4px;">
-            <div style="font-size: 12.5px; color: #a89a88;">
-              Đang hiển thị <strong id="hdncStatCount" style="color: #6ee7b7;">12</strong> video hướng dẫn
-            </div>
-            <div class="hdnc-search-box">
-              <span class="hdnc-search-icon">🔍</span>
-              <input type="text" id="hdncSearchInput" class="hdnc-search-input" placeholder="Tìm kiếm theo tên bài, kỹ thuật, nhạc cụ..." oninput="searchHdncVideos(this.value)" />
-            </div>
-          </div>
-        </div>
-
-        <!-- Lưới Thẻ Video -->
-        <div class="hdnc-video-grid" id="hdncVideoGrid">
-          <!-- Render dynamically by video_hdnc.js -->
-        </div>
-      </section>
+      <div id="sectionHdncTutorials" style="display: none !important;"></div>
     </main>
   </div> <!-- /tabContentDanTranh -->
 
@@ -1212,113 +1234,152 @@
             </div>
           </div>
 
-          <!-- MODAL TẠO BÀI VIẾT DIỄN ĐÀN THEO BỐ CỤC PADLET (YÊU CẦU 9 & ẢNH MEDIA_1793444609363_B7DD9512.PNG) -->
+          <!-- MODAL TẠO BÀI VIẾT DIỄN ĐÀN THEO BỐ CỤC GMAIL NEW MESSAGE -->
           <div class="reddit-composer-expanded padlet-composer-modal" id="redditComposerExpanded" onclick="if(event.target === this) closeRedditComposer()">
             <div class="padlet-composer-card" onclick="event.stopPropagation()">
-              <!-- Padlet Header: Close, Expand, Minimize & Submit/Publish button -->
+              <!-- Thanh tiêu đề trên cùng: Tên khung + 3 nút thu gọn / phóng to / đóng -->
               <div class="padlet-composer-header">
+                <span class="gmail-composer-title">Bài đăng mới</span>
                 <div class="padlet-header-window-btns">
-                  <button type="button" class="padlet-win-btn close" onclick="closeRedditComposer()" title="Đóng">✕</button>
-                  <button type="button" class="padlet-win-btn expand" onclick="togglePadletComposerFullscreen()" title="Toàn màn hình">↗</button>
                   <button type="button" class="padlet-win-btn minimize" onclick="closeRedditComposer()" title="Thu gọn">—</button>
+                  <button type="button" class="padlet-win-btn expand" onclick="togglePadletComposerFullscreen()" title="Toàn màn hình">⤢</button>
+                  <button type="button" class="padlet-win-btn close" onclick="closeRedditComposer()" title="Đóng">✕</button>
                 </div>
-                <button type="button" class="padlet-top-submit-btn" onclick="document.getElementById('formRedditCreatePost').requestSubmit()">
-                  Xuất bản (Publish)
-                </button>
               </div>
 
               <form id="formRedditCreatePost" onsubmit="handleCreateRedditPost(event)">
-                <!-- Subject / Title field -->
-                <div class="padlet-field-wrap">
-                  <input type="text" id="inpRedditPostTitle" class="padlet-subject-input" placeholder="Tiêu đề bài viết (Subject)..." required maxlength="300" />
+                <!-- Dòng 1 (giống Recipients): Chuyên mục, chủ đề & biệt danh -->
+                <div class="gmail-row-line">
+                  <select id="selRedditSubreddit" class="gmail-meta-select" title="Chọn chuyên mục nhạc cụ">
+                    <option value="dantranh">🪕 Đàn Tranh</option>
+                    <option value="danbau">🎻 Đàn Bầu</option>
+                    <option value="dannguyet">🌕 Đàn Nguyệt</option>
+                    <option value="dannhi">🎻 Đàn Nhị</option>
+                    <option value="saotruc">🎋 Sáo Trúc &amp; Tiêu</option>
+                    <option value="congchieng">🔔 Cồng Chiêng &amp; Trống</option>
+                    <option value="bannhaccotruyen">🎼 Bản Nhạc &amp; Nốt Số</option>
+                    <option value="tuvanchondan">🪵 Tư Vấn Chọn Đàn</option>
+                  </select>
+                  <select id="selRedditFlair" class="gmail-meta-select" title="Chọn nhãn bài viết">
+                    <option value="❓ Hỏi đáp newbie">❓ Hỏi đáp newbie</option>
+                    <option value="🖐️ Kỹ thuật ngón">🖐️ Kỹ thuật ngón</option>
+                    <option value="🪵 Chọn đàn &amp; Gỗ">🪵 Chọn đàn &amp; Gỗ</option>
+                    <option value="🎼 Bản nhạc &amp; Nốt số">🎼 Bản nhạc &amp; Nốt số</option>
+                    <option value="✨ Di sản văn hóa">✨ Di sản văn hóa</option>
+                    <option value="🎉 Giao lưu &amp; Thảo luận">🎉 Giao lưu &amp; Thảo luận</option>
+                  </select>
+                  <input type="text" id="inpRedditPostAuthor" class="gmail-author-input" placeholder="Biệt danh người đăng..." />
                 </div>
 
-                <!-- Padlet Attachment Segmented Toolbar (Upload, Camera, Link, AI Assist, Search) -->
-                <div class="padlet-media-toolbar">
-                  <div class="padlet-media-bar-inner">
-                    <button type="button" class="padlet-tool-btn" onclick="document.getElementById('inpRedditPostImageFile').click()" title="Tải ảnh / tệp từ máy lên">
-                      <span class="padlet-tool-icon">📤</span>
-                      <span class="padlet-tool-label">Tải tệp lên</span>
-                    </button>
-                    <button type="button" class="padlet-tool-btn" onclick="triggerPadletCameraUpload()" title="Chụp ảnh / Máy ảnh">
-                      <span class="padlet-tool-icon">📷</span>
-                      <span class="padlet-tool-label">Máy ảnh</span>
-                    </button>
-                    <button type="button" class="padlet-tool-btn" onclick="toggleRedditPostImageUrlInput()" title="Dán liên kết web hoặc ảnh">
-                      <span class="padlet-tool-icon">🔗</span>
-                      <span class="padlet-tool-label">Liên kết</span>
-                    </button>
-                    <button type="button" class="padlet-tool-btn" onclick="triggerPadletAiDraftHelper()" title="AI Gợi ý soạn bài viết về nhạc cụ">
-                      <span class="padlet-tool-icon">✨</span>
-                      <span class="padlet-tool-label">AI Gợi ý</span>
-                    </button>
-                    <button type="button" class="padlet-tool-btn" onclick="triggerPadletSearchSampleMusic()" title="Tìm kiếm bản nhạc nốt số mẫu">
-                      <span class="padlet-tool-icon">🔍</span>
-                      <span class="padlet-tool-label">Tìm nhạc mẫu</span>
-                    </button>
+                <!-- Dòng 2 (giống Subject): Tiêu đề bài viết -->
+                <div class="gmail-row-line">
+                  <input type="text" id="inpRedditPostTitle" class="padlet-subject-input" placeholder="Tiêu đề (Subject)" required maxlength="300" />
+                </div>
+
+                <!-- Vùng soạn thảo nội dung & xem trước tệp đính kèm -->
+                <div class="gmail-body-wrap">
+                  <textarea id="inpRedditPostContent" class="padlet-body-textarea" placeholder="Nhập nội dung bài đăng..." required></textarea>
+
+                  <!-- Preview ảnh đã đính kèm -->
+                  <div id="redditPostImagePreviewContainer" style="display: none; position: relative; border-radius: 8px; overflow: hidden; max-height: 220px; background: #f3f4f6; border: 1px solid #e5e7eb; text-align: center;">
+                    <img id="redditPostImagePreview" src="" alt="Xem trước ảnh" style="max-width: 100%; max-height: 220px; object-fit: contain; display: block; margin: 0 auto;" />
+                    <button type="button" onclick="removeRedditPostImage()" title="Gỡ bỏ tệp" style="position: absolute; top: 6px; right: 6px; background: rgba(17, 24, 39, 0.78); border: none; color: #fff; border-radius: 999px; padding: 3px 9px; cursor: pointer; font-size: 11px; font-weight: 600;">✕ Gỡ</button>
                   </div>
-                  <div class="padlet-tool-hint">Thêm hình ảnh, liên kết, bản nhạc nốt số hoặc tệp âm thanh...</div>
-                  <input type="file" id="inpRedditPostImageFile" accept="image/*" style="display: none;" onchange="handleRedditPostImageSelect(event)" />
+
+                  <!-- Preview tệp khác (âm thanh, tài liệu...) -->
+                  <div id="redditPostFilePreviewContainer" style="display: none;"></div>
                 </div>
 
-                <!-- Input dán link ảnh / web (mặc định ẩn) -->
-                <div id="redditPostImageUrlBox" style="display: none; margin-bottom: 12px;">
-                  <input type="url" id="inpRedditPostImageUrl" placeholder="Nhập liên kết hình ảnh hoặc bài viết (https://...)..." oninput="handleRedditPostImageUrlInput(this.value)" class="padlet-link-input" />
+                <input type="file" id="inpRedditPostImageFile" accept="image/*,audio/*,.mp3,.wav,.ogg,.pdf,.doc,.docx,.txt,.zip" style="display: none;" onchange="handleRedditPostImageSelect(event)" />
+
+                <!-- Thanh công cụ Chỉnh phông chữ (mặc định ẩn, mở khi bấm nút số 1 Aa) -->
+                <div class="gmail-font-toolbar" id="composerFontToolbar">
+                  <select id="selComposerFontFamily" class="gmail-fmt-select" onchange="applyComposerFontStyle()" title="Chọn phông chữ">
+                    <option value="'Be Vietnam Pro', sans-serif">Phông mặc định</option>
+                    <option value="'Lora', 'Playfair Display', Georgia, serif">Cổ điển (Serif)</option>
+                    <option value="'Charm', cursive, serif">Thư pháp</option>
+                    <option value="ui-monospace, Consolas, monospace">Đơn cách (Code / Nốt số)</option>
+                  </select>
+                  <select id="selComposerFontSize" class="gmail-fmt-select" onchange="applyComposerFontStyle()" title="Chọn cỡ chữ">
+                    <option value="12.5px">Nhỏ</option>
+                    <option value="14px" selected>Thường</option>
+                    <option value="16px">Lớn</option>
+                    <option value="19px">Rất lớn</option>
+                  </select>
+                  <button type="button" class="gmail-fmt-btn" id="btnComposerFmtBold" onclick="toggleComposerFormatFlag('bold')" title="In đậm"><strong>B</strong></button>
+                  <button type="button" class="gmail-fmt-btn" id="btnComposerFmtItalic" onclick="toggleComposerFormatFlag('italic')" title="In nghiêng"><em>I</em></button>
+                  <button type="button" class="gmail-fmt-btn" id="btnComposerFmtUnderline" onclick="toggleComposerFormatFlag('underline')" title="Gạch chân"><u>U</u></button>
                 </div>
 
-                <!-- Preview ảnh đã đính kèm -->
-                <div id="redditPostImagePreviewContainer" style="display: none; position: relative; margin-bottom: 12px; border-radius: 12px; overflow: hidden; max-height: 240px; background: rgba(0,0,0,0.5); border: 1px solid rgba(239, 196, 123, 0.35); text-align: center;">
-                  <img id="redditPostImagePreview" src="" alt="Xem trước ảnh" style="max-width: 100%; max-height: 240px; object-fit: contain;" />
-                  <button type="button" onclick="removeRedditPostImage()" title="Gỡ bỏ ảnh" style="position: absolute; top: 8px; right: 8px; background: rgba(239, 68, 68, 0.9); border: none; color: #fff; border-radius: 999px; padding: 4px 10px; cursor: pointer; font-size: 11.5px; font-weight: 700;">✕ Gỡ ảnh</button>
+                <!-- Bảng chọn Biểu cảm (mặc định ẩn, mở khi bấm nút số 4 😊) -->
+                <div class="gmail-emoji-popover" id="composerEmojiPopover">
+                  <button type="button" class="gmail-emoji-item" onclick="insertComposerEmoji('😀')">😀</button>
+                  <button type="button" class="gmail-emoji-item" onclick="insertComposerEmoji('😂')">😂</button>
+                  <button type="button" class="gmail-emoji-item" onclick="insertComposerEmoji('🥰')">🥰</button>
+                  <button type="button" class="gmail-emoji-item" onclick="insertComposerEmoji('😍')">😍</button>
+                  <button type="button" class="gmail-emoji-item" onclick="insertComposerEmoji('🤩')">🤩</button>
+                  <button type="button" class="gmail-emoji-item" onclick="insertComposerEmoji('👏')">👏</button>
+                  <button type="button" class="gmail-emoji-item" onclick="insertComposerEmoji('🙏')">🙏</button>
+                  <button type="button" class="gmail-emoji-item" onclick="insertComposerEmoji('🔥')">🔥</button>
+                  <button type="button" class="gmail-emoji-item" onclick="insertComposerEmoji('❤️')">❤️</button>
+                  <button type="button" class="gmail-emoji-item" onclick="insertComposerEmoji('✨')">✨</button>
+                  <button type="button" class="gmail-emoji-item" onclick="insertComposerEmoji('🎵')">🎵</button>
+                  <button type="button" class="gmail-emoji-item" onclick="insertComposerEmoji('🎶')">🎶</button>
+                  <button type="button" class="gmail-emoji-item" onclick="insertComposerEmoji('🪕')">🪕</button>
+                  <button type="button" class="gmail-emoji-item" onclick="insertComposerEmoji('🎻')">🎻</button>
+                  <button type="button" class="gmail-emoji-item" onclick="insertComposerEmoji('🎋')">🎋</button>
+                  <button type="button" class="gmail-emoji-item" onclick="insertComposerEmoji('🥁')">🥁</button>
+                  <button type="button" class="gmail-emoji-item" onclick="insertComposerEmoji('🔔')">🔔</button>
+                  <button type="button" class="gmail-emoji-item" onclick="insertComposerEmoji('🎉')">🎉</button>
+                  <button type="button" class="gmail-emoji-item" onclick="insertComposerEmoji('👍')">👍</button>
+                  <button type="button" class="gmail-emoji-item" onclick="insertComposerEmoji('💬')">💬</button>
+                  <button type="button" class="gmail-emoji-item" onclick="insertComposerEmoji('🌸')">🌸</button>
+                  <button type="button" class="gmail-emoji-item" onclick="insertComposerEmoji('🌟')">🌟</button>
+                  <button type="button" class="gmail-emoji-item" onclick="insertComposerEmoji('💯')">💯</button>
+                  <button type="button" class="gmail-emoji-item" onclick="insertComposerEmoji('🤝')">🤝</button>
                 </div>
 
-                <!-- Main Body: Write something fantastic... -->
-                <div class="padlet-field-wrap">
-                  <textarea id="inpRedditPostContent" class="padlet-body-textarea" placeholder="Viết điều gì đó tuyệt vời... (Chia sẻ kinh nghiệm ngón đàn, bản nhạc nốt số, câu hỏi kỹ thuật hay trao đổi cổ nhạc)" rows="5" required></textarea>
-                </div>
-
-                <!-- Padlet Bottom Bar: Color picker, Category dropdown, and Post button -->
+                <!-- Thanh dưới cùng: Nút Tải lên + 3 nút chức năng số 1 (Chỉnh phông chữ), 2 (Đăng file), 4 (Biểu cảm) + Xóa nháp -->
                 <div class="padlet-composer-footer">
                   <div class="padlet-footer-left">
-                    <!-- Color picker dots -->
-                    <div class="padlet-color-picker" title="Chọn màu nền thẻ bài viết">
-                      <span class="padlet-color-dot active" data-color="#ffffff" onclick="selectPadletCardColor('#ffffff', this)" style="background: #ffffff;" title="Trắng"></span>
-                      <span class="padlet-color-dot" data-color="#fef3c7" onclick="selectPadletCardColor('#fef3c7', this)" style="background: #fef3c7;" title="Vàng kem"></span>
-                      <span class="padlet-color-dot" data-color="#d1fae5" onclick="selectPadletCardColor('#d1fae5', this)" style="background: #d1fae5;" title="Xanh thanh ngọc"></span>
-                      <span class="padlet-color-dot" data-color="#e0e7ff" onclick="selectPadletCardColor('#e0e7ff', this)" style="background: #e0e7ff;" title="Lam dịu"></span>
-                      <span class="padlet-color-dot" data-color="#fce7f3" onclick="selectPadletCardColor('#fce7f3', this)" style="background: #fce7f3;" title="Hồng đào"></span>
-                    </div>
+                    <button type="submit" class="gmail-upload-pill" title="Tải bài viết lên diễn đàn">
+                      <span class="gmail-upload-pill-label">Tải lên</span>
+                      <span class="gmail-upload-pill-sep"></span>
+                      <span class="gmail-upload-pill-caret">▾</span>
+                    </button>
 
-                    <!-- Category / Section dropdown (§) -->
-                    <div class="padlet-section-selector">
-                      <span style="color: #9ca3af; font-size: 13px;">§</span>
-                      <select id="selRedditSubreddit" class="padlet-section-select">
-                        <option value="dantranh">Đàn Tranh</option>
-                        <option value="danbau">Đàn Bầu</option>
-                        <option value="dannguyet">Đàn Nguyệt</option>
-                        <option value="dannhi">Đàn Nhị</option>
-                        <option value="saotruc">Sáo Trúc &amp; Tiêu</option>
-                        <option value="congchieng">Cồng Chiêng &amp; Trống</option>
-                        <option value="bannhaccotruyen">Bản Nhạc &amp; Nốt Số</option>
-                        <option value="tuvanchondan">Tư Vấn Chọn Đàn</option>
-                      </select>
-                    </div>
+                    <!-- Nút số 1: Chỉnh phông chữ (Aa) -->
+                    <button type="button" class="gmail-icon-btn" id="btnComposerFontToggle" onclick="toggleComposerFontToolbar()" title="Chỉnh phông chữ">
+                      <span style="font-family: Arial, sans-serif; font-size: 14px; font-weight: 600; border-bottom: 2px solid currentColor; line-height: 1.05; padding-bottom: 1px;">Aa</span>
+                    </button>
 
-                    <select id="selRedditFlair" class="padlet-flair-select">
-                      <option value="❓ Hỏi đáp newbie">❓ Hỏi đáp newbie</option>
-                      <option value="🖐️ Kỹ thuật ngón">🖐️ Kỹ thuật ngón</option>
-                      <option value="🪵 Chọn đàn &amp; Gỗ">🪵 Chọn đàn &amp; Gỗ</option>
-                      <option value="🎼 Bản nhạc &amp; Nốt số">🎼 Bản nhạc &amp; Nốt số</option>
-                      <option value="✨ Di sản văn hóa">✨ Di sản văn hóa</option>
-                      <option value="🎉 Giao lưu &amp; Thảo luận">🎉 Giao lưu &amp; Thảo luận</option>
-                    </select>
+                    <!-- Nút số 2: Đăng file (Kẹp giấy) -->
+                    <button type="button" class="gmail-icon-btn" id="btnComposerAttachFile" onclick="document.getElementById('inpRedditPostImageFile').click()" title="Đăng file">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M21.44 11.05l-9.19 9.19a5.5 5.5 0 0 1-7.78-7.78l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95l-9.2 9.19a1.5 1.5 0 0 1-2.12-2.12l8.49-8.48"/>
+                      </svg>
+                    </button>
 
-                    <input type="hidden" id="inpPadletCardBg" value="#ffffff" />
-                    <input type="text" id="inpRedditPostAuthor" placeholder="Biệt danh..." style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; padding: 4px 10px; color: #ffea9f; font-size: 12px; width: 110px; outline: none;" />
+                    <!-- Nút số 4: Thêm biểu cảm (Mặt cười) -->
+                    <button type="button" class="gmail-icon-btn" id="btnComposerEmojiToggle" onclick="toggleComposerEmojiPopover()" title="Thêm biểu cảm">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="9"/>
+                        <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+                        <line x1="9" y1="9" x2="9.01" y2="9"/>
+                        <line x1="15" y1="9" x2="15.01" y2="9"/>
+                      </svg>
+                    </button>
                   </div>
 
-                  <button type="submit" class="padlet-btn-publish" style="background: #f59e0b; color: #111827; border: none; font-weight: 800; border-radius: 999px; padding: 8px 24px; font-size: 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);">
-                    <span>+</span> <span>Đăng bài</span>
+                  <!-- Nút thùng rác góc phải: Xóa nháp -->
+                  <button type="button" class="gmail-icon-btn" onclick="discardRedditPostDraft()" title="Xóa nháp &amp; đóng">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <polyline points="3 6 5 6 21 6"/>
+                      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                      <path d="M10 11v6"/>
+                      <path d="M14 11v6"/>
+                      <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                    </svg>
                   </button>
                 </div>
               </form>
@@ -2297,7 +2358,7 @@
                   <button type="button" class="btn btn-primary btn-sm" id="btnAccPageToggleOwnerWindow" onclick="toggleOwnerFloatingWindow()" style="display: none;">
                     👑 Mở Bảng Owner
                   </button>
-                  <button type="button" class="btn btn-secondary btn-sm" id="btnAccPageVideoManager" onclick="openAdminVideoManager()" style="display: none; color: #ffea9f; border-color: rgba(239, 196, 123, 0.45); font-weight: 700;">
+                  <button type="button" class="btn btn-secondary btn-sm" id="btnAccPageVideoManager" onclick="openAdminVideoManager()" style="display: none !important; color: #ffea9f; border-color: rgba(239, 196, 123, 0.45); font-weight: 700;">
                     🎬 Quản Lý Video
                   </button>
                   <button type="button" class="btn btn-secondary btn-sm" onclick="openAccountAuthBox('edit')">
@@ -3279,7 +3340,7 @@
           Howdy, <strong id="wpAdminBarUserName">owner</strong> 👤
         </span>
         <div class="wp-bar-actions">
-          <button type="button" class="wp-bar-action-btn" onclick="switchWpAdminView('videos')" title="Mở Quản lý Video Hướng Dẫn" style="background: rgba(239, 196, 123, 0.2); color: #ffea9f; border-color: rgba(239, 196, 123, 0.5);">
+          <button type="button" class="wp-bar-action-btn" onclick="switchWpAdminView('videos')" title="Mở Quản lý Video Hướng Dẫn" style="display: none !important; background: rgba(239, 196, 123, 0.2); color: #ffea9f; border-color: rgba(239, 196, 123, 0.5);">
             🎬 Quản Lý Video
           </button>
           <button type="button" class="wp-bar-action-btn" id="btnMinimizeOwnerWin" onclick="toggleMinimizeOwnerWindow()" title="Thu gọn / Mở rộng">
@@ -3361,8 +3422,8 @@
             </a>
           </li>
 
-          <!-- Quản lý Video (Admin Video Manager - Yêu Cầu Mới) -->
-          <li class="wp-menu-item-wrap" id="wpMenuItemVideos">
+          <!-- Quản lý Video (Admin Video Manager - Tạm thời ẩn) -->
+          <li class="wp-menu-item-wrap" id="wpMenuItemVideos" style="display: none !important;">
             <a class="wp-menu-item-link" onclick="switchWpAdminView('videos')" title="Quản lý & Tải lên Video Nhạc Cụ">
               <div class="wp-menu-item-inner">
                 <span class="wp-menu-icon">🎬</span>
@@ -3832,9 +3893,9 @@
         </div>
 
         <!-- =========================================================
-             VIEW: QUẢN LÝ VIDEO DÀNH CHO ADMIN (#wpViewVideos)
+             VIEW: QUẢN LÝ VIDEO DÀNH CHO ADMIN (#wpViewVideos - Tạm thời ẩn)
              ========================================================= -->
-        <div id="wpViewVideos" class="wp-view-section" style="display: none;">
+        <div id="wpViewVideos" class="wp-view-section" style="display: none !important;">
           <!-- Card Tiêu đề -->
           <div class="admin-video-header-card">
             <div class="admin-video-header-flex">
@@ -5172,25 +5233,6 @@
       Object.values(panes).forEach(p => {
         if (p) p.style.display = 'none';
       });
-
-      // YÊU CẦU 1: Bảo vệ truy cập Diễn đàn khi người dùng chưa đăng nhập
-      if (tabName === 'forum') {
-        const curAcc = (typeof getActiveUserAccount === 'function') ? getActiveUserAccount() : null;
-        const isGuest = !curAcc || curAcc.role === 'guest' || curAcc.username === 'guest';
-        if (isGuest) {
-          if (typeof showActionToast === 'function') {
-            showActionToast('🔒 Vui lòng đăng nhập để truy cập Diễn đàn MIT!');
-          } else {
-            alert('Vui lòng đăng nhập để truy cập Diễn đàn MIT!');
-          }
-          if (typeof openUnifiedLoginModal === 'function') {
-            openUnifiedLoginModal();
-          } else if (typeof openOwnerLoginModal === 'function') {
-            openOwnerLoginModal();
-          }
-          return;
-        }
-      }
 
       const targetKey = (panes[tabName] && tabName !== 'demosongs') ? tabName : 'encyclopedia';
       window.currentActiveNavTab = targetKey;
@@ -9045,13 +9087,6 @@
       if (typeof toggleOwnerFloatingWindow === 'function') {
         toggleOwnerFloatingWindow(false);
       }
-      const navTabForumEl = document.getElementById('navTabForum');
-      if (navTabForumEl) {
-        navTabForumEl.style.setProperty('display', 'none', 'important');
-      }
-      if (window.currentActiveNavTab === 'forum') {
-        switchNavTab('encyclopedia');
-      }
       syncHeaderAndAccountUI();
     }
     window.handleUnifiedLogout = handleUnifiedLogout;
@@ -9081,14 +9116,10 @@
         }
       }
 
-      // YÊU CẦU 1: Ẩn tab Diễn đàn khi người dùng chưa đăng nhập, chỉ hiện khi đã đăng nhập
+      // Diễn đàn MIT luôn hiển thị cho cả khách chưa đăng nhập và thành viên
       const navTabForum = document.getElementById('navTabForum');
       if (navTabForum) {
-        if (isGuest) {
-          navTabForum.style.setProperty('display', 'none', 'important');
-        } else {
-          navTabForum.style.setProperty('display', 'inline-flex', 'important');
-        }
+        navTabForum.style.setProperty('display', 'inline-flex', 'important');
       }
 
       // 1. Đồng bộ Badge thông tin tài khoản: Hiển thị avatar người dùng thay thế logo cài đặt (Yêu cầu 6)
@@ -9211,7 +9242,7 @@
       if (bellOwnerViewBox) bellOwnerViewBox.style.display = isOwner ? 'block' : 'none';
       if (btnAccToggleOwnerWin) btnAccToggleOwnerWin.style.display = isOwner ? 'inline-flex' : 'none';
       const btnAccVideoManager = document.getElementById('btnAccPageVideoManager');
-      if (btnAccVideoManager) btnAccVideoManager.style.display = isOwner ? 'inline-flex' : 'none';
+      if (btnAccVideoManager) btnAccVideoManager.style.setProperty('display', 'none', 'important');
       const btnToggleOwnerAnnounce = document.getElementById('btnToggleOwnerPostAnnounce');
       if (btnToggleOwnerAnnounce) btnToggleOwnerAnnounce.style.display = isOwner ? 'inline-flex' : 'none';
 
@@ -14143,7 +14174,7 @@ function getInitialDefaultRedditPosts() {
               <h3 style="margin: 0 0 6px 0; font-size: 16px; font-weight: 700; color: #ffea9f; line-height: 1.4;">
                 ${escapeRedditHtml(post.title || 'Bài viết thảo luận')}
               </h3>
-              <p style="margin: 0; font-size: 13px; color: #d8cbb8; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+              <p style="margin: 0; font-size: 13px; color: #d8cbb8; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; ${buildRedditPostContentStyle(post.postStyle)}">
                 ${escapeRedditHtml(post.content || '')}
               </p>
             </div>
@@ -14153,6 +14184,8 @@ function getInitialDefaultRedditPosts() {
                 <img src="${escapeRedditHtml(post.image)}" alt="Ảnh bài viết" style="max-height: 140px; border-radius: 8px; border: 1px solid rgba(239, 196, 123, 0.2); cursor: pointer;" onclick="openImageViewerModal('${escapeRedditHtml(post.image)}')" title="Nhấn để phóng to ảnh" />
               </div>
             ` : ''}
+
+            ${post.attachment ? renderRedditAttachmentHtml(post.attachment, true) : ''}
 
             <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 8px; font-size: 12px; color: #9ca3af;">
               <div style="display: flex; gap: 14px;">
@@ -14359,31 +14392,266 @@ function getInitialDefaultRedditPosts() {
     window.handleRedditSearch = handleRedditSearch;
 
     /* =========================================================
-       XỬ LÝ ĐÍNH KÈM HÌNH ẢNH TRONG BÀI ĐĂNG DIỄN ĐÀN
+       XỬ LÝ ĐÍNH KÈM FILE, CHỈNH PHÔNG CHỮ & BIỂU CẢM BÀI ĐĂNG DIỄN ĐÀN
        ========================================================= */
     window.currentRedditPostImage = null;
+    window.currentRedditPostAttachment = null;
+    window._sessionAttachmentUrls = window._sessionAttachmentUrls || {};
+    window.currentRedditPostStyle = {
+      fontFamily: "'Be Vietnam Pro', sans-serif",
+      fontSize: '14px',
+      bold: false,
+      italic: false,
+      underline: false
+    };
+
+    const ALLOWED_COMPOSER_FONTS = {
+      "'Be Vietnam Pro', sans-serif": "'Be Vietnam Pro', sans-serif",
+      "'Lora', 'Playfair Display', Georgia, serif": "'Lora', 'Playfair Display', Georgia, serif",
+      "'Charm', cursive, serif": "'Charm', cursive, serif",
+      "ui-monospace, Consolas, monospace": "ui-monospace, Consolas, monospace"
+    };
+    const ALLOWED_COMPOSER_SIZES = new Set(['12.5px', '14px', '16px', '19px']);
+
+    function formatAttachmentSizeLabel(bytes) {
+      if (!bytes || bytes < 1024) return (bytes || 0) + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+    }
+
+    function buildRedditPostContentStyle(st) {
+      if (!st || typeof st !== 'object') return '';
+      const parts = [];
+      if (st.fontFamily && ALLOWED_COMPOSER_FONTS[st.fontFamily]) {
+        parts.push('font-family: ' + ALLOWED_COMPOSER_FONTS[st.fontFamily]);
+      }
+      if (st.fontSize && ALLOWED_COMPOSER_SIZES.has(st.fontSize)) {
+        parts.push('font-size: ' + st.fontSize);
+      }
+      if (st.bold) parts.push('font-weight: 700');
+      if (st.italic) parts.push('font-style: italic');
+      if (st.underline) parts.push('text-decoration: underline');
+      return parts.join('; ');
+    }
+
+    function renderRedditAttachmentHtml(att, compact) {
+      if (!att || !att.name) return '';
+      const resolvedUrl = att.dataUrl || (att.sessionKey && window._sessionAttachmentUrls[att.sessionKey]) || '';
+      const isAudio = att.type && att.type.startsWith('audio/');
+      const safeName = escapeRedditHtml(att.name);
+      const safeSize = escapeRedditHtml(att.sizeLabel || '');
+      if (isAudio && resolvedUrl && !compact) {
+        return `
+          <div style="margin: 10px 0; padding: 10px 14px; border-radius: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(239,196,123,0.28); display: flex; flex-direction: column; gap: 6px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12.5px; color: #ffea9f;">
+              <span>🎵 <strong>${safeName}</strong></span>
+              <span style="color: #a1a1aa; font-size: 11.5px;">${safeSize}</span>
+            </div>
+            <audio controls src="${escapeRedditHtml(resolvedUrl)}" style="width: 100%; height: 34px;"></audio>
+          </div>
+        `;
+      }
+      const icon = isAudio ? '🎵' : '📎';
+      if (resolvedUrl) {
+        return `
+          <div style="margin: 8px 0;">
+            <a href="${escapeRedditHtml(resolvedUrl)}" download="${safeName}" style="display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px; border-radius: 8px; background: rgba(255,255,255,0.07); border: 1px solid rgba(239,196,123,0.3); color: #ffea9f; font-size: 12.5px; text-decoration: none;">
+              <span>${icon}</span>
+              <span style="font-weight: 600;">${safeName}</span>
+              ${safeSize ? `<span style="color: #a1a1aa; font-size: 11.5px;">(${safeSize})</span>` : ''}
+              <span style="font-size: 11.5px; opacity: 0.85;">⬇ Tải về</span>
+            </a>
+          </div>
+        `;
+      }
+      return `
+        <div style="margin: 8px 0;">
+          <span style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(239,196,123,0.22); color: #d8cbb8; font-size: 12px;">
+            <span>${icon}</span>
+            <span>${safeName}</span>
+            ${safeSize ? `<span style="color: #9ca3af;">(${safeSize})</span>` : ''}
+          </span>
+        </div>
+      `;
+    }
 
     function handleRedditPostImageSelect(event) {
       const file = event.target.files && event.target.files[0];
       if (!file) return;
 
-      if (!file.type.startsWith('image/')) {
-        alert('Vui lòng chọn một file hình ảnh hợp lệ (JPG, PNG, WEBP, GIF, v.v.)');
+      if (file.type && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const rawDataUrl = e.target.result;
+          // Tối ưu và nén ảnh về kích thước hợp lý để lưu localStorage mượt mà
+          compressPostImage(rawDataUrl, 1200, 1200, 0.82, function(compressedUrl) {
+            window.currentRedditPostImage = compressedUrl;
+            showRedditPostImagePreview(compressedUrl);
+          });
+        };
+        reader.readAsDataURL(file);
         return;
       }
 
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const rawDataUrl = e.target.result;
-        // Tối ưu và nén ảnh về kích thước hợp lý để lưu localStorage mượt mà
-        compressPostImage(rawDataUrl, 1200, 1200, 0.82, function(compressedUrl) {
-          window.currentRedditPostImage = compressedUrl;
-          showRedditPostImagePreview(compressedUrl);
-        });
-      };
-      reader.readAsDataURL(file);
+      // Hỗ trợ đăng các loại file khác (âm thanh, PDF, tài liệu...)
+      const sizeLabel = formatAttachmentSizeLabel(file.size);
+      const sessionKey = 'att_' + Date.now();
+      try {
+        window._sessionAttachmentUrls[sessionKey] = URL.createObjectURL(file);
+      } catch (err) {}
+
+      if (file.size <= 3 * 1024 * 1024) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          window.currentRedditPostAttachment = {
+            name: file.name,
+            type: file.type || 'application/octet-stream',
+            sizeLabel: sizeLabel,
+            dataUrl: e.target.result,
+            sessionKey: sessionKey
+          };
+          showRedditPostFilePreview(window.currentRedditPostAttachment);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        window.currentRedditPostAttachment = {
+          name: file.name,
+          type: file.type || 'application/octet-stream',
+          sizeLabel: sizeLabel,
+          dataUrl: '',
+          sessionKey: sessionKey
+        };
+        showRedditPostFilePreview(window.currentRedditPostAttachment);
+      }
     }
     window.handleRedditPostImageSelect = handleRedditPostImageSelect;
+
+    function showRedditPostFilePreview(att) {
+      const box = document.getElementById('redditPostFilePreviewContainer');
+      if (!box || !att) return;
+      const icon = (att.type && att.type.startsWith('audio/')) ? '🎵' : '📎';
+      box.style.display = 'block';
+      box.innerHTML = `
+        <div class="gmail-file-chip">
+          <span style="display: inline-flex; align-items: center; gap: 6px; min-width: 0;">
+            <span>${icon}</span>
+            <strong style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 320px;">${escapeRedditHtml(att.name)}</strong>
+            <span style="color: #5f6368;">(${escapeRedditHtml(att.sizeLabel)})</span>
+          </span>
+          <button type="button" onclick="removeRedditPostAttachment()" title="Gỡ tệp" style="border: none; background: transparent; color: #5f6368; font-weight: 700; cursor: pointer; font-size: 13px; padding: 0 4px;">✕</button>
+        </div>
+      `;
+    }
+
+    function removeRedditPostAttachment() {
+      window.currentRedditPostAttachment = null;
+      const box = document.getElementById('redditPostFilePreviewContainer');
+      const fileInp = document.getElementById('inpRedditPostImageFile');
+      if (box) {
+        box.style.display = 'none';
+        box.innerHTML = '';
+      }
+      if (fileInp) fileInp.value = '';
+    }
+    window.removeRedditPostAttachment = removeRedditPostAttachment;
+
+    function toggleComposerFontToolbar(forceClose) {
+      const bar = document.getElementById('composerFontToolbar');
+      const btn = document.getElementById('btnComposerFontToggle');
+      if (!bar) return;
+      const open = forceClose === false ? false : !bar.classList.contains('open');
+      bar.classList.toggle('open', open);
+      if (btn) btn.classList.toggle('active', open);
+      if (open) toggleComposerEmojiPopover(false);
+    }
+    window.toggleComposerFontToolbar = toggleComposerFontToolbar;
+
+    function toggleComposerFormatFlag(flag) {
+      if (!window.currentRedditPostStyle) return;
+      window.currentRedditPostStyle[flag] = !window.currentRedditPostStyle[flag];
+      applyComposerFontStyle();
+    }
+    window.toggleComposerFormatFlag = toggleComposerFormatFlag;
+
+    function applyComposerFontStyle() {
+      const selFont = document.getElementById('selComposerFontFamily');
+      const selSize = document.getElementById('selComposerFontSize');
+      const textarea = document.getElementById('inpRedditPostContent');
+      const st = window.currentRedditPostStyle;
+      if (selFont && ALLOWED_COMPOSER_FONTS[selFont.value]) st.fontFamily = selFont.value;
+      if (selSize && ALLOWED_COMPOSER_SIZES.has(selSize.value)) st.fontSize = selSize.value;
+
+      const btnB = document.getElementById('btnComposerFmtBold');
+      const btnI = document.getElementById('btnComposerFmtItalic');
+      const btnU = document.getElementById('btnComposerFmtUnderline');
+      if (btnB) btnB.classList.toggle('active', !!st.bold);
+      if (btnI) btnI.classList.toggle('active', !!st.italic);
+      if (btnU) btnU.classList.toggle('active', !!st.underline);
+
+      if (textarea) {
+        textarea.style.fontFamily = st.fontFamily;
+        textarea.style.fontSize = st.fontSize;
+        textarea.style.fontWeight = st.bold ? '700' : '400';
+        textarea.style.fontStyle = st.italic ? 'italic' : 'normal';
+        textarea.style.textDecoration = st.underline ? 'underline' : 'none';
+      }
+    }
+    window.applyComposerFontStyle = applyComposerFontStyle;
+
+    function resetComposerFontStyle() {
+      window.currentRedditPostStyle = {
+        fontFamily: "'Be Vietnam Pro', sans-serif",
+        fontSize: '14px',
+        bold: false,
+        italic: false,
+        underline: false
+      };
+      const selFont = document.getElementById('selComposerFontFamily');
+      const selSize = document.getElementById('selComposerFontSize');
+      if (selFont) selFont.value = "'Be Vietnam Pro', sans-serif";
+      if (selSize) selSize.value = '14px';
+      applyComposerFontStyle();
+    }
+
+    function toggleComposerEmojiPopover(forceClose) {
+      const pop = document.getElementById('composerEmojiPopover');
+      const btn = document.getElementById('btnComposerEmojiToggle');
+      if (!pop) return;
+      const open = forceClose === false ? false : !pop.classList.contains('open');
+      pop.classList.toggle('open', open);
+      if (btn) btn.classList.toggle('active', open);
+      if (open) toggleComposerFontToolbar(false);
+    }
+    window.toggleComposerEmojiPopover = toggleComposerEmojiPopover;
+
+    function insertComposerEmoji(emoji) {
+      const textarea = document.getElementById('inpRedditPostContent');
+      if (!textarea) return;
+      const start = typeof textarea.selectionStart === 'number' ? textarea.selectionStart : textarea.value.length;
+      const end = typeof textarea.selectionEnd === 'number' ? textarea.selectionEnd : textarea.value.length;
+      const val = textarea.value;
+      textarea.value = val.slice(0, start) + emoji + val.slice(end);
+      textarea.focus();
+      const nextPos = start + emoji.length;
+      if (typeof textarea.setSelectionRange === 'function') {
+        textarea.setSelectionRange(nextPos, nextPos);
+      }
+    }
+    window.insertComposerEmoji = insertComposerEmoji;
+
+    function discardRedditPostDraft() {
+      const inpTitle = document.getElementById('inpRedditPostTitle');
+      const inpContent = document.getElementById('inpRedditPostContent');
+      const inpAuthor = document.getElementById('inpRedditPostAuthor');
+      if (inpTitle) inpTitle.value = '';
+      if (inpContent) inpContent.value = '';
+      if (inpAuthor) inpAuthor.value = '';
+      removeRedditPostImage();
+      removeRedditPostAttachment();
+      resetComposerFontStyle();
+      closeRedditComposer();
+    }
+    window.discardRedditPostDraft = discardRedditPostDraft;
 
     function compressPostImage(src, maxWidth, maxHeight, quality, callback) {
       const img = new Image();
@@ -14498,9 +14766,9 @@ function getInitialDefaultRedditPosts() {
     function openRedditComposer() {
       const card = document.querySelector('.padlet-composer-card');
       if (card) {
-        const w = Math.min(660, window.innerWidth - 32);
-        card.style.left = Math.max(16, Math.round((window.innerWidth - w) / 2)) + 'px';
-        card.style.top = '80px';
+        const w = Math.min(580, window.innerWidth - 24);
+        card.style.left = Math.max(12, Math.round((window.innerWidth - w) / 2)) + 'px';
+        card.style.top = '88px';
       }
       const el = document.getElementById('redditComposerExpanded');
       if (el) {
@@ -14514,7 +14782,8 @@ function getInitialDefaultRedditPosts() {
     function closeRedditComposer() {
       const el = document.getElementById('redditComposerExpanded');
       if (el) el.classList.remove('open');
-      removeRedditPostImage();
+      toggleComposerFontToolbar(false);
+      toggleComposerEmojiPopover(false);
     }
     window.closeRedditComposer = closeRedditComposer;
 
@@ -14660,15 +14929,16 @@ function getInitialDefaultRedditPosts() {
             </h2>
 
             <!-- Nội dung bài viết -->
-            <div class="reddit-post-content" style="white-space: pre-line;">${highlighted}</div>
+            <div class="reddit-post-content" style="white-space: pre-line; ${buildRedditPostContentStyle(post.postStyle)}">${highlighted}</div>
 
-            <!-- Hình ảnh đính kèm bài viết (nếu có) -->
+            <!-- Hình ảnh & Tệp đính kèm bài viết (nếu có) -->
             ${post.image ? `
               <div class="reddit-post-image-box" onclick="openImageViewerModal('${escapeRedditHtml(post.image)}')" title="Bấm để phóng to xem ảnh">
                 <img src="${escapeRedditHtml(post.image)}" alt="Ảnh bài viết" style="max-width: 100%; max-height: 480px; object-fit: contain; display: inline-block; vertical-align: middle; border-radius: 10px;" />
                 <span style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.7); color: #ffea9f; font-size: 11px; padding: 3px 8px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.2);">🔍 Bấm để phóng to</span>
               </div>
             ` : ''}
+            ${post.attachment ? renderRedditAttachmentHtml(post.attachment, false) : ''}
 
             <!-- Thanh nút hành động (Upvote/Downvote, Bình luận, Chia sẻ) -->
             <div class="reddit-actions-row">
@@ -14835,6 +15105,8 @@ function getInitialDefaultRedditPosts() {
       const subreddit = normalizeSubredditKey(rawSub);
       const subIcon = getSubredditIcon(subreddit);
       const cardBg = document.getElementById('inpPadletCardBg')?.value || '#ffffff';
+      const postStyleSnapshot = window.currentRedditPostStyle ? Object.assign({}, window.currentRedditPostStyle) : null;
+      const postAttachmentSnapshot = window.currentRedditPostAttachment ? Object.assign({}, window.currentRedditPostAttachment) : null;
 
       const newPost = {
         id: 'mit_real_post_' + Date.now(),
@@ -14848,7 +15120,9 @@ function getInitialDefaultRedditPosts() {
         timestamp: Date.now(),
         title: inpTitle.value.trim(),
         content: inpContent ? inpContent.value.trim() : '',
+        postStyle: postStyleSnapshot,
         image: window.currentRedditPostImage || null,
+        attachment: postAttachmentSnapshot,
         flair: selFlair ? selFlair.value : 'Giao lưu',
         cardBg: cardBg,
         upvotes: 1,
@@ -14866,6 +15140,9 @@ function getInitialDefaultRedditPosts() {
       if (inpContent) inpContent.value = '';
       if (inpAuthor) inpAuthor.value = '';
       if (document.getElementById('inpPadletCardBg')) document.getElementById('inpPadletCardBg').value = '#ffffff';
+      removeRedditPostImage();
+      removeRedditPostAttachment();
+      resetComposerFontStyle();
       closeRedditComposer();
 
       renderRedditRecentPosts();
@@ -15518,20 +15795,7 @@ function getInitialDefaultRedditPosts() {
       if (h === 'dantranh' || h === 'stage' || h === 'nhaccu') {
         switchNavTab('dantranh');
       } else if (h === 'forum' || h === 'diendan' || h === 'mit') {
-        const curAcc = (typeof getActiveUserAccount === 'function') ? getActiveUserAccount() : null;
-        const isGuest = !curAcc || curAcc.role === 'guest' || curAcc.username === 'guest';
-        if (isGuest) {
-          if (typeof showActionToast === 'function') {
-            showActionToast('🔒 Vui lòng đăng nhập để truy cập Diễn đàn MIT!');
-          }
-          if (typeof openUnifiedLoginModal === 'function') {
-            openUnifiedLoginModal();
-          }
-          window.location.hash = '#home';
-          switchNavTab('encyclopedia');
-        } else {
-          switchNavTab('forum');
-        }
+        switchNavTab('forum');
       } else if (h === 'lookup' || h === 'thongtin') {
         switchNavTab('lookup');
       } else if (h === 'heritage' || h === 'nghiencuu') {
@@ -15577,8 +15841,8 @@ function getInitialDefaultRedditPosts() {
         switchNavTab('lookup');
       } else if (window.location.hash === '#heritage' || window.location.hash === '#research') {
         switchNavTab('heritage');
-      } else if (window.location.hash === '#forum' || window.location.hash === '#diendan') {
-        switchNavTab('encyclopedia');
+      } else if (window.location.hash === '#forum' || window.location.hash === '#diendan' || window.location.hash === '#mit') {
+        switchNavTab('forum');
       } else {
         switchNavTab('encyclopedia');
       }
