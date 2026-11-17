@@ -117,7 +117,7 @@
       display: none !important;
     }
 
-    /* Khung tạo bài viết diễn đàn theo bố cục Gmail New Message */
+    /* Khung tạo bài viết diễn đàn đồng bộ màu gỗ mun / đỏ trầm ánh vàng kim với thẻ bài viết */
     .reddit-composer-expanded.padlet-composer-modal,
     body.tttt-theme-body.light-theme .reddit-composer-expanded.padlet-composer-modal {
       position: fixed !important;
@@ -147,12 +147,12 @@
       max-height: calc(100vh - 104px);
       display: flex;
       flex-direction: column;
-      background: #ffffff !important;
-      color: #1f2937 !important;
-      border: 1px solid #dadce0 !important;
-      border-radius: 10px !important;
+      background: linear-gradient(160deg, rgba(30, 20, 15, 0.98) 0%, rgba(18, 12, 9, 0.99) 100%) !important;
+      color: #f5eedc !important;
+      border: 1.5px solid rgba(239, 196, 123, 0.45) !important;
+      border-radius: 14px !important;
       padding: 0 !important;
-      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35), 0 4px 12px rgba(0, 0, 0, 0.18) !important;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85), 0 0 35px rgba(239, 196, 123, 0.18) !important;
       box-sizing: border-box !important;
       overflow: hidden;
       z-index: 100001 !important;
@@ -169,11 +169,11 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #f2f6fc !important;
-      color: #041e49 !important;
-      padding: 10px 16px !important;
+      background: linear-gradient(135deg, rgba(52, 24, 18, 0.98) 0%, rgba(30, 14, 10, 0.98) 100%) !important;
+      color: #ffea9f !important;
+      padding: 11px 16px !important;
       margin: 0 !important;
-      border-bottom: 1px solid #e6ebf2 !important;
+      border-bottom: 1px solid rgba(239, 196, 123, 0.28) !important;
       cursor: grab;
       user-select: none;
     }
@@ -182,9 +182,9 @@
     }
     .gmail-composer-title {
       font-size: 14px;
-      font-weight: 600;
-      color: #041e49;
-      letter-spacing: -0.01em;
+      font-weight: 700;
+      color: #ffea9f;
+      letter-spacing: 0.01em;
     }
     .padlet-header-window-btns {
       display: flex;
@@ -192,12 +192,12 @@
       gap: 4px;
     }
     .padlet-win-btn {
-      width: 24px;
-      height: 24px;
-      border-radius: 4px;
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
       border: none;
       background: transparent;
-      color: #444746;
+      color: #e5c490;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -207,45 +207,50 @@
       transition: background 0.15s ease, color 0.15s ease;
     }
     .padlet-win-btn:hover {
-      background: rgba(68, 71, 70, 0.1);
-      color: #1f1f1f;
+      background: rgba(239, 196, 123, 0.18);
+      color: #ffffff;
     }
     #formRedditCreatePost {
       display: flex;
       flex-direction: column;
       flex: 1;
       min-height: 0;
-      background: #ffffff;
+      background: transparent;
     }
     .gmail-row-line {
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 8px 16px;
-      border-bottom: 1px solid #eceff1;
+      padding: 9px 16px;
+      border-bottom: 1px solid rgba(239, 196, 123, 0.18);
       flex-wrap: wrap;
     }
     .gmail-meta-select {
-      border: none;
-      background: #f1f3f4;
-      color: #3c4043;
-      border-radius: 6px;
-      padding: 4px 8px;
+      border: 1px solid rgba(239, 196, 123, 0.3);
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffea9f;
+      border-radius: 7px;
+      padding: 4px 9px;
       font-size: 12.5px;
-      font-weight: 500;
+      font-weight: 600;
       outline: none;
       cursor: pointer;
     }
+    .gmail-meta-select option {
+      background: #1e120d;
+      color: #ffea9f;
+    }
     .gmail-meta-select:hover,
     .gmail-meta-select:focus {
-      background: #e8eaed;
+      background: rgba(239, 196, 123, 0.16);
+      border-color: rgba(239, 196, 123, 0.55);
     }
     .gmail-author-input {
       flex: 1;
       min-width: 110px;
       border: none;
       background: transparent;
-      color: #1f2937;
+      color: #fff8eb;
       font-size: 13px;
       padding: 4px 6px;
       outline: none;
@@ -253,16 +258,16 @@
     .gmail-author-input::placeholder,
     .padlet-subject-input::placeholder,
     .padlet-body-textarea::placeholder {
-      color: #747775;
+      color: rgba(216, 203, 184, 0.55);
     }
     .padlet-subject-input {
       width: 100%;
       height: 26px;
       background: transparent;
       border: none;
-      color: #1f1f1f;
-      font-size: 14px;
-      font-weight: 500;
+      color: #fff8eb;
+      font-size: 14.5px;
+      font-weight: 600;
       padding: 0;
       box-sizing: border-box;
       outline: none;
@@ -283,9 +288,9 @@
       flex: 1;
       background: transparent;
       border: none;
-      color: #1f1f1f;
+      color: #f5eedc;
       font-size: 14px;
-      line-height: 1.55;
+      line-height: 1.6;
       padding: 0;
       box-sizing: border-box;
       outline: none;
@@ -300,54 +305,59 @@
       flex-wrap: wrap;
       padding: 7px 14px;
       margin: 0 16px 6px;
-      background: #f8fafd;
-      border: 1px solid #e1e3e1;
+      background: rgba(26, 16, 12, 0.98);
+      border: 1px solid rgba(239, 196, 123, 0.35);
       border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
     }
     .gmail-font-toolbar.open {
       display: flex;
     }
     .gmail-fmt-select {
-      border: 1px solid #dadce0;
-      background: #ffffff;
-      color: #3c4043;
+      border: 1px solid rgba(239, 196, 123, 0.32);
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffea9f;
       border-radius: 5px;
       padding: 3px 6px;
       font-size: 12px;
       outline: none;
       cursor: pointer;
     }
+    .gmail-fmt-select option {
+      background: #1e120d;
+      color: #ffea9f;
+    }
     .gmail-fmt-btn {
       min-width: 26px;
       height: 26px;
       border: none;
-      border-radius: 4px;
+      border-radius: 5px;
       background: transparent;
-      color: #444746;
+      color: #e5c490;
       font-size: 13px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      transition: background 0.12s ease;
+      transition: background 0.12s ease, color 0.12s ease;
     }
     .gmail-fmt-btn:hover {
-      background: #e8eaed;
+      background: rgba(239, 196, 123, 0.16);
+      color: #ffffff;
     }
     .gmail-fmt-btn.active {
-      background: #d3e3fd;
-      color: #0b57d0;
+      background: rgba(222, 25, 75, 0.55);
+      color: #ffea9f;
     }
     .gmail-emoji-popover {
       display: none;
       position: relative;
       margin: 0 16px 6px;
       padding: 8px 10px;
-      background: #ffffff;
-      border: 1px solid #dadce0;
+      background: rgba(26, 16, 12, 0.99);
+      border: 1px solid rgba(239, 196, 123, 0.38);
       border-radius: 10px;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.14);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.65);
       flex-wrap: wrap;
       gap: 4px;
       max-width: 310px;
@@ -368,19 +378,19 @@
       justify-content: center;
     }
     .gmail-emoji-item:hover {
-      background: #f1f3f4;
+      background: rgba(239, 196, 123, 0.18);
     }
     .gmail-file-chip {
       display: inline-flex;
       align-items: center;
       justify-content: space-between;
       gap: 10px;
-      background: #f5f5f5;
-      border: 1px solid #e0e0e0;
-      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(239, 196, 123, 0.3);
+      border-radius: 8px;
       padding: 7px 11px;
       font-size: 12.5px;
-      color: #1f1f1f;
+      color: #ffea9f;
       max-width: 100%;
     }
     .padlet-composer-footer {
@@ -388,8 +398,9 @@
       justify-content: space-between;
       align-items: center;
       gap: 10px;
-      padding: 10px 16px 14px;
-      background: #ffffff;
+      padding: 11px 16px 14px;
+      background: rgba(20, 12, 9, 0.96);
+      border-top: 1px solid rgba(239, 196, 123, 0.18);
     }
     .padlet-footer-left {
       display: flex;
@@ -402,20 +413,21 @@
       align-items: center;
       height: 36px;
       padding: 0;
-      border: none;
+      border: 1px solid rgba(239, 196, 123, 0.55);
       border-radius: 999px;
-      background: #0b57d0;
-      color: #ffffff;
+      background: linear-gradient(135deg, #de194b 0%, #b20e36 55%, #870826 100%);
+      color: #ffea9f;
       font-size: 13.5px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       overflow: hidden;
       margin-right: 6px;
-      transition: background 0.15s ease, box-shadow 0.15s ease;
+      box-shadow: 0 4px 12px rgba(222, 25, 75, 0.32);
+      transition: filter 0.15s ease, box-shadow 0.15s ease;
     }
     .gmail-upload-pill:hover {
-      background: #0842a0;
-      box-shadow: 0 2px 6px rgba(11, 87, 208, 0.35);
+      filter: brightness(1.12);
+      box-shadow: 0 5px 16px rgba(222, 25, 75, 0.45);
     }
     .gmail-upload-pill-label {
       padding: 0 14px 0 18px;
@@ -424,7 +436,7 @@
     .gmail-upload-pill-sep {
       width: 1px;
       height: 20px;
-      background: rgba(255, 255, 255, 0.35);
+      background: rgba(239, 196, 123, 0.38);
     }
     .gmail-upload-pill-caret {
       padding: 0 11px 0 9px;
@@ -435,9 +447,9 @@
       width: 34px;
       height: 34px;
       border: none;
-      border-radius: 6px;
+      border-radius: 7px;
       background: transparent;
-      color: #444746;
+      color: #e5c490;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
@@ -447,12 +459,12 @@
       transition: background 0.15s ease, color 0.15s ease;
     }
     .gmail-icon-btn:hover {
-      background: rgba(68, 71, 70, 0.1);
-      color: #1f1f1f;
+      background: rgba(239, 196, 123, 0.15);
+      color: #ffea9f;
     }
     .gmail-icon-btn.active {
-      background: #d3e3fd;
-      color: #0b57d0;
+      background: rgba(239, 196, 123, 0.28);
+      color: #ffffff;
     }
 
     /* Yêu cầu 1: Làm mọi thứ trong trang giới thiệu không thể chọn (no selected / unselectable) */
@@ -1190,6 +1202,11 @@
               <div class="reddit-sub-name">Tư Vấn Chọn Đàn</div>
               <span class="reddit-sub-members" id="subCount_tuvanchondan">15</span>
             </li>
+            <li class="reddit-community-item" data-sub="tudo" onclick="filterBySubreddit('tudo')">
+              <div class="reddit-sub-avatar" style="background: #0d9488;">💬</div>
+              <div class="reddit-sub-name">Tự Do</div>
+              <span class="reddit-sub-members" id="subCount_tudo">20</span>
+            </li>
           </ul>
 
           <div class="reddit-divider"></div>
@@ -1210,7 +1227,7 @@
           <!-- Thanh phân loại Sort Bar: Đã gộp toàn bộ chức năng lên Thanh Điều Hướng Taskbar phía trên (Yêu Cầu 1) -->
           <div class="reddit-sort-bar" style="display: none !important;">
             <div class="reddit-sort-options">
-              <button type="button" class="reddit-sort-btn active" id="btnSortBest" onclick="setRedditSort('best')">
+              <button type="button" class="reddit-sort-btn" id="btnSortBest" onclick="setRedditSort('best')">
                 <span>🚀</span>
                 <span>Nổi bật ▾</span>
               </button>
@@ -1218,7 +1235,7 @@
                 <span>🔥</span>
                 <span>Thảo luận sôi nổi</span>
               </button>
-              <button type="button" class="reddit-sort-btn" id="btnSortNew" onclick="setRedditSort('new')">
+              <button type="button" class="reddit-sort-btn active" id="btnSortNew" onclick="setRedditSort('new')">
                 <span>⚡</span>
                 <span>Mới nhất</span>
               </button>
@@ -1259,6 +1276,7 @@
                     <option value="congchieng">🔔 Cồng Chiêng &amp; Trống</option>
                     <option value="bannhaccotruyen">🎼 Bản Nhạc &amp; Nốt Số</option>
                     <option value="tuvanchondan">🪵 Tư Vấn Chọn Đàn</option>
+                    <option value="tudo">💬 Tự Do</option>
                   </select>
                   <select id="selRedditFlair" class="gmail-meta-select" title="Chọn nhãn bài viết">
                     <option value="❓ Hỏi đáp newbie">❓ Hỏi đáp newbie</option>
@@ -1267,6 +1285,7 @@
                     <option value="🎼 Bản nhạc &amp; Nốt số">🎼 Bản nhạc &amp; Nốt số</option>
                     <option value="✨ Di sản văn hóa">✨ Di sản văn hóa</option>
                     <option value="🎉 Giao lưu &amp; Thảo luận">🎉 Giao lưu &amp; Thảo luận</option>
+                    <option value="💬 Tự do">💬 Tự do</option>
                   </select>
                   <input type="text" id="inpRedditPostAuthor" class="gmail-author-input" placeholder="Biệt danh người đăng..." />
                 </div>
@@ -1281,9 +1300,9 @@
                   <textarea id="inpRedditPostContent" class="padlet-body-textarea" placeholder="Nhập nội dung bài đăng..." required></textarea>
 
                   <!-- Preview ảnh đã đính kèm -->
-                  <div id="redditPostImagePreviewContainer" style="display: none; position: relative; border-radius: 8px; overflow: hidden; max-height: 220px; background: #f3f4f6; border: 1px solid #e5e7eb; text-align: center;">
+                  <div id="redditPostImagePreviewContainer" style="display: none; position: relative; border-radius: 8px; overflow: hidden; max-height: 220px; background: rgba(0, 0, 0, 0.45); border: 1px solid rgba(239, 196, 123, 0.35); text-align: center;">
                     <img id="redditPostImagePreview" src="" alt="Xem trước ảnh" style="max-width: 100%; max-height: 220px; object-fit: contain; display: block; margin: 0 auto;" />
-                    <button type="button" onclick="removeRedditPostImage()" title="Gỡ bỏ tệp" style="position: absolute; top: 6px; right: 6px; background: rgba(17, 24, 39, 0.78); border: none; color: #fff; border-radius: 999px; padding: 3px 9px; cursor: pointer; font-size: 11px; font-weight: 600;">✕ Gỡ</button>
+                    <button type="button" onclick="removeRedditPostImage()" title="Gỡ bỏ tệp" style="position: absolute; top: 6px; right: 6px; background: rgba(222, 25, 75, 0.9); border: none; color: #fff; border-radius: 999px; padding: 3px 9px; cursor: pointer; font-size: 11px; font-weight: 600;">✕ Gỡ</button>
                   </div>
 
                   <!-- Preview tệp khác (âm thanh, tài liệu...) -->
@@ -12526,7 +12545,7 @@
     // TUYỆT ĐỐI KHÔNG CÓ TIỀN TỐ r/, TÊN THỐNG NHẤT: DIỄN ĐÀN MIT
     // =========================================================
     window.redditCurrentSubreddit = 'all';
-    window.redditCurrentSort = 'best';
+    window.redditCurrentSort = 'new';
     window.redditViewMode = 'card';
     window.redditSearchQuery = '';
 
@@ -12539,7 +12558,8 @@
       saotruc: { name: 'Sáo Trúc & Tiêu', icon: '🎋' },
       congchieng: { name: 'Cồng Chiêng & Trống', icon: '🔔' },
       bannhaccotruyen: { name: 'Bản Nhạc & Nốt Số', icon: '🎼' },
-      tuvanchondan: { name: 'Tư Vấn Chọn Đàn', icon: '🪵' }
+      tuvanchondan: { name: 'Tư Vấn Chọn Đàn', icon: '🪵' },
+      tudo: { name: 'Tự Do', icon: '💬' }
     };
 
     function normalizeSubredditKey(sub) {
@@ -13722,8 +13742,8 @@ function getInitialDefaultRedditPosts() {
           if (delRaw) deletedIds = JSON.parse(delRaw) || [];
         } catch (e) {}
 
-        // 1. Giữ nguyên 100% bài viết của người dùng thật (Yêu cầu 6)
-        const userPosts = savedList.filter(p => p && p.id && (!p.id.toString().startsWith('post_seed_') || p.isUserCreated));
+        // 1. Giữ nguyên bài viết của người dùng thật (trừ những bài đã bị xóa có chủ đích)
+        const userPosts = savedList.filter(p => p && p.id && !deletedIds.includes(p.id) && (!p.id.toString().startsWith('post_seed_') || p.isUserCreated));
         userPosts.forEach(p => {
           p.subreddit = normalizeSubredditKey(p.subreddit);
           p.author = formatUserHandle(p.author);
@@ -13748,12 +13768,13 @@ function getInitialDefaultRedditPosts() {
           }
         });
 
-        // Hợp nhất: Bài viết thật của người dùng đặt lên đầu, tiếp theo là các bài viết mẫu
+        // Hợp nhất và luôn sắp xếp bài mới nhất lên đầu
         const combined = [...userPosts, ...activeSeedPosts];
+        combined.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
         return combined;
       } catch (e) {
         console.warn('Lỗi đọc diễn đàn:', e);
-        return getInitialDefaultRedditPosts();
+        return getInitialDefaultRedditPosts().sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
       }
     }
 
@@ -13767,8 +13788,193 @@ function getInitialDefaultRedditPosts() {
       }
     }
 
+    // =========================================================
+    // PHÂN QUYỀN DIỄN ĐÀN: KHÁCH CHỈ ĐƯỢC XEM, ADMIN XÓA BÀI & BAN NGƯỜI DÙNG
+    // =========================================================
+    const FORUM_BANNED_USERS_KEY = 'mit_forum_banned_users_v1';
+
+    function requireForumLoginForAction() {
+      const u = (typeof getActiveUserAccount === 'function') ? getActiveUserAccount() : null;
+      const isGuest = !u || u.role === 'guest' || u.username === 'guest';
+      if (isGuest) {
+        const msg = '🔒 Phải đăng nhập mới có thể dùng chức năng này!';
+        if (typeof showActionToast === 'function') {
+          showActionToast(msg);
+        } else {
+          alert(msg);
+        }
+        if (typeof openUnifiedLoginModal === 'function') {
+          openUnifiedLoginModal();
+        } else if (typeof openOwnerLoginModal === 'function') {
+          openOwnerLoginModal();
+        }
+        return false;
+      }
+      return true;
+    }
+    window.requireForumLoginForAction = requireForumLoginForAction;
+
+    function isCurrentUserForumAdmin() {
+      const u = (typeof getActiveUserAccount === 'function') ? getActiveUserAccount() : null;
+      if (!u || u.role === 'guest' || u.username === 'guest') return false;
+      const uname = (u.username || '').toLowerCase();
+      return u.role === 'admin' || uname === 'admin' || uname === 'owner';
+    }
+    window.isCurrentUserForumAdmin = isCurrentUserForumAdmin;
+
+    function normalizeForumUserKey(val) {
+      return String(val || '').replace(/^@+/, '').trim().toLowerCase();
+    }
+
+    function getForumBannedUsers() {
+      try {
+        const raw = localStorage.getItem(FORUM_BANNED_USERS_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) return parsed;
+        }
+      } catch (e) {}
+      return [];
+    }
+
+    function saveForumBannedUsers(list) {
+      try {
+        localStorage.setItem(FORUM_BANNED_USERS_KEY, JSON.stringify(Array.isArray(list) ? list : []));
+      } catch (e) {}
+    }
+
+    function isForumAuthorAdminAccount(authorHandle, authorName, authorUsername) {
+      const candidates = [
+        normalizeForumUserKey(authorUsername),
+        normalizeForumUserKey(authorHandle),
+        normalizeForumUserKey(authorName)
+      ].filter(Boolean);
+      if (candidates.some(c => c === 'admin' || c === 'owner')) return true;
+      const users = (typeof getRegisteredUsersList === 'function') ? getRegisteredUsersList() : [];
+      return users.some(u => u && u.role === 'admin' && candidates.includes(normalizeForumUserKey(u.username)));
+    }
+
+    function isForumUserBanned(authorHandle, authorName, authorUsername) {
+      const list = getForumBannedUsers();
+      if (!list.length) return false;
+      const candidates = [
+        normalizeForumUserKey(authorUsername),
+        normalizeForumUserKey(authorHandle),
+        normalizeForumUserKey(authorName)
+      ].filter(Boolean);
+      if (!candidates.length) return false;
+      return list.some(entry => {
+        if (!entry) return false;
+        const keys = [
+          normalizeForumUserKey(entry.username),
+          normalizeForumUserKey(entry.handle),
+          normalizeForumUserKey(entry.displayName)
+        ].filter(Boolean);
+        return keys.some(k => candidates.includes(k));
+      });
+    }
+    window.isForumUserBanned = isForumUserBanned;
+
+    function isCurrentActiveUserBannedFromForum() {
+      const u = (typeof getActiveUserAccount === 'function') ? getActiveUserAccount() : null;
+      if (!u || u.role === 'guest' || u.username === 'guest') return false;
+      if (isCurrentUserForumAdmin()) return false;
+      const handle = formatUserHandle((u.displayName || u.username || '').replace(/\s+/g, '_').toLowerCase());
+      return isForumUserBanned(handle, u.displayName, u.username);
+    }
+    window.isCurrentActiveUserBannedFromForum = isCurrentActiveUserBannedFromForum;
+
+    function handleToggleBanForumUser(authorHandle, authorName, authorUsername) {
+      if (!requireForumLoginForAction()) return;
+      if (!isCurrentUserForumAdmin()) {
+        alert('Chỉ Admin mới có quyền Ban / gỡ Ban người dùng trên diễn đàn!');
+        return;
+      }
+      if (isForumAuthorAdminAccount(authorHandle, authorName, authorUsername)) {
+        alert('Không thể Ban tài khoản Quản trị viên (Admin)!');
+        return;
+      }
+
+      const displayLabel = authorName || authorHandle || authorUsername || 'Thành viên';
+      const candidates = [
+        normalizeForumUserKey(authorUsername),
+        normalizeForumUserKey(authorHandle),
+        normalizeForumUserKey(authorName)
+      ].filter(Boolean);
+
+      let list = getForumBannedUsers();
+      const currentlyBanned = isForumUserBanned(authorHandle, authorName, authorUsername);
+
+      if (currentlyBanned) {
+        if (!confirm(`Bạn muốn gỡ lệnh cấm (Bỏ Ban) cho "${displayLabel}" trên diễn đàn?`)) return;
+        list = list.filter(entry => {
+          const keys = [
+            normalizeForumUserKey(entry && entry.username),
+            normalizeForumUserKey(entry && entry.handle),
+            normalizeForumUserKey(entry && entry.displayName)
+          ].filter(Boolean);
+          return !keys.some(k => candidates.includes(k));
+        });
+        saveForumBannedUsers(list);
+        renderRedditFeed();
+        if (typeof showActionToast === 'function') {
+          showActionToast(`✅ Đã gỡ lệnh cấm (Bỏ Ban) cho "${displayLabel}"!`);
+        }
+      } else {
+        if (!confirm(`Bạn chắc chắn muốn Ban "${displayLabel}"? Người này sẽ không thể đăng bài hoặc bình luận trên diễn đàn.`)) return;
+        list.push({
+          username: normalizeForumUserKey(authorUsername),
+          handle: normalizeForumUserKey(authorHandle),
+          displayName: String(authorName || '').trim(),
+          bannedAt: Date.now()
+        });
+        saveForumBannedUsers(list);
+        renderRedditFeed();
+        if (typeof showActionToast === 'function') {
+          showActionToast(`🚫 Đã Ban "${displayLabel}" — người này không thể đăng bài trên diễn đàn!`);
+        }
+      }
+    }
+    window.handleToggleBanForumUser = handleToggleBanForumUser;
+
+    function openForumUserProfile() {
+      if (!requireForumLoginForAction()) return;
+      if (typeof openAccountSettingsModal === 'function') {
+        openAccountSettingsModal('profile');
+      }
+    }
+    window.openForumUserProfile = openForumUserProfile;
+
+    function closeForumUserProfile() {
+      const modal = document.getElementById('modalForumUserProfile');
+      if (modal) modal.style.display = 'none';
+    }
+    window.closeForumUserProfile = closeForumUserProfile;
+
+    function handleSaveRedditPost(postId) {
+      if (!requireForumLoginForAction()) return;
+      if (typeof showActionToast === 'function') {
+        showActionToast('Đã lưu bài viết vào mục Yêu thích! 🔖');
+      }
+    }
+    window.handleSaveRedditPost = handleSaveRedditPost;
+
     /* Xóa bài viết khỏi diễn đàn thực tế */
     function handleDeleteRedditPost(postId) {
+      if (!requireForumLoginForAction()) return;
+      const postsList = getAllRedditPosts();
+      const targetPost = postsList.find(p => p.id === postId);
+      const u = (typeof getActiveUserAccount === 'function') ? getActiveUserAccount() : null;
+      const myUsername = (u && u.username) ? u.username.toLowerCase() : '';
+      const myDisplayName = (u && u.displayName) ? u.displayName.toLowerCase() : '';
+      const isMyPost = targetPost && (
+        (myUsername && ((targetPost.author || '').replace('@', '').toLowerCase() === myUsername || (targetPost.authorUsername || '').toLowerCase() === myUsername)) ||
+        (myDisplayName && (targetPost.authorName || '').toLowerCase() === myDisplayName)
+      );
+      if (!isCurrentUserForumAdmin() && !isMyPost) {
+        alert('Bạn chỉ có thể xóa bài viết của chính mình (hoặc cần quyền Admin)!');
+        return;
+      }
       if (!confirm('Bạn có chắc chắn muốn xóa bài viết này khỏi diễn đàn?')) return;
       try {
         let deletedIds = [];
@@ -13777,20 +13983,23 @@ function getInitialDefaultRedditPosts() {
         if (!deletedIds.includes(postId)) deletedIds.push(postId);
         localStorage.setItem('mit_forum_deleted_post_ids', JSON.stringify(deletedIds));
       } catch (e) {}
-      let posts = getAllRedditPosts();
-      posts = posts.filter(p => p.id !== postId);
+      let posts = postsList.filter(p => p.id !== postId);
       saveAllRedditPosts(posts);
       renderRedditFeed();
       renderRedditRecentPosts();
+      if (document.getElementById('redditHistoryContainer')?.style.display === 'flex') {
+        renderRedditHistoryTab();
+      }
       if (typeof updateForumRealStats === 'function') updateForumRealStats();
       if (typeof showActionToast === 'function') {
-        showActionToast('Đã xóa bài viết thành công.');
+        showActionToast('🗑️ Đã xóa bài viết khỏi diễn đàn.');
       }
     }
     window.handleDeleteRedditPost = handleDeleteRedditPost;
 
     /* Xóa bình luận */
     function handleDeleteRedditComment(postId, cmtId) {
+      if (!requireForumLoginForAction()) return;
       if (!confirm('Bạn có chắc chắn muốn xóa bình luận này?')) return;
       const posts = getAllRedditPosts();
       const post = posts.find(p => p.id === postId);
@@ -13798,6 +14007,8 @@ function getInitialDefaultRedditPosts() {
       post.comments = post.comments.filter(c => c.id !== cmtId);
       saveAllRedditPosts(posts);
       renderRedditFeed();
+      const drawer = document.getElementById('commentsDrawer_' + postId);
+      if (drawer) drawer.classList.add('open');
       if (typeof showActionToast === 'function') {
         showActionToast('Đã xóa bình luận.');
       }
@@ -13806,6 +14017,7 @@ function getInitialDefaultRedditPosts() {
 
     /* Tán thành bình luận */
     function handleLikeRedditComment(postId, cmtId) {
+      if (!requireForumLoginForAction()) return;
       const posts = getAllRedditPosts();
       const post = posts.find(p => p.id === postId);
       if (!post || !Array.isArray(post.comments)) return;
@@ -13814,6 +14026,8 @@ function getInitialDefaultRedditPosts() {
       cmt.upvotes = (cmt.upvotes || 1) + 1;
       saveAllRedditPosts(posts);
       renderRedditFeed();
+      const drawer = document.getElementById('commentsDrawer_' + postId);
+      if (drawer) drawer.classList.add('open');
       if (typeof showActionToast === 'function') {
         showActionToast('Đã tán thành bình luận! 👍');
       }
@@ -13822,6 +14036,11 @@ function getInitialDefaultRedditPosts() {
 
     /* Điền nhanh chủ đề mẫu vào khung đăng bài */
     function prefillForumComposer(title, content, sub, flair) {
+      if (!requireForumLoginForAction()) return;
+      if (isCurrentActiveUserBannedFromForum()) {
+        alert('🚫 Tài khoản của bạn đã bị Admin cấm (Ban) nên không thể đăng bài trên diễn đàn!');
+        return;
+      }
       openRedditComposer();
       const inpTitle = document.getElementById('inpRedditPostTitle');
       const inpContent = document.getElementById('inpRedditPostContent');
@@ -13891,7 +14110,8 @@ function getInitialDefaultRedditPosts() {
           dannhi: 0,
           congchieng: 0,
           bannhaccotruyen: 0,
-          tuvanchondan: 0
+          tuvanchondan: 0,
+          tudo: 0
         };
 
         const baseCounts = {
@@ -13902,7 +14122,8 @@ function getInitialDefaultRedditPosts() {
           dannhi: 8,
           congchieng: 6,
           bannhaccotruyen: 22,
-          tuvanchondan: 10
+          tuvanchondan: 10,
+          tudo: 20
         };
 
         posts.forEach(p => {
@@ -14003,6 +14224,7 @@ function getInitialDefaultRedditPosts() {
       const aiTopicPanel = document.getElementById('mitAiTopicClusterPanel');
 
       if (key === 'history') {
+        if (!requireForumLoginForAction()) return;
         if (feedContainer) feedContainer.style.display = 'none';
         if (aiTopicPanel) aiTopicPanel.style.display = 'none';
         if (historyContainer) historyContainer.style.display = 'flex';
@@ -14031,6 +14253,7 @@ function getInitialDefaultRedditPosts() {
     window.forumHistoryAuthorFilter = '';
 
     function setHistoryFilterScope(scope) {
+      if ((scope || 'my') === 'my' && !requireForumLoginForAction()) return;
       window.forumHistoryScope = scope || 'my';
       window.forumHistoryAuthorFilter = '';
       const sel = document.getElementById('selHistoryAuthorFilter');
@@ -14291,7 +14514,7 @@ function getInitialDefaultRedditPosts() {
       `;
 
       // Các chuyên mục nhạc cụ
-      const mainKeys = ['dantranh', 'danbau', 'dannguyet', 'dannhi', 'saotruc', 'congchieng', 'bannhaccotruyen', 'tuvanchondan'];
+      const mainKeys = ['dantranh', 'danbau', 'dannguyet', 'dannhi', 'saotruc', 'congchieng', 'bannhaccotruyen', 'tuvanchondan', 'tudo'];
       mainKeys.forEach(k => {
         const cat = MIT_COMMUNITY_CATEGORIES[k];
         if (!cat) return;
@@ -14352,7 +14575,7 @@ function getInitialDefaultRedditPosts() {
 
     /* Đổi chế độ sắp xếp Sort (Best, Hot, New, Top - Gộp lên Taskbar Yêu Cầu 1) */
     function setRedditSort(sortKey) {
-      window.redditCurrentSort = sortKey || 'best';
+      window.redditCurrentSort = sortKey || 'new';
       ['best', 'hot', 'new', 'top'].forEach(s => {
         const btnFeed = document.getElementById('btnSort' + s.charAt(0).toUpperCase() + s.slice(1));
         const btnTb = document.getElementById('tbSort' + s.charAt(0).toUpperCase() + s.slice(1));
@@ -14536,9 +14759,9 @@ function getInitialDefaultRedditPosts() {
           <span style="display: inline-flex; align-items: center; gap: 6px; min-width: 0;">
             <span>${icon}</span>
             <strong style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 320px;">${escapeRedditHtml(att.name)}</strong>
-            <span style="color: #5f6368;">(${escapeRedditHtml(att.sizeLabel)})</span>
+            <span style="color: #d8cbb8;">(${escapeRedditHtml(att.sizeLabel)})</span>
           </span>
-          <button type="button" onclick="removeRedditPostAttachment()" title="Gỡ tệp" style="border: none; background: transparent; color: #5f6368; font-weight: 700; cursor: pointer; font-size: 13px; padding: 0 4px;">✕</button>
+          <button type="button" onclick="removeRedditPostAttachment()" title="Gỡ tệp" style="border: none; background: transparent; color: #ffea9f; font-weight: 700; cursor: pointer; font-size: 13px; padding: 0 4px;">✕</button>
         </div>
       `;
     }
@@ -14764,6 +14987,11 @@ function getInitialDefaultRedditPosts() {
 
     /* Đóng/Mở khung đăng bài dạng Modal Popup */
     function openRedditComposer() {
+      if (typeof requireForumLoginForAction === 'function' && !requireForumLoginForAction()) return;
+      if (typeof isCurrentActiveUserBannedFromForum === 'function' && isCurrentActiveUserBannedFromForum()) {
+        alert('🚫 Tài khoản của bạn đã bị Admin cấm (Ban) nên không thể đăng bài trên diễn đàn!');
+        return;
+      }
       const card = document.querySelector('.padlet-composer-card');
       if (card) {
         const w = Math.min(580, window.innerWidth - 24);
@@ -14778,6 +15006,24 @@ function getInitialDefaultRedditPosts() {
       }
     }
     window.openRedditComposer = openRedditComposer;
+
+    function handleToggleBanByPost(postId) {
+      if (typeof getAllRedditPosts !== 'function' || typeof handleToggleBanForumUser !== 'function') return;
+      const post = getAllRedditPosts().find(p => p.id === postId);
+      if (!post) return;
+      handleToggleBanForumUser(post.author || '', post.authorName || '', post.authorUsername || '');
+    }
+    window.handleToggleBanByPost = handleToggleBanByPost;
+
+    function handleToggleBanByComment(postId, cmtId) {
+      if (typeof getAllRedditPosts !== 'function' || typeof handleToggleBanForumUser !== 'function') return;
+      const post = getAllRedditPosts().find(p => p.id === postId);
+      if (!post || !Array.isArray(post.comments)) return;
+      const cmt = post.comments.find(c => c.id === cmtId);
+      if (!cmt) return;
+      handleToggleBanForumUser(cmt.author || '', cmt.authorName || '', cmt.authorUsername || '');
+    }
+    window.handleToggleBanByComment = handleToggleBanByComment;
 
     function closeRedditComposer() {
       const el = document.getElementById('redditComposerExpanded');
@@ -14839,13 +15085,13 @@ function getInitialDefaultRedditPosts() {
       }
 
 
-      // 3. Sắp xếp Sort
-      if (window.redditCurrentSort === 'hot' || window.redditCurrentSort === 'best') {
+      // 3. Sắp xếp Sort (Mặc định luôn đưa bài mới nhất lên đầu)
+      if (window.redditCurrentSort === 'hot') {
         posts.sort((a, b) => ((b.upvotes || 0) + (b.comments ? b.comments.length * 2 : 0)) - ((a.upvotes || 0) + (a.comments ? a.comments.length * 2 : 0)));
-      } else if (window.redditCurrentSort === 'new') {
-        posts.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
       } else if (window.redditCurrentSort === 'top') {
         posts.sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0));
+      } else {
+        posts.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
       }
 
       if (!posts.length) {
@@ -14881,7 +15127,11 @@ function getInitialDefaultRedditPosts() {
       }
 
       const activeUser = (typeof getActiveUserAccount === 'function') ? getActiveUserAccount() : null;
-      const currentUserName = (activeUser && activeUser.username !== 'guest') ? (activeUser.displayName || activeUser.username) : 'Bạn đọc';
+      const isLoggedInForum = !!(activeUser && activeUser.username !== 'guest');
+      const currentUserName = isLoggedInForum ? (activeUser.displayName || activeUser.username) : 'Bạn đọc';
+      const isAdmin = (typeof isCurrentUserForumAdmin === 'function') ? isCurrentUserForumAdmin() : false;
+      const myUsername = isLoggedInForum ? String(activeUser.username || '').trim().toLowerCase() : '';
+      const myDisplayName = isLoggedInForum ? String(activeUser.displayName || '').trim().toLowerCase() : '';
 
       container.innerHTML = posts.map(post => {
         const timeAgo = formatRedditTimeAgo(post.timestamp);
@@ -14897,9 +15147,21 @@ function getInitialDefaultRedditPosts() {
         const cardBg = post.cardBg || '';
         const cardBorder = (cardBg && cardBg !== '#ffffff') ? `border-left: 5px solid ${cardBg};` : '';
 
+        const postAuthorUname = String(post.authorUsername || '').trim().toLowerCase();
+        const postAuthorHandle = String(post.author || '').trim().toLowerCase();
+        const postAuthorName = String(post.authorName || '').trim().toLowerCase();
+        const isMyPost = isLoggedInForum && (
+          (postAuthorUname && postAuthorUname === myUsername) ||
+          (myUsername && postAuthorHandle === ('u/' + myUsername)) ||
+          (myDisplayName && (postAuthorName === myDisplayName || postAuthorHandle === myDisplayName))
+        );
+        const authorIsAdmin = (typeof isForumAuthorAdminAccount === 'function') ? isForumAuthorAdminAccount(post.author, post.authorName, post.authorUsername) : false;
+        const authorBanned = (typeof isForumUserBanned === 'function') ? isForumUserBanned(post.author, post.authorName, post.authorUsername) : false;
+        const canDelete = isAdmin || isMyPost;
+
         return `
           <article class="reddit-post-card" id="redditPost_${post.id}" style="${cardBorder}">
-            <!-- Header hàng trên: Danh mục MIT, tác giả, thời gian, Theo dõi, Chia sẻ -->
+            <!-- Header hàng trên: Danh mục MIT, tác giả, thời gian, Theo dõi, Ban, Xóa, Chia sẻ -->
             <div class="reddit-post-header-row">
               <div class="reddit-post-meta">
                 <div class="reddit-sub-avatar" style="width: 24px; height: 24px; font-size: 13px;">
@@ -14910,15 +15172,18 @@ function getInitialDefaultRedditPosts() {
                 </span>
                 <span>•</span>
                 <span class="reddit-author-link">${escapeRedditHtml(authorDisplay)}</span>
+                ${authorBanned ? `<span style="background: rgba(239, 68, 68, 0.22); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.45); border-radius: 999px; padding: 1px 8px; font-size: 11px; font-weight: 700;">🚫 Đã bị Ban</span>` : ''}
                 <span>•</span>
                 <span>${timeAgo}</span>
                 ${post.flair ? `<span class="reddit-flair-badge">${escapeRedditHtml(post.flair)}</span>` : ''}
               </div>
 
-              <div style="display: flex; align-items: center; gap: 8px;">
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                 <button type="button" class="reddit-join-btn ${isJoined ? 'joined' : ''}" onclick="toggleRedditJoin('${post.id}', '${escapeRedditHtml(subKey)}')">
                   ${isJoined ? 'Đang theo dõi' : '+ Theo dõi'}
                 </button>
+                ${(isAdmin && !authorIsAdmin) ? `<button type="button" class="reddit-join-btn" style="background: ${authorBanned ? 'rgba(34, 197, 94, 0.18)' : 'rgba(239, 68, 68, 0.18)'}; border-color: ${authorBanned ? 'rgba(34, 197, 94, 0.5)' : 'rgba(239, 68, 68, 0.5)'}; color: ${authorBanned ? '#86efac' : '#fca5a5'}; padding: 4px 10px; font-size: 11px;" onclick="handleToggleBanByPost('${post.id}')" title="${authorBanned ? 'Gỡ lệnh cấm đăng bài' : 'Ban tài khoản này khỏi đăng bài diễn đàn'}">${authorBanned ? '🔓 Bỏ Ban' : '🚫 Ban'}</button>` : ''}
+                ${canDelete ? `<button type="button" class="reddit-join-btn" style="background: rgba(239, 68, 68, 0.16); border-color: rgba(248, 113, 113, 0.45); color: #fca5a5; padding: 4px 10px; font-size: 11px;" onclick="handleDeleteRedditPost('${post.id}')" title="Xóa bài viết">🗑️ Xóa</button>` : ''}
                 <button type="button" class="reddit-icon-btn" style="width: 28px; height: 28px; font-size: 14px;" onclick="handleShareRedditPost('${post.id}')" title="Chia sẻ">•••</button>
               </div>
             </div>
@@ -14962,7 +15227,7 @@ function getInitialDefaultRedditPosts() {
               </button>
 
               <!-- Repost Pill -->
-              <button type="button" class="reddit-action-pill" onclick="if(typeof showActionToast==='function') showActionToast('Đã lưu bài viết vào mục Yêu thích!');" title="Lưu bài viết">
+              <button type="button" class="reddit-action-pill" onclick="handleSaveRedditPost('${post.id}')" title="Lưu bài viết">
                 <span>🔖</span>
                 <span>Lưu</span>
               </button>
@@ -14980,9 +15245,9 @@ function getInitialDefaultRedditPosts() {
               <div class="reddit-comment-box-composer">
                 <div style="display: flex; gap: 8px; margin-bottom: 8px; align-items: center; flex-wrap: wrap;">
                   <span style="font-size: 12px; color: #ffea9f; font-weight: 600;">Tên của bạn:</span>
-                  <input type="text" id="inpRedditCommentAuthor_${post.id}" placeholder="${escapeRedditHtml(currentUserName)}" style="background: rgba(14, 10, 8, 0.85); border: 1px solid rgba(239, 196, 123, 0.25); border-radius: 6px; padding: 4px 10px; color: #fff; font-size: 12px; width: 160px; outline: none;" />
+                  <input type="text" id="inpRedditCommentAuthor_${post.id}" placeholder="${escapeRedditHtml(currentUserName)}" onfocus="if(typeof requireForumLoginForAction==='function' && !requireForumLoginForAction()){ this.blur(); }" style="background: rgba(14, 10, 8, 0.85); border: 1px solid rgba(239, 196, 123, 0.25); border-radius: 6px; padding: 4px 10px; color: #fff; font-size: 12px; width: 160px; outline: none;" />
                 </div>
-                <textarea id="inpRedditComment_${post.id}" class="reddit-comment-textarea" placeholder="Viết bình luận, trao đổi câu hỏi hoặc chia sẻ cảm nghĩ..."></textarea>
+                <textarea id="inpRedditComment_${post.id}" class="reddit-comment-textarea" onfocus="if(typeof requireForumLoginForAction==='function' && !requireForumLoginForAction()){ this.blur(); }" placeholder="${isLoggedInForum ? 'Viết bình luận, trao đổi câu hỏi hoặc chia sẻ cảm nghĩ...' : '🔒 Phải đăng nhập mới có thể viết bình luận...'}"></textarea>
                 <div class="reddit-comment-submit-bar" style="display: flex; justify-content: flex-end;">
                   <button type="button" class="btn btn-primary btn-xs" onclick="handleAddRedditComment(event, '${post.id}')" style="background: linear-gradient(135deg, #ef4444, #f97316); border: none; font-weight: 700; border-radius: 999px; padding: 6px 20px; cursor: pointer;">
                     💬 Gửi bình luận
@@ -14992,27 +15257,43 @@ function getInitialDefaultRedditPosts() {
 
               <!-- Danh sách bình luận -->
               <div id="commentsList_${post.id}">
-                ${comments.map(cmt => `
+                ${comments.map(cmt => {
+                  const cmtUname = String(cmt.authorUsername || '').trim().toLowerCase();
+                  const cmtHandle = String(cmt.author || '').trim().toLowerCase();
+                  const cmtName = String(cmt.authorName || '').trim().toLowerCase();
+                  const cmtIsMine = isLoggedInForum && (
+                    (cmtUname && cmtUname === myUsername) ||
+                    (myUsername && cmtHandle === ('u/' + myUsername)) ||
+                    (myDisplayName && (cmtName === myDisplayName || cmtHandle === myDisplayName))
+                  );
+                  const cmtAuthorIsAdmin = (typeof isForumAuthorAdminAccount === 'function') ? isForumAuthorAdminAccount(cmt.author, cmt.authorName, cmt.authorUsername) : false;
+                  const cmtAuthorBanned = (typeof isForumUserBanned === 'function') ? isForumUserBanned(cmt.author, cmt.authorName, cmt.authorUsername) : false;
+                  const canDeleteCmt = isAdmin || cmtIsMine;
+                  return `
                   <div class="reddit-comment-item">
                     <div class="reddit-comment-avatar">${formatAvatarMediaHtml(cmt.authorAvatar, '🪕')}</div>
                     <div class="reddit-comment-body">
-                      <div class="reddit-comment-author-row" style="display: flex; justify-content: space-between; align-items: center;">
-                        <div style="display: flex; gap: 6px; align-items: center;">
+                      <div class="reddit-comment-author-row" style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                        <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
                           <strong>${escapeRedditHtml(cmt.authorName || formatUserHandle(cmt.author))}</strong>
+                          ${cmtAuthorBanned ? `<span style="background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.45); border-radius: 999px; padding: 0 6px; font-size: 10px; font-weight: 700;">🚫 Đã bị Ban</span>` : ''}
                           <span>•</span>
                           <span>${formatRedditTimeAgo(cmt.timestamp)}</span>
                         </div>
-                        <button type="button" style="background: none; border: none; color: #f87171; font-size: 11px; cursor: pointer; opacity: 0.8;" onclick="handleDeleteRedditComment('${post.id}', '${cmt.id}')" title="Xóa bình luận">🗑️</button>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                          ${(isAdmin && !cmtAuthorIsAdmin) ? `<button type="button" style="background: ${cmtAuthorBanned ? 'rgba(34, 197, 94, 0.16)' : 'rgba(239, 68, 68, 0.16)'}; border: 1px solid ${cmtAuthorBanned ? 'rgba(34, 197, 94, 0.4)' : 'rgba(239, 68, 68, 0.4)'}; border-radius: 6px; color: ${cmtAuthorBanned ? '#86efac' : '#fca5a5'}; font-size: 10px; cursor: pointer; padding: 2px 6px; font-weight: 700;" onclick="handleToggleBanByComment('${post.id}', '${cmt.id}')" title="${cmtAuthorBanned ? 'Bỏ Ban người dùng' : 'Ban người dùng'}">${cmtAuthorBanned ? '🔓 Bỏ Ban' : '🚫 Ban'}</button>` : ''}
+                          ${canDeleteCmt ? `<button type="button" style="background: none; border: none; color: #f87171; font-size: 11px; cursor: pointer; opacity: 0.85;" onclick="handleDeleteRedditComment('${post.id}', '${cmt.id}')" title="Xóa bình luận">🗑️</button>` : ''}
+                        </div>
                       </div>
                       <div class="reddit-comment-text" style="white-space: pre-line;">${escapeRedditHtml(cmt.text)}</div>
                       <div class="reddit-comment-actions">
                         <span class="reddit-comment-action-link" onclick="handleLikeRedditComment('${post.id}', '${cmt.id}')">▲ ${cmt.upvotes || 1}</span>
-                        <span class="reddit-comment-action-link" onclick="document.getElementById('inpRedditComment_${post.id}').focus()">Trả lời</span>
+                        <span class="reddit-comment-action-link" onclick="if(typeof requireForumLoginForAction==='function' && !requireForumLoginForAction()) return; const el=document.getElementById('inpRedditComment_${post.id}'); if(el) el.focus();">Trả lời</span>
                         <span class="reddit-comment-action-link" onclick="handleShareRedditPost('${post.id}')">Chia sẻ</span>
                       </div>
                     </div>
                   </div>
-                `).join('')}
+                `; }).join('')}
               </div>
             </div>
 
@@ -15025,6 +15306,7 @@ function getInitialDefaultRedditPosts() {
 
     /* Upvote / Downvote */
     function handleRedditVote(postId, direction) {
+      if (typeof requireForumLoginForAction === 'function' && !requireForumLoginForAction()) return;
       const posts = getAllRedditPosts();
       const post = posts.find(p => p.id === postId);
       if (!post) return;
@@ -15049,6 +15331,7 @@ function getInitialDefaultRedditPosts() {
 
     /* Tham gia / Theo dõi chuyên mục */
     function toggleRedditJoin(postId, subreddit) {
+      if (typeof requireForumLoginForAction === 'function' && !requireForumLoginForAction()) return;
       const posts = getAllRedditPosts();
       const post = posts.find(p => p.id === postId);
       if (!post) return;
@@ -15076,6 +15359,11 @@ function getInitialDefaultRedditPosts() {
     /* Đăng bài viết mới lên Diễn Đàn MIT */
     function handleCreateRedditPost(e) {
       if (e) e.preventDefault();
+      if (typeof requireForumLoginForAction === 'function' && !requireForumLoginForAction()) return;
+      if (typeof isCurrentActiveUserBannedFromForum === 'function' && isCurrentActiveUserBannedFromForum()) {
+        alert('🚫 Tài khoản của bạn đã bị Admin cấm (Ban) nên không thể đăng bài trên diễn đàn!');
+        return;
+      }
       const inpTitle = document.getElementById('inpRedditPostTitle');
       const inpContent = document.getElementById('inpRedditPostContent');
       const inpAuthor = document.getElementById('inpRedditPostAuthor');
@@ -15100,6 +15388,7 @@ function getInitialDefaultRedditPosts() {
       const authorHandle = formatUserHandle(authorDisplayName.replace(/\s+/g, '_').toLowerCase());
       const authorAvatar = (activeUser && activeUser.avatar) ? activeUser.avatar : '🪕';
       const authorBadge = 'Thành viên Diễn đàn';
+      const authorUsername = (activeUser && activeUser.username && activeUser.username !== 'guest') ? activeUser.username : '';
 
       const rawSub = selSub ? selSub.value : 'dantranh';
       const subreddit = normalizeSubredditKey(rawSub);
@@ -15114,6 +15403,7 @@ function getInitialDefaultRedditPosts() {
         subredditAvatar: subIcon,
         author: authorHandle,
         authorName: authorDisplayName,
+        authorUsername: authorUsername,
         authorRole: 'Thành viên Diễn đàn',
         authorBadge: authorBadge,
         authorAvatar: authorAvatar,
@@ -15145,9 +15435,19 @@ function getInitialDefaultRedditPosts() {
       resetComposerFontStyle();
       closeRedditComposer();
 
+      window.redditCurrentSort = 'new';
+      if (window.redditCurrentSubreddit && window.redditCurrentSubreddit !== 'all' && normalizeSubredditKey(window.redditCurrentSubreddit) !== subreddit) {
+        if (typeof filterBySubreddit === 'function') {
+          filterBySubreddit('all');
+        } else {
+          renderRedditFeed();
+        }
+      } else {
+        renderRedditFeed();
+      }
       renderRedditRecentPosts();
-      renderRedditFeed();
       if (typeof updateForumRealStats === 'function') updateForumRealStats();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
 
       if (typeof showActionToast === 'function') {
         showActionToast('Đã đăng bài viết lên Diễn đàn Đàn Tranh thành công! 🎉');
@@ -15159,6 +15459,11 @@ function getInitialDefaultRedditPosts() {
     /* Thêm bình luận */
     function handleAddRedditComment(e, postId) {
       if (e) e.preventDefault();
+      if (typeof requireForumLoginForAction === 'function' && !requireForumLoginForAction()) return;
+      if (typeof isCurrentActiveUserBannedFromForum === 'function' && isCurrentActiveUserBannedFromForum()) {
+        alert('🚫 Tài khoản của bạn đã bị Admin cấm (Ban) nên không thể bình luận hoặc đăng bài trên diễn đàn!');
+        return;
+      }
       const inp = document.getElementById('inpRedditComment_' + postId);
       const inpAuthor = document.getElementById('inpRedditCommentAuthor_' + postId);
       if (!inp || !inp.value.trim()) return;
@@ -15175,6 +15480,7 @@ function getInitialDefaultRedditPosts() {
 
       const authorHandle = formatUserHandle(authorDisplayName.replace(/\s+/g, '_').toLowerCase());
       const authorAvatar = (activeUser && activeUser.avatar) ? activeUser.avatar : '🪕';
+      const authorUsername = (activeUser && activeUser.username && activeUser.username !== 'guest') ? activeUser.username : '';
 
       const posts = getAllRedditPosts();
       const post = posts.find(p => p.id === postId);
@@ -15185,6 +15491,7 @@ function getInitialDefaultRedditPosts() {
         id: 'cmt_' + Date.now(),
         author: authorHandle,
         authorName: authorDisplayName,
+        authorUsername: authorUsername,
         authorAvatar: authorAvatar,
         timestamp: Date.now(),
         text: inp.value.trim(),
@@ -15208,6 +15515,7 @@ function getInitialDefaultRedditPosts() {
 
     /* Chia sẻ bài viết Diễn Đàn MIT */
     function handleShareRedditPost(postId) {
+      if (typeof requireForumLoginForAction === 'function' && !requireForumLoginForAction()) return;
       const shareUrl = window.location.origin + window.location.pathname + '#forum?post=' + postId;
       try {
         if (navigator.clipboard) {
@@ -15259,6 +15567,7 @@ function getInitialDefaultRedditPosts() {
 
     /* Nút Clear xóa danh sách bài viết gần đây */
     function clearRedditRecentPosts() {
+      if (typeof requireForumLoginForAction === 'function' && !requireForumLoginForAction()) return;
       const container = document.getElementById('redditRecentPostsList');
       if (container) {
         container.innerHTML = '<div style="font-size: 13px; color: #818384; padding: 8px 0;">Đã xóa bài viết gần đây.</div>';
@@ -15348,6 +15657,7 @@ function getInitialDefaultRedditPosts() {
     // MODAL LỊCH ĐĂNG BÀI & KẾ HOẠCH DIỄN ĐÀN (YÊU CẦU 3)
     // =========================================================
     function openForumScheduleModal() {
+      if (typeof requireForumLoginForAction === 'function' && !requireForumLoginForAction()) return;
       const modal = document.getElementById('mitPostingScheduleModal');
       if (modal) {
         modal.style.display = 'flex';
