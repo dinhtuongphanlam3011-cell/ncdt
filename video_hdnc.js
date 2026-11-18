@@ -940,6 +940,7 @@
     setTimeout(function () {
       closeAdminVideoUploadModal();
       renderAdminVideoTable();
+      renderPublicInstrumentVideos();
 
       var btnSubmit = document.getElementById('btnAdminSubmitUpload');
       if (btnSubmit) btnSubmit.disabled = false;
@@ -971,6 +972,7 @@
       var filtered = videos.filter(function (v) { return v.id !== videoId; });
       saveAllAdminVideos(filtered);
       renderAdminVideoTable();
+      renderPublicInstrumentVideos();
 
       if (typeof window.showActionToast === 'function') {
         window.showActionToast('✓ Đã xóa video thành công!');
@@ -1093,6 +1095,190 @@
   }
 
   // =========================================================================
+  // 11B. HIỂN THỊ KHO VIDEO HƯỚNG DẪN CHỈ TRONG TAB NHẠC CỤ (#sectionHdncTutorials)
+  // =========================================================================
+  var publicFilterInst = 'all';
+  var publicFilterCat = 'all';
+
+  function buildInstrumentFilterMeta(allVideos) {
+    var counts = { all: allVideos.length };
+    var seen = {};
+    var items = [];
+
+    allVideos.forEach(function (v) {
+      var id = v.instrumentId || 'dantranh';
+      counts[id] = (counts[id] || 0) + 1;
+      if (!seen[id]) {
+        seen[id] = true;
+        items.push({
+          id: id,
+          name: v.instrumentName || 'Nhạc cụ',
+          icon: v.instrumentIcon || '🪕'
+        });
+      }
+    });
+
+    if (publicFilterInst !== 'all' && !seen[publicFilterInst]) {
+      var ref = ALL_INSTRUMENTS_REF.find(function (i) { return i.id === publicFilterInst; });
+      items.unshift({
+        id: publicFilterInst,
+        name: ref ? ref.name : publicFilterInst,
+        icon: ref ? ref.icon : '🪕'
+      });
+      counts[publicFilterInst] = 0;
+    }
+
+    return { counts: counts, items: items };
+  }
+
+  function renderPublicInstrumentVideos() {
+    var grid = document.getElementById('hdncVideoGrid');
+    if (!grid) return;
+
+    var uploadBtn = document.getElementById('btnPublicHdncUpload');
+    if (uploadBtn) {
+      uploadBtn.style.display = checkAdminPermission() ? 'inline-flex' : 'none';
+    }
+
+    var allVideos = getAllAdminVideos();
+
+    // 1. Render bộ lọc Nhạc Cụ (#hdncInstFilterBar)
+    var instBar = document.getElementById('hdncInstFilterBar');
+    if (instBar) {
+      var instMeta = buildInstrumentFilterMeta(allVideos);
+      var instHtml = [
+        '<button type="button" class="hdnc-pill-btn' + (publicFilterInst === 'all' ? ' active' : '') + '" onclick="filterHdncByInstrument(\'all\')">',
+        '  <span>Tất cả</span> <span class="hdnc-pill-count">' + (instMeta.counts.all || 0) + '</span>',
+        '</button>'
+      ];
+      instMeta.items.forEach(function (item) {
+        var activeCls = (publicFilterInst === item.id) ? ' active' : '';
+        instHtml.push(
+          '<button type="button" class="hdnc-pill-btn' + activeCls + '" onclick="filterHdncByInstrument(\'' + escapeHtml(item.id) + '\')">',
+          '  <span>' + escapeHtml(item.icon) + ' ' + escapeHtml(item.name) + '</span> <span class="hdnc-pill-count">' + (instMeta.counts[item.id] || 0) + '</span>',
+          '</button>'
+        );
+      });
+      instBar.innerHTML = instHtml.join('');
+    }
+
+    // 2. Render bộ lọc Chủ Đề (#hdncCatFilterBar)
+    var catBar = document.getElementById('hdncCatFilterBar');
+    if (catBar) {
+      var instScopedVideos = allVideos.filter(function (v) {
+        return publicFilterInst === 'all' || v.instrumentId === publicFilterInst;
+      });
+      var catCounts = { all: instScopedVideos.length };
+      instScopedVideos.forEach(function (v) {
+        var c = v.category || 'usage';
+        catCounts[c] = (catCounts[c] || 0) + 1;
+      });
+
+      catBar.innerHTML = ADMIN_VIDEO_CATEGORIES.map(function (c) {
+        var activeCls = (publicFilterCat === c.id) ? ' active' : '';
+        return (
+          '<button type="button" class="hdnc-pill-btn' + activeCls + '" onclick="filterHdncByCategory(\'' + escapeHtml(c.id) + '\')">' +
+            '<span>' + c.icon + ' ' + escapeHtml(c.name) + '</span>' +
+            '<span class="hdnc-pill-count">' + (catCounts[c.id] || 0) + '</span>' +
+          '</button>'
+        );
+      }).join('');
+    }
+
+    // 3. Lọc danh sách video cần hiển thị
+    var filtered = allVideos.filter(function (v) {
+      if (publicFilterInst !== 'all' && v.instrumentId !== publicFilterInst) return false;
+      if (publicFilterCat !== 'all' && v.category !== publicFilterCat) return false;
+      return true;
+    });
+
+    if (filtered.length === 0) {
+      grid.innerHTML = [
+        '<div style="grid-column: 1 / -1; text-align: center; padding: 40px 20px; background: rgba(0, 0, 0, 0.28); border: 1px dashed rgba(239, 196, 123, 0.3); border-radius: 16px; color: #d8cbb8;">',
+        '  <div style="font-size: 34px; margin-bottom: 8px;">🎬</div>',
+        '  <div style="font-size: 15px; font-weight: 700; color: #ffea9f;">Chưa có video hướng dẫn riêng cho lựa chọn này</div>',
+        '  <div style="font-size: 12.5px; color: #b8a894; margin: 6px 0 14px;">Bạn có thể xem toàn bộ ' + allVideos.length + ' video hướng dẫn nhạc cụ dân tộc trong kho.</div>',
+        '  <button type="button" class="hdnc-btn-secondary" onclick="filterHdncByInstrument(\'all\'); filterHdncByCategory(\'all\');">🌐 Xem tất cả video (' + allVideos.length + ')</button>',
+        '</div>'
+      ].join('');
+      return;
+    }
+
+    // 4. Render lưới khung video 16:9 bo góc kèm thời lượng góc dưới phải
+    grid.innerHTML = filtered.map(function (v) {
+      var catObj = ADMIN_VIDEO_CATEGORIES.find(function (c) { return c.id === v.category; });
+      var catName = catObj ? catObj.name : (v.categoryName || 'Hướng dẫn');
+      var instLabel = v.instrumentName || 'Nhạc cụ dân tộc';
+      var iconLabel = v.instrumentIcon || '🪕';
+
+      var mediaHtml = '';
+      if (v.thumbnailUrl) {
+        mediaHtml = '<img class="hdnc-yt-thumb-media" src="' + escapeHtml(v.thumbnailUrl) + '" alt="' + escapeHtml(v.title) + '" style="opacity: 0; transition: opacity 0.25s ease;" onload="this.style.opacity=\'1\'" onerror="this.style.display=\'none\'" />';
+      } else if (v.videoUrl && v.videoUrl.indexOf('indexeddb://') !== 0) {
+        var safeUrl = (v.videoUrl.indexOf('%') === -1) ? encodeURI(v.videoUrl) : v.videoUrl;
+        mediaHtml = '<video class="hdnc-yt-thumb-media" src="' + escapeHtml(safeUrl) + '" preload="metadata" muted playsinline style="opacity: 0; transition: opacity 0.25s ease;" onloadeddata="try{this.currentTime=Math.min(1.5,(this.duration||3)*0.25);}catch(e){this.style.opacity=\'1\';}" onseeked="this.style.opacity=\'1\'" onerror="this.style.display=\'none\'"></video>';
+      }
+
+      return [
+        '<article class="hdnc-yt-card" onclick="openAdminVideoPreview(\'' + escapeHtml(v.id) + '\')" title="' + escapeHtml(v.title) + '">',
+        '  <div class="hdnc-yt-thumb-frame">',
+        '    <div class="hdnc-yt-fallback-art">',
+        '      <div class="hdnc-yt-fallback-left">',
+        '        <div class="hdnc-yt-fallback-brand"><span>🎵 HERITUNE</span> <span>•</span> <span>VIDEO</span></div>',
+        '        <div class="hdnc-yt-fallback-heading">' + escapeHtml(instLabel) + '</div>',
+        '        <div class="hdnc-yt-fallback-tags">',
+        '          <span class="hdnc-yt-fallback-tag">' + escapeHtml(iconLabel) + ' ' + escapeHtml(instLabel) + '</span>',
+        '          <span class="hdnc-yt-fallback-tag">' + escapeHtml(catName) + '</span>',
+        '        </div>',
+        '      </div>',
+        '      <div class="hdnc-yt-fallback-right">',
+        '        <span class="hdnc-yt-fallback-icon">' + escapeHtml(iconLabel) + '</span>',
+        '      </div>',
+        '    </div>',
+             mediaHtml,
+        '    <div class="hdnc-yt-play-hover"><div class="hdnc-yt-play-circle">▶</div></div>',
+        '    <span class="hdnc-yt-duration-badge">' + escapeHtml(v.duration || '--:--') + '</span>',
+        '  </div>',
+        '  <div class="hdnc-yt-card-info">',
+        '    <div class="hdnc-yt-card-title">' + escapeHtml(v.title) + '</div>',
+        '    <div class="hdnc-yt-card-meta">',
+        '      <span>' + escapeHtml(iconLabel) + ' ' + escapeHtml(instLabel) + '</span>',
+        '      <span>•</span>',
+        '      <span>' + escapeHtml(catName) + '</span>',
+        '    </div>',
+        '  </div>',
+        '</article>'
+      ].join('');
+    }).join('');
+  }
+
+  function filterHdncByInstrument(instId) {
+    publicFilterInst = instId || 'all';
+    renderPublicInstrumentVideos();
+  }
+
+  function filterHdncByCategory(catId) {
+    publicFilterCat = catId || 'all';
+    renderPublicInstrumentVideos();
+  }
+
+  function scrollToHdncSection() {
+    renderPublicInstrumentVideos();
+    var section = document.getElementById('sectionHdncTutorials');
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  function syncHdncWithCurrentStageInstrument() {
+    var activeInst = window.currentActiveInstrument || 'dantranh';
+    publicFilterInst = activeInst;
+    publicFilterCat = 'all';
+    renderPublicInstrumentVideos();
+    scrollToHdncSection();
+  }
+
+  // =========================================================================
   // 12. KHỞI TẠO VÀ XUẤT CÁC HÀM TOÀN CỤC
   // =========================================================================
   function initAdminVideos() {
@@ -1101,6 +1287,7 @@
     populateInstrumentSelect('adminUploadInstSelect');
 
     renderAdminVideoTable();
+    renderPublicInstrumentVideos();
 
     // Lắng nghe phím ESC để đóng Modal
     window.addEventListener('keydown', function (e) {
@@ -1132,6 +1319,7 @@
     getAllVideos: getAllAdminVideos,
     saveAllVideos: saveAllAdminVideos,
     renderAdminVideoTable: renderAdminVideoTable,
+    renderPublicInstrumentVideos: renderPublicInstrumentVideos,
     openUploadModal: openAdminVideoUploadModal,
     closeUploadModal: closeAdminVideoUploadModal,
     openPreview: openAdminVideoPreview,
@@ -1161,10 +1349,17 @@
   window.searchAdminVideos = searchAdminVideos;
   window.resetAdminVideoFilters = resetAdminVideoFilters;
 
+  window.renderPublicInstrumentVideos = renderPublicInstrumentVideos;
+  window.filterHdncByInstrument = filterHdncByInstrument;
+  window.filterHdncByCategory = filterHdncByCategory;
+  window.syncHdncWithCurrentStageInstrument = syncHdncWithCurrentStageInstrument;
+  window.scrollToHdncSection = scrollToHdncSection;
+  window.openHdncUploadModal = openAdminVideoUploadModal;
+
   // Giữ lại các hook cũ để không gây lỗi nếu có code gọi DanTranhVideoHdnc
   window.DanTranhVideoHdnc = {
     getAllVideos: getAllAdminVideos,
-    renderGrid: renderAdminVideoTable
+    renderGrid: renderPublicInstrumentVideos
   };
 
 })(window);

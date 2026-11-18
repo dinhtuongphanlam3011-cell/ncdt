@@ -615,7 +615,7 @@
         <button type="button" class="inst-action-btn inst-mode-tab-btn" id="btnInstModeInfo" onclick="switchInstrumentSubMode('info')" title="Xem thông tin chi tiết, cấu tạo &amp; lịch sử của cây đàn này">
           <span>📖</span> <span id="lblInstModeInfoTitle">Thông tin &amp; Cấu tạo</span>
         </button>
-        <button type="button" class="inst-action-btn inst-mode-tab-btn" id="btnInstModeTutorial" onclick="switchInstrumentSubMode('hdnc')" title="Xem kho video hướng dẫn kỹ thuật &amp; diễn tấu cây đàn này" style="display: none !important;">
+        <button type="button" class="inst-action-btn inst-mode-tab-btn" id="btnInstModeTutorial" onclick="switchInstrumentSubMode('hdnc')" title="Xem kho video hướng dẫn kỹ thuật &amp; diễn tấu cây đàn này">
           <span>🎬</span> <span id="lblInstModeTutorialTitle">Hướng dẫn</span>
         </button>
       </div>
@@ -985,7 +985,7 @@
             <button type="button" class="lux-gold-cta-btn" style="width:auto; padding:8px 16px; font-size:12.5px;" onclick="openInstrumentResearchTab(window.currentActiveInstrument || 'dantranh')" title="Đi tìm hiểu thông tin cây đàn này">
               📖 Đi tìm hiểu thông tin cây đàn →
             </button>
-            <button type="button" class="lux-gold-cta-btn" style="display: none !important; width:auto; padding:8px 16px; font-size:12.5px; background: rgba(239, 196, 123, 0.15); border: 1px solid rgba(239, 196, 123, 0.45); color: #ffea9f;" onclick="scrollToHdncSection()" title="Cuộn xuống xem các video hướng dẫn nhạc cụ">
+            <button type="button" class="lux-gold-cta-btn" style="width:auto; padding:8px 16px; font-size:12.5px; background: rgba(239, 196, 123, 0.15); border: 1px solid rgba(239, 196, 123, 0.45); color: #ffea9f;" onclick="scrollToHdncSection()" title="Cuộn xuống xem các video hướng dẫn nhạc cụ">
               🎬 Video Hướng Dẫn ↓
             </button>
             <button type="button" id="btnStageToggleFavorite" class="lux-icon-circle-btn lux-heart-btn" onclick="toggleFavoriteCurrentInstrument(this)" title="Lưu nhạc cụ vào danh sách Yêu thích trong Tài khoản">
@@ -1105,9 +1105,42 @@
       </div> <!-- /.stage-card -->
 
       <!-- =========================================================
-           KHU VỰC HƯỚNG DẪN VIDEO CHUYÊN SÂU (ĐÃ TẠM THỜI GỠ BỎ KHỎI GIAO DIỆN)
+           KHU VỰC VIDEO HƯỚNG DẪN & DIỄN TẤU (CHỈ HIỆN TRONG TAB NHẠC CỤ)
            ========================================================= -->
-      <div id="sectionHdncTutorials" style="display: none !important;"></div>
+      <section class="hdnc-section-container" id="sectionHdncTutorials" aria-label="Khu vực Video Hướng Dẫn Nhạc Cụ">
+        <div class="hdnc-section-header">
+          <div class="hdnc-header-left">
+            <div class="hdnc-header-icon-wrap">🎬</div>
+            <div>
+              <h2 class="hdnc-title">VIDEO HƯỚNG DẪN &amp; DIỄN TẤU NHẠC CỤ</h2>
+              <p class="hdnc-subtitle">Kho video hướng dẫn kỹ thuật gảy đàn, phương pháp diễn tấu và nghệ thuật trình diễn nhạc cụ dân tộc Việt Nam</p>
+            </div>
+          </div>
+          <div class="hdnc-header-actions">
+            <button type="button" class="hdnc-btn-secondary" onclick="syncHdncWithCurrentStageInstrument()" title="Lọc các video hướng dẫn của cây đàn đang chọn">
+              <span>🎯</span> <span>Lọc theo cây đàn hiện tại</span>
+            </button>
+            <button type="button" class="hdnc-btn-primary" id="btnPublicHdncUpload" onclick="openHdncUploadModal()" style="display: none;" title="Tải video hướng dẫn mới lên hệ thống (Admin)">
+              <span>➕</span> <span>Tải Video Lên</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="hdnc-filters-wrap">
+          <div class="hdnc-filter-row">
+            <div class="hdnc-filter-label">🎵 Nhạc Cụ:</div>
+            <div class="hdnc-pill-group" id="hdncInstFilterBar"></div>
+          </div>
+          <div class="hdnc-filter-row">
+            <div class="hdnc-filter-label">📚 Chủ Đề:</div>
+            <div class="hdnc-pill-group" id="hdncCatFilterBar"></div>
+          </div>
+        </div>
+
+        <div class="hdnc-video-grid" id="hdncVideoGrid">
+          <!-- Rendered dynamically by video_hdnc.js -->
+        </div>
+      </section>
     </main>
   </div> <!-- /tabContentDanTranh -->
 
@@ -4878,6 +4911,9 @@
       if (nameEl) nameEl.textContent = nameVal;
       if (demoTextEl) {
         demoTextEl.textContent = 'Bản tấu (' + nameVal + ')';
+      }
+      if (typeof window.renderPublicInstrumentVideos === 'function') {
+        window.renderPublicInstrumentVideos();
       }
     }
     window.syncInstrumentTaskbarInfo = syncInstrumentTaskbarInfo;
