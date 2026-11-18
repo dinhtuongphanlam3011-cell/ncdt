@@ -12070,13 +12070,25 @@
       if (navTabDanTranh) navTabDanTranh.style.display = "none";
       if (navTabDemoSongs) navTabDemoSongs.style.display = "none";
     }
+    // Lần đầu vào web (chưa tự chọn nhạc cụ nào): chỉ hiện "Chơi nhạc cụ", không gắn sẵn Đàn Tranh
+    var isInstBootPhase = (window.__instBoot === true);
+    var sessionPickedInst = false;
+    try { sessionPickedInst = (sessionStorage.getItem("hasSelectedInstrument") === "true"); } catch (eSess) {}
+    var showGenericInstLabel = isInstBootPhase && !sessionPickedInst;
+    if (!isInstBootPhase) window.userPickedInstrument = true;
+
     var navTabInstText = document.getElementById("navTabInstText");
     var navTabInstIcon = document.getElementById("navTabInstIcon");
     if (navTabInstText) {
-      navTabInstText.textContent = "Chơi " + inst.name + " (3D)";
+      navTabInstText.textContent = showGenericInstLabel ? "Chơi nhạc cụ" : ("Chơi " + inst.name + " (3D)");
     }
     if (navTabInstIcon) {
-      navTabInstIcon.textContent = inst.icon || "🪕";
+      navTabInstIcon.textContent = showGenericInstLabel ? "🎵" : (inst.icon || "🪕");
+    }
+
+    // Cập nhật khu vực video hướng dẫn: chỉ hiện video của đúng nhạc cụ đang chọn
+    if (typeof window.renderPublicInstrumentVideos === "function") {
+      window.renderPublicInstrumentVideos(instId);
     }
 
     var lbl3DInstIcon = document.getElementById("lbl3DInstIcon");
@@ -12820,6 +12832,7 @@
   currentActiveInstrument = "dantranh";
   window.currentActiveInstrument = "dantranh";
   window.hasSelectedInstrument = true;
+  window.__instBoot = true;
   if (typeof switchInstrument === "function") {
     switchInstrument("dantranh");
   }

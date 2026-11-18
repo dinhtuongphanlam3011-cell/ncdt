@@ -294,6 +294,18 @@
     { id: 'dannuoc', name: 'Đàn Nước', icon: '💧' }
   ];
 
+  // Danh sách nhạc cụ dùng để gán video: ưu tiên đúng danh sách (id) của sân khấu Chơi nhạc cụ
+  // để video đăng cho nhạc cụ nào thì hiện đúng ở nhạc cụ đó.
+  function getInstrumentRefList() {
+    var stageList = window.ALL_38_INST_LIST;
+    if (Array.isArray(stageList) && stageList.length) {
+      return stageList.map(function (i) {
+        return { id: i.id, name: i.name, icon: i.icon || '🪕' };
+      });
+    }
+    return ALL_INSTRUMENTS_REF;
+  }
+
   // =========================================================================
   // 3. BỘ LƯU TRỮ VĨNH VIỄN INDEXEDDB CHO VIDEO DUNG LƯỢNG LỚN (UP TO 500MB+)
   // =========================================================================
@@ -464,7 +476,7 @@
 
     var uniqueInsts = {};
     allVideos.forEach(function (v) { if (v.instrumentId) uniqueInsts[v.instrumentId] = true; });
-    if (elInstCount) elInstCount.textContent = Object.keys(uniqueInsts).length + ' / ' + ALL_INSTRUMENTS_REF.length;
+    if (elInstCount) elInstCount.textContent = Object.keys(uniqueInsts).length + ' / ' + getInstrumentRefList().length;
 
     if (elTotalSize) {
       // Ước tính tổng dung lượng kho video
@@ -605,6 +617,7 @@
   var currentEditingId = null;
   var currentSelectedFile = null;
   var currentCapturedThumbDataUrl = '';
+  var currentSelectedDuration = '';
 
   function openAdminVideoUploadModal(videoIdToEdit) {
     if (!checkAdminPermission()) {
@@ -615,6 +628,7 @@
     currentEditingId = videoIdToEdit || null;
     currentSelectedFile = null;
     currentCapturedThumbDataUrl = '';
+    currentSelectedDuration = '';
 
     var overlay = document.getElementById('modalAdminVideoUpload');
     var heading = document.getElementById('adminUploadModalTitle');
@@ -695,9 +709,15 @@
     var sel = document.getElementById(selectElementId);
     if (!sel || sel.options.length > 2) return;
 
-    sel.innerHTML = ALL_INSTRUMENTS_REF.map(function (item) {
+    var optionsHtml = getInstrumentRefList().map(function (item) {
       return '<option value="' + item.id + '">' + item.icon + ' ' + item.name + '</option>';
     }).join('');
+
+    // Ô lọc ở bảng quản trị cần giữ lựa chọn "Tất cả nhạc cụ"
+    if (selectElementId === 'adminFilterInstSelect') {
+      optionsHtml = '<option value="all">🌐 Tất cả nhạc cụ</option>' + optionsHtml;
+    }
+    sel.innerHTML = optionsHtml;
   }
 
   // Xử lý khi Admin chọn tệp video từ máy tính
@@ -732,8 +752,9 @@
     var instSelect = document.getElementById('adminUploadInstSelect');
     if (instSelect) {
       var fn = file.name.toLowerCase();
-      for (var i = 0; i < ALL_INSTRUMENTS_REF.length; i++) {
-        var inst = ALL_INSTRUMENTS_REF[i];
+      var instRefList = getInstrumentRefList();
+      for (var i = 0; i < instRefList.length; i++) {
+        var inst = instRefList[i];
         var cleanName = inst.name.toLowerCase().replace('đàn ', '').replace('sáo ', '').replace('kèn ', '');
         if (fn.indexOf(cleanName) !== -1 || fn.indexOf(inst.id) !== -1) {
           instSelect.value = inst.id;
@@ -758,6 +779,7 @@
       var sec = tempVideo.duration;
       if (sec && isFinite(sec) && sec > 0) {
         var durStr = formatDurationSeconds(sec);
+        currentSelectedDuration = durStr;
         if (durationMeta) {
           durationMeta.textContent = 'Thời lượng: ' + durStr + ' • Kích thước: ' + formatFileSizeBytes(file.size);
         }
@@ -821,7 +843,7 @@
       return;
     }
 
-    var instObj = ALL_INSTRUMENTS_REF.find(function (i) { return i.id === instId; }) || { id: 'dantranh', name: 'Đàn Tranh', icon: '🪕' };
+    var instObj = getInstrumentRefList().find(function (i) { return i.id === instId; }) || { id: 'dantranh', name: 'Đàn Tranh', icon: '🪕' };
     var catObj = ADMIN_VIDEO_CATEGORIES.find(function (c) { return c.id === catId; }) || { id: 'usage', name: 'Hướng dẫn sử dụng' };
 
     var progressWrap = document.getElementById('adminUploadProgressWrap');
@@ -860,6 +882,7 @@
               target.fileSize = formatFileSizeBytes(currentSelectedFile.size);
               target.videoUrl = 'indexeddb://' + target.id;
               target.isPreset = false;
+              if (currentSelectedDuration) target.duration = currentSelectedDuration;
 
               finishSaveAndRefresh(videos, '✓ Đã cập nhật và lưu trữ video thành công!');
             });
@@ -889,7 +912,7 @@
             instrumentIcon: instObj.icon,
             category: catId,
             categoryName: catObj.name,
-            duration: '03:15', // Sẽ được trích xuất động hoặc lưu chuẩn
+            duration: currentSelectedDuration || '--:--', // Trích xuất tự động từ video khi chọn tệp
             fileSize: formatFileSizeBytes(file.size),
             views: 1,
             uploadDate: new Date().toISOString().slice(0, 10),
@@ -1095,121 +1118,63 @@
   }
 
   // =========================================================================
-  // 11B. HIỂN THỊ KHO VIDEO HƯỚNG DẪN CHỈ TRONG TAB NHẠC CỤ (#sectionHdncTutorials)
+  // 11B. KHO VIDEO TRONG TAB CHƠI NHẠC CỤ (#sectionHdncTutorials)
+  // Chỉ hiện video ĐÃ ĐĂNG (Admin thêm ở Video Manager) của đúng nhạc cụ đang chọn.
+  // Nhạc cụ chưa có video nào được đăng -> hiện thông báo "đang cố gắng thêm video".
   // =========================================================================
-  var publicFilterInst = 'all';
-  var publicFilterCat = 'all';
+  var INSTRUMENT_ID_ALIASES = { dantiba: 'dantyba', chapi: 'danchapi' };
 
-  function buildInstrumentFilterMeta(allVideos) {
-    var counts = { all: allVideos.length };
-    var seen = {};
-    var items = [];
-
-    allVideos.forEach(function (v) {
-      var id = v.instrumentId || 'dantranh';
-      counts[id] = (counts[id] || 0) + 1;
-      if (!seen[id]) {
-        seen[id] = true;
-        items.push({
-          id: id,
-          name: v.instrumentName || 'Nhạc cụ',
-          icon: v.instrumentIcon || '🪕'
-        });
-      }
-    });
-
-    if (publicFilterInst !== 'all' && !seen[publicFilterInst]) {
-      var ref = ALL_INSTRUMENTS_REF.find(function (i) { return i.id === publicFilterInst; });
-      items.unshift({
-        id: publicFilterInst,
-        name: ref ? ref.name : publicFilterInst,
-        icon: ref ? ref.icon : '🪕'
-      });
-      counts[publicFilterInst] = 0;
-    }
-
-    return { counts: counts, items: items };
+  function normalizeInstrumentId(id) {
+    var key = String(id || '').trim();
+    return INSTRUMENT_ID_ALIASES[key] || key;
   }
 
-  function renderPublicInstrumentVideos() {
+  function getInstrumentMeta(instId) {
+    var id = normalizeInstrumentId(instId);
+    var found = getInstrumentRefList().find(function (i) { return i.id === id; });
+    return found || { id: id, name: 'Nhạc cụ', icon: '🪕' };
+  }
+
+  function getPublishedVideosForInstrument(instId) {
+    var id = normalizeInstrumentId(instId);
+    return getAllAdminVideos().filter(function (v) {
+      if (v.isPreset) return false; // Video mẫu có sẵn trong danh sách nhưng chưa được đăng
+      return normalizeInstrumentId(v.instrumentId) === id;
+    });
+  }
+
+  function renderPublicInstrumentVideos(instIdArg) {
     var grid = document.getElementById('hdncVideoGrid');
     if (!grid) return;
 
-    var uploadBtn = document.getElementById('btnPublicHdncUpload');
-    if (uploadBtn) {
-      uploadBtn.style.display = checkAdminPermission() ? 'inline-flex' : 'none';
+    var activeId = normalizeInstrumentId(instIdArg || window.currentActiveInstrument || 'dantranh');
+    var meta = getInstrumentMeta(activeId);
+    var videos = getPublishedVideosForInstrument(activeId);
+
+    var titleEl = document.getElementById('hdncSectionTitle');
+    if (titleEl) titleEl.textContent = 'VIDEO HƯỚNG DẪN • ' + String(meta.name).toUpperCase();
+    var subEl = document.getElementById('hdncSectionSubtitle');
+    if (subEl) {
+      subEl.textContent = videos.length
+        ? (videos.length + ' video hướng dẫn & diễn tấu của ' + meta.name)
+        : ('Video hướng dẫn & diễn tấu của ' + meta.name);
     }
 
-    var allVideos = getAllAdminVideos();
-
-    // 1. Render bộ lọc Nhạc Cụ (#hdncInstFilterBar)
-    var instBar = document.getElementById('hdncInstFilterBar');
-    if (instBar) {
-      var instMeta = buildInstrumentFilterMeta(allVideos);
-      var instHtml = [
-        '<button type="button" class="hdnc-pill-btn' + (publicFilterInst === 'all' ? ' active' : '') + '" onclick="filterHdncByInstrument(\'all\')">',
-        '  <span>Tất cả</span> <span class="hdnc-pill-count">' + (instMeta.counts.all || 0) + '</span>',
-        '</button>'
-      ];
-      instMeta.items.forEach(function (item) {
-        var activeCls = (publicFilterInst === item.id) ? ' active' : '';
-        instHtml.push(
-          '<button type="button" class="hdnc-pill-btn' + activeCls + '" onclick="filterHdncByInstrument(\'' + escapeHtml(item.id) + '\')">',
-          '  <span>' + escapeHtml(item.icon) + ' ' + escapeHtml(item.name) + '</span> <span class="hdnc-pill-count">' + (instMeta.counts[item.id] || 0) + '</span>',
-          '</button>'
-        );
-      });
-      instBar.innerHTML = instHtml.join('');
-    }
-
-    // 2. Render bộ lọc Chủ Đề (#hdncCatFilterBar)
-    var catBar = document.getElementById('hdncCatFilterBar');
-    if (catBar) {
-      var instScopedVideos = allVideos.filter(function (v) {
-        return publicFilterInst === 'all' || v.instrumentId === publicFilterInst;
-      });
-      var catCounts = { all: instScopedVideos.length };
-      instScopedVideos.forEach(function (v) {
-        var c = v.category || 'usage';
-        catCounts[c] = (catCounts[c] || 0) + 1;
-      });
-
-      catBar.innerHTML = ADMIN_VIDEO_CATEGORIES.map(function (c) {
-        var activeCls = (publicFilterCat === c.id) ? ' active' : '';
-        return (
-          '<button type="button" class="hdnc-pill-btn' + activeCls + '" onclick="filterHdncByCategory(\'' + escapeHtml(c.id) + '\')">' +
-            '<span>' + c.icon + ' ' + escapeHtml(c.name) + '</span>' +
-            '<span class="hdnc-pill-count">' + (catCounts[c.id] || 0) + '</span>' +
-          '</button>'
-        );
-      }).join('');
-    }
-
-    // 3. Lọc danh sách video cần hiển thị
-    var filtered = allVideos.filter(function (v) {
-      if (publicFilterInst !== 'all' && v.instrumentId !== publicFilterInst) return false;
-      if (publicFilterCat !== 'all' && v.category !== publicFilterCat) return false;
-      return true;
-    });
-
-    if (filtered.length === 0) {
+    if (videos.length === 0) {
       grid.innerHTML = [
-        '<div style="grid-column: 1 / -1; text-align: center; padding: 40px 20px; background: rgba(0, 0, 0, 0.28); border: 1px dashed rgba(239, 196, 123, 0.3); border-radius: 16px; color: #d8cbb8;">',
-        '  <div style="font-size: 34px; margin-bottom: 8px;">🎬</div>',
-        '  <div style="font-size: 15px; font-weight: 700; color: #ffea9f;">Chưa có video hướng dẫn riêng cho lựa chọn này</div>',
-        '  <div style="font-size: 12.5px; color: #b8a894; margin: 6px 0 14px;">Bạn có thể xem toàn bộ ' + allVideos.length + ' video hướng dẫn nhạc cụ dân tộc trong kho.</div>',
-        '  <button type="button" class="hdnc-btn-secondary" onclick="filterHdncByInstrument(\'all\'); filterHdncByCategory(\'all\');">🌐 Xem tất cả video (' + allVideos.length + ')</button>',
+        '<div style="grid-column: 1 / -1; text-align: center; padding: 44px 20px; background: rgba(0, 0, 0, 0.28); border: 1px dashed rgba(239, 196, 123, 0.3); border-radius: 16px; color: #d8cbb8;">',
+        '  <div style="font-size: 36px; margin-bottom: 10px;">🎬</div>',
+        '  <div style="font-size: 15.5px; font-weight: 700; color: #ffea9f; line-height: 1.5;">Đội ngũ chúng tôi đang cố gắng thêm video của nhạc cụ này nhanh nhất có thể!</div>',
         '</div>'
       ].join('');
       return;
     }
 
-    // 4. Render lưới khung video 16:9 bo góc kèm thời lượng góc dưới phải
-    grid.innerHTML = filtered.map(function (v) {
+    grid.innerHTML = videos.map(function (v) {
       var catObj = ADMIN_VIDEO_CATEGORIES.find(function (c) { return c.id === v.category; });
       var catName = catObj ? catObj.name : (v.categoryName || 'Hướng dẫn');
-      var instLabel = v.instrumentName || 'Nhạc cụ dân tộc';
-      var iconLabel = v.instrumentIcon || '🪕';
+      var instLabel = v.instrumentName || meta.name;
+      var iconLabel = v.instrumentIcon || meta.icon;
 
       var mediaHtml = '';
       if (v.thumbnailUrl) {
@@ -1252,16 +1217,6 @@
     }).join('');
   }
 
-  function filterHdncByInstrument(instId) {
-    publicFilterInst = instId || 'all';
-    renderPublicInstrumentVideos();
-  }
-
-  function filterHdncByCategory(catId) {
-    publicFilterCat = catId || 'all';
-    renderPublicInstrumentVideos();
-  }
-
   function scrollToHdncSection() {
     renderPublicInstrumentVideos();
     var section = document.getElementById('sectionHdncTutorials');
@@ -1271,10 +1226,6 @@
   }
 
   function syncHdncWithCurrentStageInstrument() {
-    var activeInst = window.currentActiveInstrument || 'dantranh';
-    publicFilterInst = activeInst;
-    publicFilterCat = 'all';
-    renderPublicInstrumentVideos();
     scrollToHdncSection();
   }
 
@@ -1350,8 +1301,6 @@
   window.resetAdminVideoFilters = resetAdminVideoFilters;
 
   window.renderPublicInstrumentVideos = renderPublicInstrumentVideos;
-  window.filterHdncByInstrument = filterHdncByInstrument;
-  window.filterHdncByCategory = filterHdncByCategory;
   window.syncHdncWithCurrentStageInstrument = syncHdncWithCurrentStageInstrument;
   window.scrollToHdncSection = scrollToHdncSection;
   window.openHdncUploadModal = openAdminVideoUploadModal;

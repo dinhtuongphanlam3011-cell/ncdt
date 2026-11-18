@@ -541,8 +541,8 @@
           Trang chủ
         </button>
         <button type="button" class="nav-link tttt-plain-tab" id="navTabDanTranh" onclick="handleHomeInstrumentNavClick(event)" title="Nhấn để mở khu vực Nhạc cụ (Tiếp tục chơi hoặc Đổi nhạc cụ)">
-          <span id="navTabInstIcon">🪕</span>
-          <span id="navTabInstText">Nhạc cụ</span>
+          <span id="navTabInstIcon">🎵</span>
+          <span id="navTabInstText">Chơi nhạc cụ</span>
         </button>
         <button type="button" class="nav-link tttt-plain-tab" id="navTabForum" onclick="switchNavTab('forum')">
           💬 Diễn đàn MIT
@@ -1105,35 +1105,17 @@
       </div> <!-- /.stage-card -->
 
       <!-- =========================================================
-           KHU VỰC VIDEO HƯỚNG DẪN & DIỄN TẤU (CHỈ HIỆN TRONG TAB NHẠC CỤ)
+           KHU VỰC VIDEO HƯỚNG DẪN (CHỈ HIỆN TRONG TAB CHƠI NHẠC CỤ, CHỈ VIDEO CỦA NHẠC CỤ ĐANG CHỌN)
+           Admin thêm video ở: Công cụ Admin → Video Manager
            ========================================================= -->
       <section class="hdnc-section-container" id="sectionHdncTutorials" aria-label="Khu vực Video Hướng Dẫn Nhạc Cụ">
-        <div class="hdnc-section-header">
+        <div class="hdnc-section-header" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">
           <div class="hdnc-header-left">
             <div class="hdnc-header-icon-wrap">🎬</div>
             <div>
-              <h2 class="hdnc-title">VIDEO HƯỚNG DẪN &amp; DIỄN TẤU NHẠC CỤ</h2>
-              <p class="hdnc-subtitle">Kho video hướng dẫn kỹ thuật gảy đàn, phương pháp diễn tấu và nghệ thuật trình diễn nhạc cụ dân tộc Việt Nam</p>
+              <h2 class="hdnc-title" id="hdncSectionTitle">VIDEO HƯỚNG DẪN</h2>
+              <p class="hdnc-subtitle" id="hdncSectionSubtitle">Video hướng dẫn &amp; diễn tấu của nhạc cụ đang chọn</p>
             </div>
-          </div>
-          <div class="hdnc-header-actions">
-            <button type="button" class="hdnc-btn-secondary" onclick="syncHdncWithCurrentStageInstrument()" title="Lọc các video hướng dẫn của cây đàn đang chọn">
-              <span>🎯</span> <span>Lọc theo cây đàn hiện tại</span>
-            </button>
-            <button type="button" class="hdnc-btn-primary" id="btnPublicHdncUpload" onclick="openHdncUploadModal()" style="display: none;" title="Tải video hướng dẫn mới lên hệ thống (Admin)">
-              <span>➕</span> <span>Tải Video Lên</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="hdnc-filters-wrap">
-          <div class="hdnc-filter-row">
-            <div class="hdnc-filter-label">🎵 Nhạc Cụ:</div>
-            <div class="hdnc-pill-group" id="hdncInstFilterBar"></div>
-          </div>
-          <div class="hdnc-filter-row">
-            <div class="hdnc-filter-label">📚 Chủ Đề:</div>
-            <div class="hdnc-pill-group" id="hdncCatFilterBar"></div>
           </div>
         </div>
 
@@ -3474,14 +3456,14 @@
             </a>
           </li>
 
-          <!-- Quản lý Video (Admin Video Manager - Tạm thời ẩn) -->
-          <li class="wp-menu-item-wrap" id="wpMenuItemVideos" style="display: none !important;">
-            <a class="wp-menu-item-link" onclick="switchWpAdminView('videos')" title="Quản lý & Tải lên Video Nhạc Cụ">
+          <!-- Quản lý Video (Admin Video Manager - dành cho Admin chính & Quản trị viên phụ) -->
+          <li class="wp-menu-item-wrap" id="wpMenuItemVideos">
+            <a class="wp-menu-item-link" onclick="switchWpAdminView('videos')" title="Quản lý & Thêm Video Nhạc Cụ">
               <div class="wp-menu-item-inner">
                 <span class="wp-menu-icon">🎬</span>
                 <span class="wp-menu-text">Video Manager</span>
               </div>
-              <span class="wp-menu-badge" id="wpMenuVideosBadge">12</span>
+              <span class="wp-menu-badge" id="wpMenuVideosBadge">0</span>
             </a>
           </li>
 
@@ -3945,19 +3927,19 @@
         </div>
 
         <!-- =========================================================
-             VIEW: QUẢN LÝ VIDEO DÀNH CHO ADMIN (#wpViewVideos - Tạm thời ẩn)
+             VIEW: QUẢN LÝ VIDEO DÀNH CHO ADMIN (#wpViewVideos)
              ========================================================= -->
-        <div id="wpViewVideos" class="wp-view-section" style="display: none !important;">
+        <div id="wpViewVideos" class="wp-view-section" style="display: none;">
           <!-- Card Tiêu đề -->
           <div class="admin-video-header-card">
             <div class="admin-video-header-flex">
               <div>
                 <h1 class="admin-video-heading-title">🎬 Quản Lý Video Hướng Dẫn (Admin Video Studio)</h1>
-                <p class="admin-video-heading-desc">Hệ thống lưu trữ trên Server &amp; Database, hỗ trợ tải video MP4/WebM/MOV, tự động trích xuất thumbnail và phân loại 38 nhạc cụ.</p>
+                <p class="admin-video-heading-desc">Thêm video cho từng nhạc cụ: chọn nhạc cụ khi đăng, video chỉ hiện ở tab Chơi nhạc cụ của đúng nhạc cụ đó. Hỗ trợ MP4/WebM/MOV, tự động trích xuất thumbnail và thời lượng.</p>
               </div>
               <div>
                 <button type="button" class="admin-btn-primary" onclick="openAdminVideoUploadModal()" title="Tải tệp video mới từ máy tính lên hệ thống">
-                  <span>➕</span> <span>Tải Video Mới Lên</span>
+                  <span>➕</span> <span>Thêm Video Mới</span>
                 </button>
               </div>
             </div>
@@ -5144,6 +5126,16 @@
       if (e) {
         if (typeof e.stopPropagation === 'function') e.stopPropagation();
         if (typeof e.preventDefault === 'function') e.preventDefault();
+      }
+      // Lần đầu vào web chưa chọn nhạc cụ nào: mở thẳng bộ lọc để chọn, không tự gán Đàn Tranh
+      let hasPickedInst = window.userPickedInstrument === true;
+      try {
+        if (sessionStorage.getItem('hasSelectedInstrument') === 'true') hasPickedInst = true;
+      } catch (err) {}
+      if (!hasPickedInst) {
+        if (typeof toggleMegaFilterPanel === 'function') toggleMegaFilterPanel(true);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
       }
       openInstrumentChoiceModal();
     }
@@ -16175,6 +16167,8 @@ function getInitialDefaultRedditPosts() {
       if (typeof switchInstrument === 'function') {
         switchInstrument(defaultInst);
       }
+      // Kết thúc giai đoạn khởi động: từ đây mọi lần đổi nhạc cụ đều là do người dùng chọn
+      window.__instBoot = false;
       initDemoInstrumentSelect();
       syncDemoSongWithInstrument('dantranh');
       if (typeof initAutoSavePasswordUI === 'function') initAutoSavePasswordUI();
