@@ -540,8 +540,8 @@
         <button type="button" class="nav-link tttt-plain-tab active" id="navTabEncyclopedia" onclick="switchNavTab('encyclopedia')">
           Trang chủ
         </button>
-        <button type="button" class="nav-link tttt-plain-tab" id="navTabDanTranh" onclick="handleHomeInstrumentNavClick(event)" title="Nhấn để mở khu vực Nhạc cụ (Tiếp tục chơi hoặc Đổi nhạc cụ)">
-          <span id="navTabInstIcon">🎵</span>
+        <button type="button" class="nav-link tttt-plain-tab" id="navTabDanTranh" onclick="handleHomeInstrumentNavClick(event)" title="Nhấn để mở khu vực Chơi nhạc cụ (Tiếp tục chơi hoặc Đổi nhạc cụ)">
+          <span id="navTabInstIcon">🪕</span>
           <span id="navTabInstText">Chơi nhạc cụ</span>
         </button>
         <button type="button" class="nav-link tttt-plain-tab" id="navTabForum" onclick="switchNavTab('forum')">
@@ -643,8 +643,8 @@
           </div>
         </div>
 
-        <button type="button" class="nav-link tttt-plain-tab" id="forumNavBtnInstrument" onclick="handleHomeInstrumentNavClick(event)" title="Khu vực Nhạc cụ: Tiếp tục chơi hoặc Đổi nhạc cụ" style="margin-left: 8px; border-radius: 999px; height: 36px; padding: 0 14px; font-weight: 700; color: #ffea9f; border: 1px solid rgba(239, 196, 123, 0.4); background: rgba(239, 196, 123, 0.1); display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
-          <span>🪕</span> <span>Nhạc cụ</span>
+        <button type="button" class="nav-link tttt-plain-tab" id="forumNavBtnInstrument" onclick="handleHomeInstrumentNavClick(event)" title="Khu vực Chơi nhạc cụ: Tiếp tục chơi hoặc Đổi nhạc cụ" style="margin-left: 8px; border-radius: 999px; height: 36px; padding: 0 14px; font-weight: 700; color: #ffea9f; border: 1px solid rgba(239, 196, 123, 0.4); background: rgba(239, 196, 123, 0.1); display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
+          <span>🪕</span> <span>Chơi nhạc cụ</span>
         </button>
       </div>
 
@@ -1109,13 +1109,18 @@
            Admin thêm video ở: Công cụ Admin → Video Manager
            ========================================================= -->
       <section class="hdnc-section-container" id="sectionHdncTutorials" aria-label="Khu vực Video Hướng Dẫn Nhạc Cụ">
-        <div class="hdnc-section-header" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">
+        <div class="hdnc-section-header">
           <div class="hdnc-header-left">
             <div class="hdnc-header-icon-wrap">🎬</div>
             <div>
               <h2 class="hdnc-title" id="hdncSectionTitle">VIDEO HƯỚNG DẪN</h2>
               <p class="hdnc-subtitle" id="hdncSectionSubtitle">Video hướng dẫn &amp; diễn tấu của nhạc cụ đang chọn</p>
             </div>
+          </div>
+          <div class="hdnc-header-actions">
+            <button type="button" class="hdnc-btn-primary" id="btnPublicHdncUpload" onclick="openAdminVideoUploadModal()" style="display: none;" title="Thêm video hướng dẫn cho nhạc cụ (Admin / Quản trị viên phụ)">
+              <span>➕</span> <span>Thêm Video Nhạc Cụ</span>
+            </button>
           </div>
         </div>
 
@@ -2300,7 +2305,7 @@
           <button type="button" class="btn-inst-choice-action" id="btnInstChoiceContinue" onclick="handleInstrumentChoiceContinue()" style="width: 100%; padding: 13px 18px; border-radius: 12px; background: linear-gradient(135deg, #de194b 0%, #b20e36 50%, #870826 100%); border: 1.5px solid rgba(239, 196, 123, 0.6); color: #ffffff; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 14px; box-shadow: 0 6px 18px rgba(222, 25, 75, 0.35); transition: all 0.2s ease;">
             <span style="font-size: 24px; flex-shrink: 0;">▶️</span>
             <div style="flex: 1; min-width: 0;">
-              <div style="font-size: 15px; font-weight: 800; color: #fff; line-height: 1.25;">Tiếp tục chơi nhạc cụ hiện tại</div>
+              <div id="instChoiceContinueHeading" style="font-size: 15px; font-weight: 800; color: #fff; line-height: 1.25;">Tiếp tục chơi nhạc cụ Đàn Tranh</div>
               <div style="font-size: 12px; color: #ffea9f; margin-top: 2px;">Vào thẳng tab chơi <span id="instChoiceCurrentSubName">Đàn Tranh</span> (3D)</div>
             </div>
             <span style="font-size: 16px; color: #efc47b;">➔</span>
@@ -3490,8 +3495,16 @@
              VIEW 1: CÀI ĐẶT NHẠC CỤ & ÂM THANH
              ========================================================= -->
         <div id="wpViewPosts" class="wp-view-section" style="display: block;">
-          <div class="wp-posts-heading-row" style="margin-bottom: 16px;">
+          <div class="wp-posts-heading-row" style="margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
             <h1 class="wp-posts-title">🎛️ Cài đặt Nhạc Cụ &amp; Âm Thanh</h1>
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <button type="button" class="admin-btn-secondary" onclick="switchWpAdminView('videos')" title="Mở mục Quản Lý Video Nhạc Cụ">
+                <span>🎬</span> <span>Quản Lý Video Nhạc Cụ</span>
+              </button>
+              <button type="button" class="admin-btn-primary" onclick="openAdminVideoUploadModal()" title="Thêm video mới cho từng nhạc cụ">
+                <span>➕</span> <span>Thêm Video Mới</span>
+              </button>
+            </div>
           </div>
 
           <!-- PHẦN 1: CÀI ĐẶT ÂM THANH TỔNG HỆ THỐNG (MASTER AUDIO) -->
@@ -4550,10 +4563,10 @@
           const navTabDanTranh = document.getElementById('navTabDanTranh');
           if (navTabDanTranh) {
             const txt = document.getElementById('navTabInstText');
-            if (txt) txt.textContent = `Nhạc cụ: ${instName}`;
+            if (txt) txt.textContent = 'Chơi nhạc cụ';
             const icn = document.getElementById('navTabInstIcon');
             if (icn) {
-              icn.textContent = instIcon;
+              icn.textContent = '🪕';
               icn.style.display = 'inline';
             }
           }
@@ -4711,10 +4724,10 @@
       if (navTabDanTranh) {
         navTabDanTranh.style.display = 'inline-flex';
         const txt = document.getElementById('navTabInstText');
-        if (txt) txt.textContent = `Nhạc cụ: ${instName}`;
+        if (txt) txt.textContent = 'Chơi nhạc cụ';
         const icn = document.getElementById('navTabInstIcon');
         if (icn) {
-          icn.textContent = instIcon;
+          icn.textContent = '🪕';
           icn.style.display = 'inline';
         }
       }
@@ -5127,16 +5140,6 @@
         if (typeof e.stopPropagation === 'function') e.stopPropagation();
         if (typeof e.preventDefault === 'function') e.preventDefault();
       }
-      // Lần đầu vào web chưa chọn nhạc cụ nào: mở thẳng bộ lọc để chọn, không tự gán Đàn Tranh
-      let hasPickedInst = window.userPickedInstrument === true;
-      try {
-        if (sessionStorage.getItem('hasSelectedInstrument') === 'true') hasPickedInst = true;
-      } catch (err) {}
-      if (!hasPickedInst) {
-        if (typeof toggleMegaFilterPanel === 'function') toggleMegaFilterPanel(true);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        return;
-      }
       openInstrumentChoiceModal();
     }
     window.handleHomeInstrumentNavClick = handleHomeInstrumentNavClick;
@@ -5160,6 +5163,8 @@
 
       const nameEl = document.getElementById('instChoiceCurrentName');
       if (nameEl) nameEl.textContent = instName;
+      const headingEl = document.getElementById('instChoiceContinueHeading');
+      if (headingEl) headingEl.textContent = `Tiếp tục chơi nhạc cụ ${instName}`;
       const subNameEl = document.getElementById('instChoiceCurrentSubName');
       if (subNameEl) subNameEl.textContent = instName;
       const iconEl = document.getElementById('instChoiceCurrentIcon');
@@ -7057,7 +7062,7 @@
       if (navTabDanTranh) {
         navTabDanTranh.style.display = 'inline-flex';
         const txt = document.getElementById('navTabInstText');
-        if (txt) txt.textContent = `Chơi ${activeItem.name} (3D)`;
+        if (txt) txt.textContent = 'Chơi nhạc cụ';
       }
 
       switchNavTab('dantranh');
@@ -7083,7 +7088,7 @@
       if (navTabDanTranh) {
         navTabDanTranh.style.display = 'inline-flex';
         const txt = document.getElementById('navTabInstText');
-        if (txt) txt.textContent = `Chơi ${activeItem.name} (3D)`;
+        if (txt) txt.textContent = 'Chơi nhạc cụ';
       }
 
       if (typeof openInstrumentResearchTab === 'function') {
@@ -9244,6 +9249,9 @@
       const wpMenuItemUsers = document.getElementById('wpMenuItemUsers');
       if (wpMenuItemUsers) {
         wpMenuItemUsers.style.display = isPrimary ? 'block' : 'none';
+      }
+      if (typeof window.renderPublicInstrumentVideos === 'function') {
+        window.renderPublicInstrumentVideos();
       }
 
       if (isGuest) {

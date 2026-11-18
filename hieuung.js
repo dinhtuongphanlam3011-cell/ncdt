@@ -12070,20 +12070,14 @@
       if (navTabDanTranh) navTabDanTranh.style.display = "none";
       if (navTabDemoSongs) navTabDemoSongs.style.display = "none";
     }
-    // Lần đầu vào web (chưa tự chọn nhạc cụ nào): chỉ hiện "Chơi nhạc cụ", không gắn sẵn Đàn Tranh
-    var isInstBootPhase = (window.__instBoot === true);
-    var sessionPickedInst = false;
-    try { sessionPickedInst = (sessionStorage.getItem("hasSelectedInstrument") === "true"); } catch (eSess) {}
-    var showGenericInstLabel = isInstBootPhase && !sessionPickedInst;
-    if (!isInstBootPhase) window.userPickedInstrument = true;
-
+    // Khóa nhãn tab trên thanh điều hướng luôn là "Chơi nhạc cụ" (tên nhạc cụ cụ thể chỉ hiện khi bấm vào modal lựa chọn)
     var navTabInstText = document.getElementById("navTabInstText");
     var navTabInstIcon = document.getElementById("navTabInstIcon");
     if (navTabInstText) {
-      navTabInstText.textContent = showGenericInstLabel ? "Chơi nhạc cụ" : ("Chơi " + inst.name + " (3D)");
+      navTabInstText.textContent = "Chơi nhạc cụ";
     }
     if (navTabInstIcon) {
-      navTabInstIcon.textContent = showGenericInstLabel ? "🎵" : (inst.icon || "🪕");
+      navTabInstIcon.textContent = "🪕";
     }
 
     // Cập nhật khu vực video hướng dẫn: chỉ hiện video của đúng nhạc cụ đang chọn

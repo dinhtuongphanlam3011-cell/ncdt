@@ -399,9 +399,9 @@
   // =========================================================================
   function checkAdminPermission() {
     var u = (typeof window.getActiveUserAccount === 'function') ? window.getActiveUserAccount() : null;
-    if (!u) return false;
+    if (!u || u.username === 'guest' || u.role === 'guest') return false;
     var uname = (u.username || '').toLowerCase().trim();
-    return u.role === 'admin' || uname === 'admin' || uname === 'owner';
+    return u.role === 'admin' || u.isSubAdmin === true || uname === 'admin' || uname === 'owner';
   }
 
   // =========================================================================
@@ -412,29 +412,13 @@
       var raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         var parsed = JSON.parse(raw);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          var map = {};
-          parsed.forEach(function (v) { if (v && v.id) map[v.id] = v; });
-
-          // Cập nhật lại thời lượng và dữ liệu chuẩn của preset nếu có sai lệch
-          DEFAULT_HDNC_VIDEOS.forEach(function (preset) {
-            if (!map[preset.id]) {
-              map[preset.id] = preset;
-              parsed.push(preset);
-            } else if (map[preset.id].isPreset) {
-              // Cập nhật lại thời lượng thực tế
-              map[preset.id].duration = preset.duration;
-              map[preset.id].fileSize = preset.fileSize;
-            }
-          });
-          return parsed;
+        if (Array.isArray(parsed)) {
+          return parsed.filter(function (v) { return v && v.id && !v.isPreset; });
         }
       }
     } catch (e) {}
 
-    // Nạp 12 video thực tế ban đầu
-    saveAllAdminVideos(DEFAULT_HDNC_VIDEOS);
-    return DEFAULT_HDNC_VIDEOS.slice();
+    return [];
   }
 
   function saveAllAdminVideos(list) {
@@ -465,6 +449,9 @@
     var tableBody = document.getElementById('wpAdminVideoTableBody');
     if (!tableBody) return;
 
+    populateInstrumentSelect('adminFilterInstSelect');
+    populateInstrumentSelect('adminUploadInstSelect');
+
     var allVideos = getAllAdminVideos();
 
     // 1. Cập nhật thẻ thống kê tổng quan
@@ -475,12 +462,19 @@
     if (elTotalCount) elTotalCount.textContent = allVideos.length;
 
     var uniqueInsts = {};
-    allVideos.forEach(function (v) { if (v.instrumentId) uniqueInsts[v.instrumentId] = true; });
+    var totalMb = 0;
+    allVideos.forEach(function (v) {
+      if (v.instrumentId) uniqueInsts[v.instrumentId] = true;
+      var sz = String(v.fileSize || '');
+      var num = parseFloat(sz);
+      if (!isNaN(num) && isFinite(num)) {
+        totalMb += (sz.indexOf('GB') !== -1) ? (num * 1024) : num;
+      }
+    });
     if (elInstCount) elInstCount.textContent = Object.keys(uniqueInsts).length + ' / ' + getInstrumentRefList().length;
 
     if (elTotalSize) {
-      // Ước tính tổng dung lượng kho video
-      elTotalSize.textContent = '1.2 GB+';
+      elTotalSize.textContent = totalMb >= 1024 ? ((totalMb / 1024).toFixed(2) + ' GB') : (totalMb.toFixed(1).replace(/\.0$/, '') + ' MB');
     }
 
     // Cập nhật badge trên menu sidebar nếu có
@@ -506,8 +500,8 @@
         '<tr>',
         '  <td colspan="7" style="text-align: center; padding: 48px 20px; color: #a89a88;">',
         '    <div style="font-size: 32px; margin-bottom: 8px;">🎬</div>',
-        '    <div style="font-weight: 700; color: #ffea9f; font-size: 15px;">Chưa có video nào phù hợp với bộ lọc</div>',
-        '    <div style="font-size: 12.5px; margin-top: 4px;">Nhấn nút <strong>"➕ Tải Video Lên"</strong> phía trên để đưa video mới vào hệ thống.</div>',
+        '    <div style="font-weight: 700; color: #ffea9f; font-size: 15px;">' + (allVideos.length === 0 ? 'Chưa có video nào được đăng tải' : 'Chưa có video nào phù hợp với bộ lọc') + '</div>',
+        '    <div style="font-size: 12.5px; margin-top: 4px;">Nhấn nút <strong>"➕ Thêm Video Mới"</strong> phía trên để đăng video cho từng nhạc cụ.</div>',
         '  </td>',
         '</tr>'
       ].join('');
@@ -707,8 +701,9 @@
 
   function populateInstrumentSelect(selectElementId) {
     var sel = document.getElementById(selectElementId);
-    if (!sel || sel.options.length > 2) return;
+    if (!sel) return;
 
+    var prevVal = sel.value;
     var optionsHtml = getInstrumentRefList().map(function (item) {
       return '<option value="' + item.id + '">' + item.icon + ' ' + item.name + '</option>';
     }).join('');
@@ -718,6 +713,7 @@
       optionsHtml = '<option value="all">🌐 Tất cả nhạc cụ</option>' + optionsHtml;
     }
     sel.innerHTML = optionsHtml;
+    if (prevVal) sel.value = prevVal;
   }
 
   // Xử lý khi Admin chọn tệp video từ máy tính
@@ -1147,6 +1143,11 @@
     var grid = document.getElementById('hdncVideoGrid');
     if (!grid) return;
 
+    var uploadBtn = document.getElementById('btnPublicHdncUpload');
+    if (uploadBtn) {
+      uploadBtn.style.display = checkAdminPermission() ? 'inline-flex' : 'none';
+    }
+
     var activeId = normalizeInstrumentId(instIdArg || window.currentActiveInstrument || 'dantranh');
     var meta = getInstrumentMeta(activeId);
     var videos = getPublishedVideosForInstrument(activeId);
@@ -1164,7 +1165,7 @@
       grid.innerHTML = [
         '<div style="grid-column: 1 / -1; text-align: center; padding: 44px 20px; background: rgba(0, 0, 0, 0.28); border: 1px dashed rgba(239, 196, 123, 0.3); border-radius: 16px; color: #d8cbb8;">',
         '  <div style="font-size: 36px; margin-bottom: 10px;">🎬</div>',
-        '  <div style="font-size: 15.5px; font-weight: 700; color: #ffea9f; line-height: 1.5;">Đội ngũ chúng tôi đang cố gắng thêm video của nhạc cụ này nhanh nhất có thể!</div>',
+        '  <div style="font-size: 15.5px; font-weight: 700; color: #ffea9f; line-height: 1.5;">Đội ngũ tôi đang cố gắng thêm vid của nhạc cụ này nhanh nhất có thể</div>',
         '</div>'
       ].join('');
       return;
