@@ -4355,6 +4355,14 @@
 
       <div class="admin-preview-video-wrap hdnc-player-video-wrap">
         <video id="adminPreviewVideoPlayer" class="admin-preview-video-player" controls playsinline></video>
+        <iframe id="adminPreviewIframePlayer" style="display: none; width: 100%; height: 100%; min-height: 400px; border: none; background: #000;" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>
+        <div id="adminPreviewCloudLoader" style="display: none; position: absolute; inset: 0; background: rgba(12, 6, 4, 0.92); flex-direction: column; align-items: center; justify-content: center; gap: 12px; z-index: 6; color: #ffea9f; text-align: center; padding: 20px;">
+          <div style="font-size: 28px;">☁️</div>
+          <div id="adminPreviewCloudLoaderText" style="font-size: 14px; font-weight: 700;">Đang tải video từ Cloud Server...</div>
+          <div style="width: min(320px, 80%); height: 8px; background: rgba(255,255,255,0.12); border-radius: 999px; overflow: hidden;">
+            <div id="adminPreviewCloudLoaderBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #e8a742, #10b981); transition: width 0.2s ease;"></div>
+          </div>
+        </div>
       </div>
 
       <div class="admin-preview-body hdnc-player-info-body">
@@ -4399,6 +4407,14 @@
             <div class="admin-dropzone-sub" id="adminDropzoneSub">Hệ thống hỗ trợ tệp dung lượng lớn, tự động chụp thumbnail &amp; phân loại nhạc cụ</div>
           </div>
           <input type="file" id="adminVideoFileInput" accept="video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov" style="display: none;" onchange="handleAdminVideoFileChosen(event)" />
+        </div>
+
+        <!-- 1B. Hoặc dán Link Video trực tiếp (YouTube, Google Drive, Cloudinary, MP4 URL) -->
+        <div class="admin-form-group">
+          <label class="admin-form-label" for="adminUploadVideoUrl">
+            <span>🔗</span> <span>Hoặc dán Link Video trực tiếp (YouTube, Google Drive, Cloudinary, MP4 URL):</span>
+          </label>
+          <input type="url" id="adminUploadVideoUrl" class="admin-form-input" placeholder="https://www.youtube.com/watch?v=... hoặc https://.../video.mp4" oninput="if(typeof handleAdminVideoUrlChanged==='function') handleAdminVideoUrlChanged(this.value)" />
         </div>
 
         <!-- 2. Preview Thumbnail & Snapshot tự động -->
@@ -11020,15 +11036,41 @@
 
     function adminTestCloudConnection() {
       if (!window.DanTranhCloudSync) return;
-      alert('⚡ Đang kiểm tra kết nối Realtime Cloud...\n✅ Kết nối thành công! Hệ thống đồng bộ âm thanh & thông báo đang hoạt động hoàn hảo.');
+      const badge = document.getElementById('cloudStatusBadge');
+      if (badge) badge.innerHTML = '<span>⏳</span> <span>Đang kiểm tra kết nối máy chủ Cloud...</span>';
+      window.DanTranhCloudSync.triggerSyncNow().then(function () {
+        const health = (typeof window.DanTranhCloudSync.getCloudHealth === 'function') ? window.DanTranhCloudSync.getCloudHealth() : {};
+        if (health && health.lastError) {
+          if (badge) badge.innerHTML = '<span>⚠️</span> <span>Lỗi máy chủ: ' + escapeHtml(health.lastError) + '</span>';
+          alert('⚠️ Kiểm tra kết nối Cloud Relay gặp lỗi:\n' + health.lastError);
+        } else {
+          if (badge) badge.innerHTML = '<span>🟢</span> <span>Realtime Cloud Đang Hoạt Động</span>';
+          alert('✅ Kết nối máy chủ Cloud Relay thành công!\nDữ liệu video, bài viết diễn đàn và thông báo đang đồng bộ giữa các máy.');
+        }
+      });
     }
     window.adminTestCloudConnection = adminTestCloudConnection;
 
     function adminTriggerManualCloudSync() {
-      if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.triggerSyncNow === 'function') {
-        window.DanTranhCloudSync.triggerSyncNow();
-        alert('🔄 Đã kích hoạt đồng bộ thủ công dữ liệu Cloud và làm mới toàn bộ nốt âm thanh / thông báo!');
-      }
+      if (!window.DanTranhCloudSync) return;
+      const badge = document.getElementById('cloudStatusBadge');
+      if (badge) badge.innerHTML = '<span>🔄</span> <span>Đang đẩy và tải đồng bộ dữ liệu Cloud...</span>';
+      const pushPromise = (typeof window.DanTranhCloudSync.pushAllLocalDataToCloud === 'function')
+        ? window.DanTranhCloudSync.pushAllLocalDataToCloud()
+        : Promise.resolve({ ok: true });
+      pushPromise.then(function (pushRes) {
+        return window.DanTranhCloudSync.triggerSyncNow().then(function () {
+          const health = (typeof window.DanTranhCloudSync.getCloudHealth === 'function') ? window.DanTranhCloudSync.getCloudHealth() : {};
+          if ((pushRes && pushRes.ok === false) || (health && health.lastError)) {
+            const errText = (health && health.lastError) || 'Lỗi đẩy dữ liệu lên Cloud Relay';
+            if (badge) badge.innerHTML = '<span>⚠️</span> <span>' + escapeHtml(errText) + '</span>';
+            alert('⚠️ Đồng bộ có lỗi máy chủ:\n' + errText);
+          } else {
+            if (badge) badge.innerHTML = '<span>🟢</span> <span>Realtime Cloud Đang Hoạt Động</span>';
+            alert('✅ Đã đồng bộ xong toàn bộ dữ liệu (Video, Diễn đàn, Thông báo, Tài khoản) lên Cloud và làm mới từ máy chủ!');
+          }
+        });
+      });
     }
     window.adminTriggerManualCloudSync = adminTriggerManualCloudSync;
 

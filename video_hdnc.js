@@ -422,17 +422,19 @@
   }
 
   function saveAllAdminVideos(list) {
-    if (!Array.isArray(list)) return;
+    if (!Array.isArray(list)) return Promise.resolve({ ok: false, error: 'Invalid list' });
+    var cleanList = list.filter(function (v) { return v && v.id && !v.isPreset; });
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cleanList));
     } catch (e) {
       console.warn('[VideoManager] Không thể lưu vào localStorage:', e);
     }
 
     // Đẩy lên Server Cloud Relay để đồng bộ tất cả các thiết bị khác
     if (window.DanTranhCloudSync && typeof window.DanTranhCloudSync.syncHdncVideosToCloud === 'function') {
-      window.DanTranhCloudSync.syncHdncVideosToCloud(list);
+      return Promise.resolve(window.DanTranhCloudSync.syncHdncVideosToCloud(cleanList));
     }
+    return Promise.resolve({ ok: false, error: 'Chưa nạp CloudSync' });
   }
 
   // =========================================================================
@@ -513,9 +515,12 @@
       var catObj = ADMIN_VIDEO_CATEGORIES.find(function (c) { return c.id === v.category; });
       var catName = catObj ? (catObj.icon + ' ' + catObj.name) : (v.categoryName || 'Hướng dẫn');
 
-      var storageLabel = v.isPreset 
-        ? '<span class="admin-source-badge server">📁 Server video_hdnc</span>'
-        : '<span class="admin-source-badge cloud">☁️ Database &amp; Storage</span>';
+      var isRemoteUrl = v.videoUrl && /^https?:\/\//i.test(v.videoUrl);
+      var storageLabel = isRemoteUrl
+        ? '<span class="admin-source-badge cloud">🌐 Link Cloud URL</span>'
+        : (v.cloudVideoRef
+          ? '<span class="admin-source-badge server">☁️ Đã đồng bộ Cloud</span>'
+          : '<span class="admin-source-badge cloud">💾 Lưu cục bộ</span>');
 
       var thumbHtml = v.thumbnailUrl 
         ? '<img class="admin-table-thumb-img" src="' + escapeHtml(v.thumbnailUrl) + '" alt="' + escapeHtml(v.title) + '" />'
@@ -571,16 +576,57 @@
   function captureVideoThumbnail(videoElement) {
     try {
       var canvas = document.createElement('canvas');
-      var w = videoElement.videoWidth || 640;
-      var h = videoElement.videoHeight || 360;
-      canvas.width = Math.min(640, w);
-      canvas.height = Math.round(canvas.width * (h / w)) || 360;
+      var w = videoElement.videoWidth || 320;
+      var h = videoElement.videoHeight || 180;
+      canvas.width = Math.min(320, w);
+      canvas.height = Math.round(canvas.width * (h / w)) || 180;
       var ctx = canvas.getContext('2d');
       ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-      return canvas.toDataURL('image/jpeg', 0.85);
+      return canvas.toDataURL('image/jpeg', 0.62);
     } catch (e) {
       console.warn('Không thể chụp thumbnail từ video canvas:', e);
       return '';
+    }
+  }
+
+  function extractYouTubeId(url) {
+    if (!url || typeof url !== 'string') return null;
+    var m = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/i);
+    return m ? m[1] : null;
+  }
+
+  function extractGoogleDriveFileId(url) {
+    if (!url || typeof url !== 'string') return null;
+    var m = url.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?id=)([A-Za-z0-9_-]+)/i);
+    return m ? m[1] : null;
+  }
+
+  function handleAdminVideoUrlChanged(rawUrl) {
+    var url = String(rawUrl || '').trim();
+    if (!url) return;
+    var ytId = extractYouTubeId(url);
+    var previewWrap = document.getElementById('adminUploadPreviewWrap');
+    var thumbImg = document.getElementById('adminUploadThumbImg');
+    var durationText = document.getElementById('adminUploadDurationText');
+
+    if (ytId) {
+      var ytThumb = 'https://img.youtube.com/vi/' + ytId + '/hqdefault.jpg';
+      if (!currentCapturedThumbDataUrl) {
+        currentCapturedThumbDataUrl = ytThumb;
+        if (thumbImg) thumbImg.src = ytThumb;
+        if (previewWrap) previewWrap.style.display = 'flex';
+      }
+      if (durationText) {
+        durationText.innerHTML = '🎬 <strong>Video YouTube</strong> • Tự động lấy thumbnail';
+      }
+    } else if (extractGoogleDriveFileId(url)) {
+      if (durationText) {
+        durationText.innerHTML = '📁 <strong>Google Drive Video</strong> • Phát trực tuyến đa thiết bị';
+      }
+    } else if (/^https?:\/\//i.test(url)) {
+      if (durationText) {
+        durationText.innerHTML = '🌐 <strong>Link Video trực tiếp</strong> • Đồng bộ đa thiết bị';
+      }
     }
   }
 
@@ -656,8 +702,12 @@
 
         document.getElementById('adminUploadTitle').value = item.title || '';
         document.getElementById('adminUploadDesc').value = item.description || '';
-        document.getElementById('adminUploadInstSelect').value = item.instrumentId || 'dantranh';
+        document.getElementById('adminUploadInstSelect').value = normalizeInstrumentId(item.instrumentId || 'dantranh');
         document.getElementById('adminUploadCategorySelect').value = item.category || 'usage';
+        var urlInpEdit = document.getElementById('adminUploadVideoUrl');
+        if (urlInpEdit) {
+          urlInpEdit.value = (item.videoUrl && /^https?:\/\//i.test(item.videoUrl)) ? item.videoUrl : '';
+        }
 
         if (item.thumbnailUrl) {
           currentCapturedThumbDataUrl = item.thumbnailUrl;
@@ -684,7 +734,9 @@
       if (btnSubmit) btnSubmit.textContent = '🚀 Bắt Đầu Tải Lên & Lưu Trữ';
 
       // Mặc định chọn cây đàn người dùng đang xem nếu có
-      var curInst = window.currentActiveInstrument || 'dantranh';
+      var urlInpNew = document.getElementById('adminUploadVideoUrl');
+      if (urlInpNew) urlInpNew.value = '';
+      var curInst = normalizeInstrumentId(window.currentActiveInstrument || 'dantranh');
       var selInst = document.getElementById('adminUploadInstSelect');
       if (selInst && curInst) selInst.value = curInst;
     }
@@ -799,20 +851,61 @@
     };
   }
 
-  // Xử lý khi Admin chọn ảnh thumbnail riêng từ máy
+  // Xử lý khi Admin chọn ảnh thumbnail riêng từ máy (tự nén <= 320px để đồng bộ Cloud nhanh)
   function handleAdminCustomThumbnailChosen(event) {
     var file = event.target.files && event.target.files[0];
     if (!file) return;
 
     var reader = new FileReader();
     reader.onload = function (e) {
-      currentCapturedThumbDataUrl = e.target.result;
-      var thumbImg = document.getElementById('adminUploadThumbImg');
-      if (thumbImg) thumbImg.src = currentCapturedThumbDataUrl;
-      var previewWrap = document.getElementById('adminUploadPreviewWrap');
-      if (previewWrap) previewWrap.style.display = 'flex';
+      var rawDataUrl = e.target.result;
+      var img = new Image();
+      img.onload = function () {
+        try {
+          var canvas = document.createElement('canvas');
+          var w = img.naturalWidth || 320;
+          var h = img.naturalHeight || 180;
+          canvas.width = Math.min(320, w);
+          canvas.height = Math.round(canvas.width * (h / w)) || 180;
+          var ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          currentCapturedThumbDataUrl = canvas.toDataURL('image/jpeg', 0.65);
+        } catch (err) {
+          currentCapturedThumbDataUrl = rawDataUrl;
+        }
+        var thumbImg = document.getElementById('adminUploadThumbImg');
+        if (thumbImg) thumbImg.src = currentCapturedThumbDataUrl;
+        var previewWrap = document.getElementById('adminUploadPreviewWrap');
+        if (previewWrap) previewWrap.style.display = 'flex';
+      };
+      img.onerror = function () {
+        currentCapturedThumbDataUrl = rawDataUrl;
+        var thumbImg = document.getElementById('adminUploadThumbImg');
+        if (thumbImg) thumbImg.src = currentCapturedThumbDataUrl;
+        var previewWrap = document.getElementById('adminUploadPreviewWrap');
+        if (previewWrap) previewWrap.style.display = 'flex';
+      };
+      img.src = rawDataUrl;
     };
     reader.readAsDataURL(file);
+  }
+
+  var MAX_CLOUD_VIDEO_BYTES = 15 * 1024 * 1024; // 15MB cho phép đồng bộ file nhị phân trực tiếp qua Cloud Relay
+
+  function uploadFileToIndexedDbAndCloud(recordId, file, progressBar, progressPct, progressStatus) {
+    return storeVideoBlob(recordId, file).then(function () {
+      if (file.size <= MAX_CLOUD_VIDEO_BYTES && window.DanTranhCloudSync && typeof window.DanTranhCloudSync.uploadBlobToCloudChunks === 'function') {
+        updateProgressUI(progressBar, progressPct, progressStatus, 10, 'Đang đẩy video lên máy chủ Cloud để phát trên mọi máy (0%)...');
+        return window.DanTranhCloudSync.uploadBlobToCloudChunks(file, function (pct) {
+          var scaled = Math.min(95, Math.max(10, Math.round(10 + pct * 0.85)));
+          updateProgressUI(progressBar, progressPct, progressStatus, scaled, 'Đang tải video lên máy chủ Cloud (' + pct + '%)...');
+        }).then(function (cloudRes) {
+          updateProgressUI(progressBar, progressPct, progressStatus, 98, 'Đang hoàn tất đồng bộ danh sách lên Cloud...');
+          return cloudRes;
+        });
+      }
+      return null;
+    });
   }
 
   // Thực thi tải lên & lưu trữ video với Progress Bar
@@ -820,7 +913,7 @@
     if (event) event.preventDefault();
 
     if (!checkAdminPermission()) {
-      alert('🔒 Quyền truy cập bị từ chối: Chỉ Quản trị viên (Admin) mới có quyền tải lên video!');
+      alert('🔒 Quyền truy cập bị từ chối: Chỉ Quản trị viên (Admin / Quản trị viên phụ) mới có quyền tải lên video!');
       return;
     }
 
@@ -828,14 +921,16 @@
     var desc = (document.getElementById('adminUploadDesc').value || '').trim();
     var instId = document.getElementById('adminUploadInstSelect').value;
     var catId = document.getElementById('adminUploadCategorySelect').value;
+    var urlInpEl = document.getElementById('adminUploadVideoUrl');
+    var videoUrlInpVal = urlInpEl ? (urlInpEl.value || '').trim() : '';
 
     if (!title) {
       alert('⚠️ Vui lòng nhập tiêu đề cho video hướng dẫn!');
       return;
     }
 
-    if (!currentEditingId && !currentSelectedFile) {
-      alert('⚠️ Vui lòng chọn tệp video từ máy tính để tải lên!');
+    if (!currentEditingId && !currentSelectedFile && !videoUrlInpVal) {
+      alert('⚠️ Vui lòng chọn tệp video từ máy tính hoặc dán Link Video trực tiếp!');
       return;
     }
 
@@ -852,6 +947,8 @@
     if (btnSubmit) btnSubmit.disabled = true;
 
     var videos = getAllAdminVideos();
+    var ytId = videoUrlInpVal ? extractYouTubeId(videoUrlInpVal) : null;
+    var driveId = videoUrlInpVal ? extractGoogleDriveFileId(videoUrlInpVal) : null;
 
     if (currentEditingId) {
       // 1. Chỉnh sửa video hiện có
@@ -866,59 +963,110 @@
         target.categoryName = catObj.name;
         if (currentCapturedThumbDataUrl) {
           target.thumbnailUrl = currentCapturedThumbDataUrl;
+          target.thumbnailChunkRef = '';
         }
 
-        // Nếu có tệp mới được tải thay thế
         if (currentSelectedFile) {
-          runUploadSimulation(currentSelectedFile, function (progress) {
-            updateProgressUI(progressBar, progressPct, progressStatus, progress, 'Đang lưu tệp video mới vào cơ sở dữ liệu Server...');
+          var editFile = currentSelectedFile;
+          runUploadSimulation(editFile, function (progress) {
+            updateProgressUI(progressBar, progressPct, progressStatus, Math.min(20, Math.round(progress * 0.2)), 'Đang kiểm tra tệp video (' + formatFileSizeBytes(editFile.size) + ')...');
           }, function () {
-            storeVideoBlob(target.id, currentSelectedFile).then(function () {
-              target.filename = currentSelectedFile.name;
-              target.fileSize = formatFileSizeBytes(currentSelectedFile.size);
+            uploadFileToIndexedDbAndCloud(target.id, editFile, progressBar, progressPct, progressStatus).then(function (cloudRes) {
+              target.filename = editFile.name;
+              target.fileSize = formatFileSizeBytes(editFile.size);
               target.videoUrl = 'indexeddb://' + target.id;
+              target.cloudVideoRef = (cloudRes && cloudRes.ref) ? cloudRes.ref : '';
               target.isPreset = false;
+              target.cloudSynced = false;
               if (currentSelectedDuration) target.duration = currentSelectedDuration;
 
-              finishSaveAndRefresh(videos, '✓ Đã cập nhật và lưu trữ video thành công!');
+              var note = (editFile.size > MAX_CLOUD_VIDEO_BYTES)
+                ? '⚠️ Video > 15MB đã cập nhật trên máy và đồng bộ tiêu đề lên Cloud (muốn phát mọi máy vui lòng dán link YouTube/Drive).'
+                : ((target.cloudVideoRef) ? '✓ Đã cập nhật và đồng bộ video lên Cloud Server thành công!' : '⚠️ Không đẩy được tệp lên Cloud Relay; đã lưu cục bộ.');
+              finishSaveAndRefresh(videos, note);
             });
           });
+        } else if (videoUrlInpVal) {
+          target.videoUrl = videoUrlInpVal;
+          target.cloudVideoRef = '';
+          target.filename = ytId ? 'YouTube Video' : (driveId ? 'Google Drive Video' : 'Link URL');
+          target.fileSize = 'Trực tuyến (URL)';
+          if (ytId && !target.thumbnailUrl) {
+            target.thumbnailUrl = 'https://img.youtube.com/vi/' + ytId + '/hqdefault.jpg';
+          }
+          target.cloudSynced = false;
+          updateProgressUI(progressBar, progressPct, progressStatus, 95, 'Đang đồng bộ liên kết lên Cloud Server...');
+          finishSaveAndRefresh(videos, '✓ Đã cập nhật liên kết video & đồng bộ đa thiết bị!');
         } else {
+          target.cloudSynced = false;
+          updateProgressUI(progressBar, progressPct, progressStatus, 95, 'Đang đồng bộ thông tin lên Cloud Server...');
           finishSaveAndRefresh(videos, '✓ Đã cập nhật thông tin video thành công!');
         }
       }
-    } else {
-      // 2. Thêm video mới được tải lên
+    } else if (currentSelectedFile) {
+      // 2A. Thêm video mới từ tệp máy tính
       var newId = 'vid_admin_' + Date.now();
       var file = currentSelectedFile;
 
       runUploadSimulation(file, function (progress) {
-        updateProgressUI(progressBar, progressPct, progressStatus, progress, 'Đang tải lên và lưu trữ vào Server Database (' + formatFileSizeBytes(file.size) + ')...');
+        updateProgressUI(progressBar, progressPct, progressStatus, Math.min(20, Math.round(progress * 0.2)), 'Đang chuẩn bị tải video (' + formatFileSizeBytes(file.size) + ')...');
       }, function () {
-        storeVideoBlob(newId, file).then(function () {
+        uploadFileToIndexedDbAndCloud(newId, file, progressBar, progressPct, progressStatus).then(function (cloudRes) {
           var newRecord = {
             id: newId,
             title: title,
             description: desc,
             filename: file.name,
             videoUrl: 'indexeddb://' + newId,
+            cloudVideoRef: (cloudRes && cloudRes.ref) ? cloudRes.ref : '',
             thumbnailUrl: currentCapturedThumbDataUrl,
             instrumentId: instId,
             instrumentName: instObj.name,
             instrumentIcon: instObj.icon,
             category: catId,
             categoryName: catObj.name,
-            duration: currentSelectedDuration || '--:--', // Trích xuất tự động từ video khi chọn tệp
+            duration: currentSelectedDuration || '--:--',
             fileSize: formatFileSizeBytes(file.size),
             views: 1,
             uploadDate: new Date().toISOString().slice(0, 10),
-            isPreset: false
+            isPreset: false,
+            cloudSynced: false
           };
 
           videos.unshift(newRecord);
-          finishSaveAndRefresh(videos, '✓ Đã tải lên và lưu trữ video vào Server thành công!');
+          var note = (file.size > MAX_CLOUD_VIDEO_BYTES)
+            ? '⚠️ Tệp > 15MB đã lưu cục bộ và đồng bộ thẻ video lên Cloud (dán thêm Link URL để phát trên máy khác).'
+            : (newRecord.cloudVideoRef ? '✓ Đã tải lên và đồng bộ video lên Cloud Server thành công!' : '⚠️ Không đẩy được tệp lên Cloud Relay; đã lưu cục bộ.');
+          finishSaveAndRefresh(videos, note);
         });
       });
+    } else {
+      // 2B. Thêm video mới từ Link URL (YouTube / Google Drive / MP4 URL)
+      var newUrlId = 'vid_admin_' + Date.now();
+      var autoThumb = currentCapturedThumbDataUrl || (ytId ? ('https://img.youtube.com/vi/' + ytId + '/hqdefault.jpg') : '');
+      var newUrlRecord = {
+        id: newUrlId,
+        title: title,
+        description: desc,
+        filename: ytId ? 'YouTube Video' : (driveId ? 'Google Drive Video' : 'Link Video'),
+        videoUrl: videoUrlInpVal,
+        cloudVideoRef: '',
+        thumbnailUrl: autoThumb,
+        instrumentId: instId,
+        instrumentName: instObj.name,
+        instrumentIcon: instObj.icon,
+        category: catId,
+        categoryName: catObj.name,
+        duration: currentSelectedDuration || (ytId ? 'YouTube' : 'Online'),
+        fileSize: 'Trực tuyến (URL)',
+        views: 1,
+        uploadDate: new Date().toISOString().slice(0, 10),
+        isPreset: false,
+        cloudSynced: false
+      };
+      videos.unshift(newUrlRecord);
+      updateProgressUI(progressBar, progressPct, progressStatus, 90, 'Đang đồng bộ liên kết lên Cloud Server...');
+      finishSaveAndRefresh(videos, '✓ Đã đăng video trực tuyến và đồng bộ đa thiết bị!');
     }
   }
 
@@ -939,7 +1087,7 @@
     };
     reader.onload = function () {
       onProgress(100);
-      setTimeout(onComplete, 250);
+      setTimeout(onComplete, 180);
     };
     reader.onerror = function () {
       alert('❌ Đã xảy ra lỗi khi đọc tệp video. Vui lòng thử lại với tệp khác.');
@@ -954,28 +1102,36 @@
   }
 
   function finishSaveAndRefresh(videosList, successMessage) {
-    saveAllAdminVideos(videosList);
+    var progressBar = document.getElementById('adminUploadProgressBar');
+    var progressPct = document.getElementById('adminUploadProgressPct');
+    var progressStatus = document.getElementById('adminUploadProgressStatus');
 
-    setTimeout(function () {
-      closeAdminVideoUploadModal();
-      renderAdminVideoTable();
-      renderPublicInstrumentVideos();
+    saveAllAdminVideos(videosList).then(function (syncRes) {
+      updateProgressUI(progressBar, progressPct, progressStatus, 100, (syncRes && syncRes.ok === false) ? 'Đã lưu cục bộ (lỗi đồng bộ Cloud)' : 'Hoàn tất đồng bộ Cloud!');
+      setTimeout(function () {
+        closeAdminVideoUploadModal();
+        renderAdminVideoTable();
+        renderPublicInstrumentVideos();
 
-      var btnSubmit = document.getElementById('btnAdminSubmitUpload');
-      if (btnSubmit) btnSubmit.disabled = false;
+        var btnSubmit = document.getElementById('btnAdminSubmitUpload');
+        if (btnSubmit) btnSubmit.disabled = false;
 
-      if (typeof window.showActionToast === 'function') {
-        window.showActionToast(successMessage);
-      } else {
-        alert(successMessage);
-      }
-    }, 400);
+        if (syncRes && syncRes.ok === false) {
+          var errMsg = '⚠️ Video đã lưu trên máy nhưng đồng bộ lên máy chủ Cloud Relay thất bại' + (syncRes.error ? (': ' + syncRes.error) : '.') + '\n\nBạn có thể mở mục Cloud & Realtime → Đồng bộ ngay để thử đẩy lại.';
+          alert(errMsg);
+        } else if (typeof window.showActionToast === 'function') {
+          window.showActionToast(successMessage);
+        } else {
+          alert(successMessage);
+        }
+      }, 250);
+    });
   }
 
-  // Xóa video
+  // Xóa video (lưu vào danh sách đã xóa để đồng bộ xóa trên mọi máy)
   function deleteAdminVideo(videoId) {
     if (!checkAdminPermission()) {
-      alert('🔒 Quyền truy cập bị từ chối: Chỉ Quản trị viên (Admin) mới có quyền xóa video!');
+      alert('🔒 Quyền truy cập bị từ chối: Chỉ Quản trị viên (Admin / Quản trị viên phụ) mới có quyền xóa video!');
       return;
     }
 
@@ -987,21 +1143,89 @@
       return;
     }
 
+    try {
+      var delIds = JSON.parse(localStorage.getItem('dan_tranh_hdnc_deleted_ids_v1') || '[]') || [];
+      if (delIds.indexOf(videoId) === -1) {
+        delIds.push(videoId);
+        localStorage.setItem('dan_tranh_hdnc_deleted_ids_v1', JSON.stringify(delIds));
+      }
+    } catch (e) {}
+
     deleteVideoBlob(videoId).then(function () {
       var filtered = videos.filter(function (v) { return v.id !== videoId; });
-      saveAllAdminVideos(filtered);
-      renderAdminVideoTable();
-      renderPublicInstrumentVideos();
+      saveAllAdminVideos(filtered).then(function () {
+        renderAdminVideoTable();
+        renderPublicInstrumentVideos();
 
-      if (typeof window.showActionToast === 'function') {
-        window.showActionToast('✓ Đã xóa video thành công!');
+        if (typeof window.showActionToast === 'function') {
+          window.showActionToast('✓ Đã xóa video và đồng bộ lên Cloud!');
+        }
+      });
+    });
+  }
+
+  // Tự động đồng bộ các video Admin đã đăng trước đây (khi còn lưu cục bộ chưa đẩy được lên Cloud)
+  function autoSyncUnsyncedLocalVideosToCloud() {
+    if (!window.DanTranhCloudSync || typeof window.DanTranhCloudSync.syncHdncVideosToCloud !== 'function') return;
+    var localVids = getAllAdminVideos();
+    if (!localVids.length) return;
+
+    var dirty = localVids.some(function (v) {
+      return v && (!v.cloudSynced || (v.videoUrl && v.videoUrl.indexOf('indexeddb://') === 0 && !v.cloudVideoRef));
+    });
+    if (!dirty) return;
+
+    var chain = Promise.resolve();
+    localVids.forEach(function (v) {
+      if (!v) return;
+      if (v.videoUrl && v.videoUrl.indexOf('indexeddb://') === 0 && !v.cloudVideoRef && typeof window.DanTranhCloudSync.uploadBlobToCloudChunks === 'function') {
+        var blobId = v.videoUrl.replace('indexeddb://', '');
+        chain = chain.then(function () {
+          return getVideoBlob(blobId).then(function (blob) {
+            if (blob && blob.size <= MAX_CLOUD_VIDEO_BYTES) {
+              return window.DanTranhCloudSync.uploadBlobToCloudChunks(blob).then(function (res) {
+                if (res && res.ref) v.cloudVideoRef = res.ref;
+              });
+            }
+          });
+        });
       }
+    });
+
+    chain.then(function () {
+      saveAllAdminVideos(localVids).then(function (syncRes) {
+        if (syncRes && syncRes.ok) {
+          renderAdminVideoTable();
+          renderPublicInstrumentVideos();
+        }
+      });
     });
   }
 
   // =========================================================================
-  // 10. PREVIEW PLAYER DÀNH CHO ADMIN KIỂM TRA VIDEO ĐÃ UPLOAD
+  // 10. PREVIEW PLAYER DÀNH CHO ADMIN & NGƯỜI DÙNG (HỖ TRỢ YOUTUBE / DRIVE / CLOUD CHUNKS)
   // =========================================================================
+  function resetPreviewPlayersState() {
+    var player = document.getElementById('adminPreviewVideoPlayer');
+    var iframeEl = document.getElementById('adminPreviewIframePlayer');
+    var loader = document.getElementById('adminPreviewCloudLoader');
+    var loaderBar = document.getElementById('adminPreviewCloudLoaderBar');
+    var loaderText = document.getElementById('adminPreviewCloudLoaderText');
+
+    if (player) {
+      player.pause();
+      player.src = '';
+      player.style.display = 'block';
+    }
+    if (iframeEl) {
+      iframeEl.src = 'about:blank';
+      iframeEl.style.display = 'none';
+    }
+    if (loader) loader.style.display = 'none';
+    if (loaderBar) loaderBar.style.width = '0%';
+    if (loaderText) loaderText.textContent = 'Đang tải video từ Cloud Server...';
+  }
+
   function openAdminVideoPreview(videoId) {
     var videos = getAllAdminVideos();
     var video = videos.find(function (v) { return v.id === videoId; });
@@ -1009,6 +1233,10 @@
 
     var overlay = document.getElementById('modalAdminVideoPreview');
     var player = document.getElementById('adminPreviewVideoPlayer');
+    var iframeEl = document.getElementById('adminPreviewIframePlayer');
+    var loader = document.getElementById('adminPreviewCloudLoader');
+    var loaderBar = document.getElementById('adminPreviewCloudLoaderBar');
+    var loaderText = document.getElementById('adminPreviewCloudLoaderText');
     var titleEl = document.getElementById('adminPreviewTitle');
     var subtitleEl = document.getElementById('adminPreviewSubtitle');
     var badgeInstEl = document.getElementById('adminPreviewInstBadge');
@@ -1019,6 +1247,8 @@
 
     if (!overlay || !player) return;
 
+    resetPreviewPlayersState();
+
     // TÊN Ở TRÊN (Title on top in modal header)
     if (titleEl) {
       titleEl.textContent = video.title || 'Xem Thử Video';
@@ -1027,6 +1257,9 @@
     if (subtitleEl) {
       subtitleEl.textContent = (video.instrumentName ? ('Nhạc cụ: ' + video.instrumentName + ' • ') : '') + (video.categoryName || 'Video Hướng Dẫn Diễn Tấu');
     }
+
+    var ytId = video.videoUrl ? extractYouTubeId(video.videoUrl) : null;
+    var driveId = video.videoUrl ? extractGoogleDriveFileId(video.videoUrl) : null;
 
     // THÔNG TIN Ở DƯỚI (Information underneath video player)
     if (badgeInstEl) {
@@ -1040,25 +1273,66 @@
       durationEl.innerHTML = '⏱️ <strong>' + (video.duration || '--:--') + '</strong>' + (video.fileSize ? (' • 💾 ' + video.fileSize) : '');
     }
     if (storageEl) {
-      storageEl.innerHTML = video.isPreset ? '📁 Server video_hdnc' : '☁️ Database &amp; Storage';
+      if (ytId) storageEl.innerHTML = '🌐 YouTube';
+      else if (driveId) storageEl.innerHTML = '📁 Google Drive';
+      else if (video.cloudVideoRef) storageEl.innerHTML = '☁️ Cloud Server';
+      else if (video.videoUrl && /^https?:\/\//i.test(video.videoUrl)) storageEl.innerHTML = '🌐 Cloud URL';
+      else storageEl.innerHTML = '💾 Lưu cục bộ';
     }
     if (descEl) {
       descEl.textContent = video.description || 'Chưa có mô tả chi tiết cho video này.';
     }
 
+    if (ytId && iframeEl) {
+      player.style.display = 'none';
+      iframeEl.style.display = 'block';
+      iframeEl.src = 'https://www.youtube.com/embed/' + encodeURIComponent(ytId) + '?autoplay=1&rel=0';
+      overlay.classList.add('open');
+      return;
+    }
+
+    if (driveId && iframeEl) {
+      player.style.display = 'none';
+      iframeEl.style.display = 'block';
+      iframeEl.src = 'https://drive.google.com/file/d/' + encodeURIComponent(driveId) + '/preview';
+      overlay.classList.add('open');
+      return;
+    }
+
     if (video.videoUrl && video.videoUrl.indexOf('indexeddb://') === 0) {
       var blobId = video.videoUrl.replace('indexeddb://', '');
+      overlay.classList.add('open');
       getVideoBlob(blobId).then(function (blob) {
         if (blob) {
           player.src = URL.createObjectURL(blob);
           player.load();
-          overlay.classList.add('open');
           try { player.play().catch(function () {}); } catch (e) {}
+          return;
+        }
+        // Không có trong IndexedDB máy hiện tại (mở từ máy khác) -> tải từ Cloud Relay nếu có cloudVideoRef
+        if (video.cloudVideoRef && window.DanTranhCloudSync && typeof window.DanTranhCloudSync.downloadBlobFromCloudChunks === 'function') {
+          if (loader) loader.style.display = 'flex';
+          if (loaderText) loaderText.textContent = '⏳ Đang tải video từ Cloud Server (0%)...';
+          window.DanTranhCloudSync.downloadBlobFromCloudChunks(video.cloudVideoRef, function (pct) {
+            if (loaderBar) loaderBar.style.width = pct + '%';
+            if (loaderText) loaderText.textContent = '⏳ Đang tải video từ Cloud Server (' + pct + '%)...';
+          }).then(function (downloadedBlob) {
+            if (downloadedBlob) {
+              storeVideoBlob(blobId, downloadedBlob);
+              if (loader) loader.style.display = 'none';
+              player.src = URL.createObjectURL(downloadedBlob);
+              player.load();
+              try { player.play().catch(function () {}); } catch (e) {}
+            } else {
+              if (loaderText) loaderText.textContent = '⚠️ Lỗi tải video từ Cloud Server. Vui lòng thử lại sau.';
+            }
+          });
         } else {
-          alert('Không tìm thấy tệp video nhị phân trong cơ sở dữ liệu.');
+          if (loader) loader.style.display = 'flex';
+          if (loaderText) loaderText.textContent = '⚠️ Video này (>15MB) hiện chỉ lưu trên máy Admin gốc hoặc chưa được gắn Link URL phát trực tuyến.';
         }
       });
-    } else {
+    } else if (video.videoUrl) {
       var url = video.videoUrl;
       if (url.indexOf('%') === -1) url = encodeURI(url);
       player.src = url;
@@ -1070,11 +1344,7 @@
 
   function closeAdminVideoPreview() {
     var overlay = document.getElementById('modalAdminVideoPreview');
-    var player = document.getElementById('adminPreviewVideoPlayer');
-    if (player) {
-      player.pause();
-      player.src = '';
-    }
+    resetPreviewPlayersState();
     if (overlay) overlay.classList.remove('open');
   }
 
@@ -1178,9 +1448,11 @@
       var iconLabel = v.instrumentIcon || meta.icon;
 
       var mediaHtml = '';
-      if (v.thumbnailUrl) {
-        mediaHtml = '<img class="hdnc-yt-thumb-media" src="' + escapeHtml(v.thumbnailUrl) + '" alt="' + escapeHtml(v.title) + '" style="opacity: 0; transition: opacity 0.25s ease;" onload="this.style.opacity=\'1\'" onerror="this.style.display=\'none\'" />';
-      } else if (v.videoUrl && v.videoUrl.indexOf('indexeddb://') !== 0) {
+      var ytThumbId = v.videoUrl ? extractYouTubeId(v.videoUrl) : null;
+      var effectiveThumb = v.thumbnailUrl || (ytThumbId ? ('https://img.youtube.com/vi/' + ytThumbId + '/hqdefault.jpg') : '');
+      if (effectiveThumb) {
+        mediaHtml = '<img class="hdnc-yt-thumb-media" src="' + escapeHtml(effectiveThumb) + '" alt="' + escapeHtml(v.title) + '" style="opacity: 0; transition: opacity 0.25s ease;" onload="this.style.opacity=\'1\'" onerror="this.style.display=\'none\'" />';
+      } else if (v.videoUrl && v.videoUrl.indexOf('indexeddb://') !== 0 && !ytThumbId && !extractGoogleDriveFileId(v.videoUrl)) {
         var safeUrl = (v.videoUrl.indexOf('%') === -1) ? encodeURI(v.videoUrl) : v.videoUrl;
         mediaHtml = '<video class="hdnc-yt-thumb-media" src="' + escapeHtml(safeUrl) + '" preload="metadata" muted playsinline style="opacity: 0; transition: opacity 0.25s ease;" onloadeddata="try{this.currentTime=Math.min(1.5,(this.duration||3)*0.25);}catch(e){this.style.opacity=\'1\';}" onseeked="this.style.opacity=\'1\'" onerror="this.style.display=\'none\'"></video>';
       }
@@ -1241,6 +1513,9 @@
     renderAdminVideoTable();
     renderPublicInstrumentVideos();
 
+    // Đẩy tự động các video cục bộ cũ (nếu có) lên Cloud Relay để máy khác nhìn thấy ngay
+    setTimeout(autoSyncUnsyncedLocalVideosToCloud, 1200);
+
     // Lắng nghe phím ESC để đóng Modal
     window.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') {
@@ -1284,6 +1559,7 @@
     filterByCategory: filterAdminVideosByCategory,
     search: searchAdminVideos,
     resetFilters: resetAdminVideoFilters,
+    syncUnsyncedToCloud: autoSyncUnsyncedLocalVideosToCloud,
     checkAdminPermission: checkAdminPermission
   };
 
@@ -1294,6 +1570,7 @@
   window.closeAdminVideoPreview = closeAdminVideoPreview;
   window.handleAdminVideoFileChosen = handleAdminVideoFileChosen;
   window.handleAdminCustomThumbnailChosen = handleAdminCustomThumbnailChosen;
+  window.handleAdminVideoUrlChanged = handleAdminVideoUrlChanged;
   window.handleAdminSubmitUpload = handleAdminSubmitUpload;
   window.deleteAdminVideo = deleteAdminVideo;
   window.filterAdminVideosByInstrument = filterAdminVideosByInstrument;

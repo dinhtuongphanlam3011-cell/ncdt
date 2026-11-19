@@ -23,10 +23,24 @@
     REPORTS: 'dan_tranh_reports',
     FORUM_POSTS: 'mit_forum_real_posts_v5',
     FORUM_POSTS_ALT: 'dan_tranh_forum_posts',
+    FORUM_DELETED: 'mit_forum_deleted_post_ids',
+    FORUM_BANNED: 'mit_forum_banned_users_v1',
+    HDNC_VIDEOS: 'dan_tranh_hdnc_videos_v1',
+    HDNC_DELETED: 'dan_tranh_hdnc_deleted_ids_v1',
     SERVER_AUDIO: 'dan_tranh_server_audio_config',
     CLOUD_CONFIG: 'dan_tranh_cloud_config',
     USER_SESSION: 'dan_tranh_user_session',
     USERS: 'dan_tranh_users'
+  };
+
+  var EXTENDS_BIN_CREATE_URL = 'https://extendsclass.com/api/json-storage/bin';
+  var EXTENDS_CHUNK_SIZE = 22000;
+  var _childBinCache = {};
+  var _resolvingMediaRefs = {};
+  var _cloudHealth = {
+    lastOkAt: 0,
+    lastError: null,
+    lastErrorAt: 0
   };
 
   // Kênh BroadcastChannel đồng bộ tức thì giữa các Tab/Cửa sổ cùng trình duyệt (<10ms)
@@ -838,6 +852,254 @@
     return null;
   }
 
+  // ============================================================================
+  // MULTI-BIN CHUNKED CLOUD STORAGE (VƯỢT GIỚI HẠN 32KB CỦA EXTENDSCLASS)
+  // ============================================================================
+  function getChildBinUrl(binId) {
+    return EXTENDS_BIN_CREATE_URL + '/' + encodeURIComponent(String(binId || '').trim());
+  }
+
+  function createExtendsChildBin(payloadObj, attempt) {
+    var tryNum = attempt || 0;
+    var bodyStr = '';
+    try {
+      bodyStr = JSON.stringify(payloadObj);
+    } catch (e) {
+      return Promise.resolve(null);
+    }
+
+    return fetch(EXTENDS_BIN_CREATE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: bodyStr
+    })
+      .then(function (res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.text();
+      })
+      .then(function (raw) {
+        var parsed = extractCleanJson(raw);
+        if (parsed && parsed.id) {
+          _childBinCache[parsed.id] = payloadObj;
+          if (!payloadObj.isChunk && bodyStr.length < 18000) {
+            try { localStorage.setItem('dt_extbin_' + parsed.id, bodyStr); } catch (eLs) {}
+          }
+          return String(parsed.id);
+        }
+        return null;
+      })
+      .catch(function (err) {
+        if (tryNum < 2) {
+          return new Promise(function (resolve) {
+            setTimeout(function () {
+              resolve(createExtendsChildBin(payloadObj, tryNum + 1));
+            }, 350 * (tryNum + 1));
+          });
+        }
+        console.warn('[CloudSync] createExtendsChildBin failed:', err && err.message ? err.message : err);
+        return null;
+      });
+  }
+
+  function fetchExtendsChildBin(binId, attempt) {
+    var id = String(binId || '').trim();
+    if (!id) return Promise.resolve(null);
+    if (_childBinCache[id]) return Promise.resolve(_childBinCache[id]);
+
+    try {
+      var cachedRaw = localStorage.getItem('dt_extbin_' + id);
+      if (cachedRaw) {
+        var cachedParsed = JSON.parse(cachedRaw);
+        if (cachedParsed) {
+          _childBinCache[id] = cachedParsed;
+          return Promise.resolve(cachedParsed);
+        }
+      }
+    } catch (eLs) {}
+
+    var tryNum = attempt || 0;
+    var url = getChildBinUrl(id) + '?_t=' + Date.now();
+    return fetch(url, { method: 'GET', cache: 'no-store' })
+      .then(function (res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.text();
+      })
+      .then(function (raw) {
+        var parsed = extractCleanJson(raw);
+        if (parsed && parsed.data && typeof parsed.data === 'string') {
+          var inner = extractCleanJson(parsed.data);
+          if (inner) parsed = inner;
+        }
+        if (parsed) {
+          _childBinCache[id] = parsed;
+          if (!parsed.isChunk) {
+            try {
+              var serialized = JSON.stringify(parsed);
+              if (serialized.length < 18000) localStorage.setItem('dt_extbin_' + id, serialized);
+            } catch (eCache) {}
+          }
+          return parsed;
+        }
+        return null;
+      })
+      .catch(function (err) {
+        if (tryNum < 2) {
+          return new Promise(function (resolve) {
+            setTimeout(function () {
+              resolve(fetchExtendsChildBin(id, tryNum + 1));
+            }, 350 * (tryNum + 1));
+          });
+        }
+        console.warn('[CloudSync] fetchExtendsChildBin failed:', id, err && err.message ? err.message : err);
+        return null;
+      });
+  }
+
+  function uploadStringToCloudChunks(strData, onProgress) {
+    if (!strData || typeof strData !== 'string') return Promise.resolve(null);
+    if (strData.indexOf('extchunks://') === 0) return Promise.resolve(strData);
+
+    var chunks = [];
+    for (var i = 0; i < strData.length; i += EXTENDS_CHUNK_SIZE) {
+      chunks.push(strData.substring(i, i + EXTENDS_CHUNK_SIZE));
+    }
+    var isSingleSmall = (chunks.length === 1 && strData.length < 18000);
+    var ids = new Array(chunks.length);
+    var completed = 0;
+    var failed = false;
+
+    function runBatch(startIdx) {
+      if (failed || startIdx >= chunks.length) {
+        if (failed) return Promise.resolve(null);
+        return Promise.resolve('extchunks://' + ids.join(','));
+      }
+      var endIdx = Math.min(chunks.length, startIdx + 3);
+      var promises = [];
+      for (var j = startIdx; j < endIdx; j++) {
+        (function (idx) {
+          promises.push(
+            createExtendsChildBin({ c: chunks[idx], isChunk: !isSingleSmall }).then(function (id) {
+              if (!id) {
+                failed = true;
+              } else {
+                ids[idx] = id;
+                completed++;
+                if (typeof onProgress === 'function') {
+                  onProgress(Math.round((completed / chunks.length) * 100));
+                }
+              }
+            })
+          );
+        })(j);
+      }
+      return Promise.all(promises).then(function () {
+        return runBatch(endIdx);
+      });
+    }
+
+    return runBatch(0);
+  }
+
+  function downloadStringFromCloudChunks(refStr, onProgress) {
+    if (!refStr || typeof refStr !== 'string') return Promise.resolve(null);
+    if (refStr.indexOf('extchunks://') !== 0) return Promise.resolve(refStr);
+
+    var binIds = refStr.slice(12).split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+    if (binIds.length === 0) return Promise.resolve(null);
+
+    var parts = new Array(binIds.length);
+    var completed = 0;
+    var failed = false;
+
+    function runBatch(startIdx) {
+      if (failed || startIdx >= binIds.length) {
+        if (failed) return Promise.resolve(null);
+        return Promise.resolve(parts.join(''));
+      }
+      var endIdx = Math.min(binIds.length, startIdx + 4);
+      var promises = [];
+      for (var j = startIdx; j < endIdx; j++) {
+        (function (idx) {
+          promises.push(
+            fetchExtendsChildBin(binIds[idx]).then(function (obj) {
+              if (!obj || typeof obj.c !== 'string') {
+                failed = true;
+              } else {
+                parts[idx] = obj.c;
+                completed++;
+                if (typeof onProgress === 'function') {
+                  onProgress(Math.round((completed / binIds.length) * 100));
+                }
+              }
+            })
+          );
+        })(j);
+      }
+      return Promise.all(promises).then(function () {
+        return runBatch(endIdx);
+      });
+    }
+
+    return runBatch(0);
+  }
+
+  function uploadBlobToCloudChunks(blob, onProgress) {
+    return new Promise(function (resolve) {
+      if (!blob) {
+        resolve(null);
+        return;
+      }
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        var dataUrl = e && e.target ? e.target.result : null;
+        if (!dataUrl || typeof dataUrl !== 'string') {
+          resolve(null);
+          return;
+        }
+        uploadStringToCloudChunks(dataUrl, onProgress).then(function (ref) {
+          if (!ref) {
+            resolve(null);
+            return;
+          }
+          resolve({
+            ref: ref,
+            mimeType: blob.type || 'video/mp4'
+          });
+        });
+      };
+      reader.onerror = function () { resolve(null); };
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  function dataUrlToBlob(dataUrl) {
+    if (!dataUrl || typeof dataUrl !== 'string') return null;
+    try {
+      var commaIdx = dataUrl.indexOf(',');
+      if (commaIdx === -1) return null;
+      var header = dataUrl.substring(0, commaIdx);
+      var b64 = dataUrl.substring(commaIdx + 1);
+      var mimeMatch = header.match(/data:([^;]+);/i);
+      var mime = (mimeMatch && mimeMatch[1]) ? mimeMatch[1] : 'video/mp4';
+      var binStr = atob(b64);
+      var len = binStr.length;
+      var bytes = new Uint8Array(len);
+      for (var i = 0; i < len; i++) {
+        bytes[i] = binStr.charCodeAt(i);
+      }
+      return new Blob([bytes], { type: mime });
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function downloadBlobFromCloudChunks(refStr, onProgress) {
+    return downloadStringFromCloudChunks(refStr, onProgress).then(function (dataUrl) {
+      if (!dataUrl) return null;
+      return dataUrlToBlob(dataUrl);
+    });
+  }
+
   // Kéo dữ liệu mới nhất từ Cloud (Hòm thư Admin, Thông báo, Diễn đàn, Users, Âm thanh)
   function fetchCloudUpdates() {
     return new Promise(function (resolve) {
@@ -886,10 +1148,12 @@
         }
       }
 
-      // 3. Cloud Relay Endpoint tự động (Mặc định ExtendsClass JSON Storage)
+      // 3. Cloud Relay Endpoint tự động (Mặc định ExtendsClass JSON Storage, bỏ qua cache 2h)
       var endpoint = cfg.relayEndpoint || DEFAULT_RELAY_ENDPOINT;
       if (endpoint) {
-        fetch(endpoint, { method: 'GET', cache: 'no-cache' })
+        var sep = endpoint.indexOf('?') === -1 ? '?' : '&';
+        var fetchUrl = endpoint + sep + '_t=' + Date.now();
+        fetch(fetchUrl, { method: 'GET', cache: 'no-store' })
           .then(function (res) {
             if (!res.ok) throw new Error('HTTP ' + res.status);
             return res.text();
@@ -897,6 +1161,8 @@
           .then(function (rawText) {
             var payload = extractCleanJson(rawText);
             if (!payload) {
+              _cloudHealth.lastError = 'Dữ liệu máy chủ Cloud Relay không hợp lệ';
+              _cloudHealth.lastErrorAt = Date.now();
               resolve(false);
               return;
             }
@@ -904,10 +1170,14 @@
               var inner = extractCleanJson(payload.data);
               if (inner) payload = inner;
             }
+            _cloudHealth.lastOkAt = Date.now();
+            _cloudHealth.lastError = null;
             var changed = applyCloudPayload(payload);
             resolve(changed);
           })
           .catch(function (err) {
+            _cloudHealth.lastError = (err && err.message) ? err.message : 'Lỗi kết nối Cloud Relay';
+            _cloudHealth.lastErrorAt = Date.now();
             resolve(false);
           });
         return;
@@ -1018,52 +1288,157 @@
       }
     }
 
-    // D. Cập nhật Diễn đàn (Forum Posts, Comments, Upvotes)
+    // D. Cập nhật Diễn đàn (Forum Posts, Comments, Upvotes, Deleted IDs & Banned Users)
+    var forumDeletedIds = [];
+    try { forumDeletedIds = JSON.parse(localStorage.getItem(STORAGE_KEYS.FORUM_DELETED) || '[]') || []; } catch (e) {}
+    if (Array.isArray(payload.forum_deleted_ids) && payload.forum_deleted_ids.length) {
+      var delMapChanged = false;
+      payload.forum_deleted_ids.forEach(function (did) {
+        if (did && forumDeletedIds.indexOf(did) === -1) {
+          forumDeletedIds.push(did);
+          delMapChanged = true;
+        }
+      });
+      if (delMapChanged) {
+        try { localStorage.setItem(STORAGE_KEYS.FORUM_DELETED, JSON.stringify(forumDeletedIds)); } catch (e) {}
+        changed = true;
+      }
+    }
+    var forumDelSet = {};
+    forumDeletedIds.forEach(function (did) { if (did) forumDelSet[String(did)] = true; });
+
+    if (Array.isArray(payload.forum_banned_users)) {
+      var localBanned = [];
+      try { localBanned = JSON.parse(localStorage.getItem(STORAGE_KEYS.FORUM_BANNED) || '[]') || []; } catch (e) {}
+      var bannedNormSet = {};
+      localBanned.forEach(function (b) { if (b) bannedNormSet[String(b).trim().toLowerCase()] = true; });
+      var banChanged = false;
+      payload.forum_banned_users.forEach(function (cb) {
+        var norm = String(cb || '').trim().toLowerCase();
+        if (norm && !bannedNormSet[norm]) {
+          localBanned.push(norm);
+          bannedNormSet[norm] = true;
+          banChanged = true;
+        }
+      });
+      if (banChanged) {
+        try { localStorage.setItem(STORAGE_KEYS.FORUM_BANNED, JSON.stringify(localBanned)); } catch (e) {}
+        changed = true;
+      }
+    }
+
     if (Array.isArray(payload.forum_posts)) {
       var localPosts = [];
-      if (typeof window.getAllRedditPosts === 'function') {
-        try { localPosts = window.getAllRedditPosts(); } catch (e) {}
-      }
-      if (!localPosts || localPosts.length === 0) {
-        var localPostsRaw = localStorage.getItem(STORAGE_KEYS.FORUM_POSTS) || localStorage.getItem(STORAGE_KEYS.FORUM_POSTS_ALT);
-        try { localPosts = JSON.parse(localPostsRaw) || []; } catch (e) {}
-      }
+      var localPostsRaw = localStorage.getItem(STORAGE_KEYS.FORUM_POSTS) || localStorage.getItem(STORAGE_KEYS.FORUM_POSTS_ALT);
+      try { localPosts = JSON.parse(localPostsRaw) || []; } catch (e) {}
+      if (!Array.isArray(localPosts)) localPosts = [];
+
       var postMap = {};
-      localPosts.forEach(function (p) { if (p && p.id) postMap[String(p.id)] = p; });
-      var postChanged = false;
+      localPosts.forEach(function (p) {
+        if (p && p.id && !forumDelSet[String(p.id)]) postMap[String(p.id)] = p;
+      });
+      var postChanged = (localPosts.length !== Object.keys(postMap).length);
+      var mediaRefsToResolve = [];
 
       payload.forum_posts.forEach(function (cloudP) {
-        if (!cloudP || !cloudP.id) return;
+        if (!cloudP || !cloudP.id || forumDelSet[String(cloudP.id)]) return;
         var k = String(cloudP.id);
         if (!postMap[k]) {
-          postMap[k] = cloudP;
+          var cloned = Object.assign({}, cloudP);
+          if (cloned.attachment) cloned.attachment = Object.assign({}, cloned.attachment);
+          postMap[k] = cloned;
           postChanged = true;
         } else {
           var curP = postMap[k];
           var cloudCmts = Array.isArray(cloudP.comments) ? cloudP.comments : [];
           var curCmts = Array.isArray(curP.comments) ? curP.comments : [];
-          if (cloudCmts.length > curCmts.length) {
-            curP.comments = cloudCmts;
+          if (cloudCmts.length > 0) {
+            var cmtMap = {};
+            curCmts.forEach(function (c) { if (c && c.id) cmtMap[String(c.id)] = c; });
+            var cAdded = false;
+            cloudCmts.forEach(function (cc) {
+              if (cc && cc.id && !cmtMap[String(cc.id)]) {
+                curCmts.push(cc);
+                cmtMap[String(cc.id)] = cc;
+                cAdded = true;
+              }
+            });
+            if (cAdded) {
+              curP.comments = curCmts;
+              postChanged = true;
+            }
+          }
+          if (cloudP.upvotes !== undefined && cloudP.upvotes > (curP.upvotes || 0)) {
+            curP.upvotes = cloudP.upvotes;
             postChanged = true;
           }
-          if (cloudP.upvotes !== undefined && cloudP.upvotes !== curP.upvotes) {
-            curP.upvotes = Math.max(curP.upvotes || 0, cloudP.upvotes);
+          if (!curP.image && cloudP.image) {
+            curP.image = cloudP.image;
+            postChanged = true;
+          }
+          if (!curP.attachment && cloudP.attachment) {
+            curP.attachment = Object.assign({}, cloudP.attachment);
             postChanged = true;
           }
         }
+
+        var targetP = postMap[k];
+        if (targetP.image && String(targetP.image).indexOf('extchunks://') === 0) {
+          mediaRefsToResolve.push({ postId: k, field: 'image', ref: targetP.image });
+        }
+        if (targetP.attachment && targetP.attachment.dataUrl && String(targetP.attachment.dataUrl).indexOf('extchunks://') === 0) {
+          mediaRefsToResolve.push({ postId: k, field: 'attachment', ref: targetP.attachment.dataUrl });
+        }
       });
 
-      if (postChanged || localPosts.length !== Object.keys(postMap).length) {
+      if (postChanged) {
         var mergedPosts = Object.values(postMap).sort(function (a, b) {
           return (b.timestamp || 0) - (a.timestamp || 0);
         });
-        localStorage.setItem(STORAGE_KEYS.FORUM_POSTS, JSON.stringify(mergedPosts));
-        localStorage.setItem(STORAGE_KEYS.FORUM_POSTS_ALT, JSON.stringify(mergedPosts));
+        try {
+          localStorage.setItem(STORAGE_KEYS.FORUM_POSTS, JSON.stringify(mergedPosts));
+          localStorage.setItem(STORAGE_KEYS.FORUM_POSTS_ALT, JSON.stringify(mergedPosts));
+        } catch (e) {}
         changed = true;
         if (typeof window.renderRedditFeed === 'function') window.renderRedditFeed();
         if (typeof window.renderRedditRecentPosts === 'function') window.renderRedditRecentPosts();
         if (typeof window.renderRedditHistoryTab === 'function') window.renderRedditHistoryTab();
         if (typeof window.updateForumRealStats === 'function') window.updateForumRealStats();
+      }
+
+      if (mediaRefsToResolve.length > 0) {
+        mediaRefsToResolve.forEach(function (job) {
+          var lockKey = 'post_' + job.postId + '_' + job.field + '_' + job.ref;
+          if (_resolvingMediaRefs[lockKey]) return;
+          _resolvingMediaRefs[lockKey] = true;
+          downloadStringFromCloudChunks(job.ref).then(function (resolvedData) {
+            delete _resolvingMediaRefs[lockKey];
+            if (!resolvedData) return;
+            try {
+              var curRaw = localStorage.getItem(STORAGE_KEYS.FORUM_POSTS) || localStorage.getItem(STORAGE_KEYS.FORUM_POSTS_ALT);
+              var arr = JSON.parse(curRaw || '[]') || [];
+              var updatedAny = false;
+              arr.forEach(function (p) {
+                if (p && String(p.id) === job.postId) {
+                  if (job.field === 'image') {
+                    p.imageChunkRef = job.ref;
+                    p.image = resolvedData;
+                    updatedAny = true;
+                  } else if (job.field === 'attachment' && p.attachment) {
+                    p.attachment.dataChunkRef = job.ref;
+                    p.attachment.dataUrl = resolvedData;
+                    updatedAny = true;
+                  }
+                }
+              });
+              if (updatedAny) {
+                localStorage.setItem(STORAGE_KEYS.FORUM_POSTS, JSON.stringify(arr));
+                localStorage.setItem(STORAGE_KEYS.FORUM_POSTS_ALT, JSON.stringify(arr));
+                if (typeof window.renderRedditFeed === 'function') window.renderRedditFeed();
+              }
+            } catch (eHydrate) {}
+          });
+        });
       }
     }
 
@@ -1106,26 +1481,68 @@
       }
     }
 
-    // G. Cập nhật Video Hướng Dẫn Nhạc Cụ (HDNC Videos)
-    if (Array.isArray(payload.hdnc_videos)) {
-      var localVideosRaw = localStorage.getItem('dan_tranh_hdnc_videos_v1');
-      var localVideos = [];
-      try { localVideos = JSON.parse(localVideosRaw) || []; } catch (e) {}
-      var vidMap = {};
-      localVideos.forEach(function (v) { if (v && v.id) vidMap[v.id] = v; });
-      var vidChanged = false;
+    // G. Cập nhật Video Hướng Dẫn Nhạc Cụ (HDNC Videos & Deleted IDs)
+    var hdncDeletedIds = [];
+    try { hdncDeletedIds = JSON.parse(localStorage.getItem(STORAGE_KEYS.HDNC_DELETED) || '[]') || []; } catch (e) {}
+    if (Array.isArray(payload.hdnc_deleted_ids) && payload.hdnc_deleted_ids.length) {
+      var hdncDelChanged = false;
+      payload.hdnc_deleted_ids.forEach(function (did) {
+        if (did && hdncDeletedIds.indexOf(did) === -1) {
+          hdncDeletedIds.push(did);
+          hdncDelChanged = true;
+        }
+      });
+      if (hdncDelChanged) {
+        try { localStorage.setItem(STORAGE_KEYS.HDNC_DELETED, JSON.stringify(hdncDeletedIds)); } catch (e) {}
+        changed = true;
+      }
+    }
+    var hdncDelSet = {};
+    hdncDeletedIds.forEach(function (did) { if (did) hdncDelSet[String(did)] = true; });
 
-      payload.hdnc_videos.forEach(function (cloudV) {
-        if (!cloudV || !cloudV.id) return;
-        if (!vidMap[cloudV.id] || JSON.stringify(vidMap[cloudV.id]) !== JSON.stringify(cloudV)) {
-          vidMap[cloudV.id] = cloudV;
-          vidChanged = true;
+    if (Array.isArray(payload.hdnc_videos)) {
+      var rawLocalVideos = [];
+      try { rawLocalVideos = JSON.parse(localStorage.getItem(STORAGE_KEYS.HDNC_VIDEOS) || '[]') || []; } catch (e) {}
+      if (!Array.isArray(rawLocalVideos)) rawLocalVideos = [];
+
+      var localMap = {};
+      rawLocalVideos.forEach(function (v) {
+        if (v && v.id && !v.isPreset && !hdncDelSet[String(v.id)]) {
+          localMap[v.id] = v;
         }
       });
 
-      if (vidChanged) {
-        var mergedVids = Object.values(vidMap);
-        localStorage.setItem('dan_tranh_hdnc_videos_v1', JSON.stringify(mergedVids));
+      var mergedVidMap = {};
+      var thumbRefsToResolve = [];
+
+      payload.hdnc_videos.forEach(function (cloudV) {
+        if (!cloudV || !cloudV.id || cloudV.isPreset || hdncDelSet[String(cloudV.id)]) return;
+        var prev = localMap[cloudV.id];
+        var nextItem = Object.assign({}, cloudV, { isPreset: false, cloudSynced: true });
+        if (prev && prev.thumbnailUrl && !nextItem.thumbnailUrl) {
+          nextItem.thumbnailUrl = prev.thumbnailUrl;
+        }
+        mergedVidMap[nextItem.id] = nextItem;
+        if (!nextItem.thumbnailUrl && nextItem.thumbnailChunkRef && String(nextItem.thumbnailChunkRef).indexOf('extchunks://') === 0) {
+          thumbRefsToResolve.push({ id: nextItem.id, ref: nextItem.thumbnailChunkRef });
+        }
+      });
+
+      // Giữ lại các video mới tải cục bộ chưa kịp đẩy lên Cloud (chưa có cờ cloudSynced)
+      Object.keys(localMap).forEach(function (lid) {
+        if (!mergedVidMap[lid] && !localMap[lid].cloudSynced) {
+          mergedVidMap[lid] = localMap[lid];
+        }
+      });
+
+      var mergedVids = Object.values(mergedVidMap);
+      var cleanLocalVids = Object.values(localMap);
+      var needsSave = (JSON.stringify(cleanLocalVids) !== JSON.stringify(mergedVids)) || (rawLocalVideos.length !== cleanLocalVids.length);
+
+      if (needsSave) {
+        try {
+          localStorage.setItem(STORAGE_KEYS.HDNC_VIDEOS, JSON.stringify(mergedVids));
+        } catch (e) {}
         changed = true;
         if (window.DanTranhAdminVideos && typeof window.DanTranhAdminVideos.renderAdminVideoTable === 'function') {
           window.DanTranhAdminVideos.renderAdminVideoTable();
@@ -1133,6 +1550,37 @@
         if (window.DanTranhVideoHdnc && typeof window.DanTranhVideoHdnc.renderGrid === 'function') {
           window.DanTranhVideoHdnc.renderGrid();
         }
+      }
+
+      if (thumbRefsToResolve.length > 0) {
+        thumbRefsToResolve.forEach(function (job) {
+          var lockKey = 'vthumb_' + job.id + '_' + job.ref;
+          if (_resolvingMediaRefs[lockKey]) return;
+          _resolvingMediaRefs[lockKey] = true;
+          downloadStringFromCloudChunks(job.ref).then(function (dataUrl) {
+            delete _resolvingMediaRefs[lockKey];
+            if (!dataUrl) return;
+            try {
+              var arr = JSON.parse(localStorage.getItem(STORAGE_KEYS.HDNC_VIDEOS) || '[]') || [];
+              var updatedAny = false;
+              arr.forEach(function (v) {
+                if (v && v.id === job.id && !v.thumbnailUrl) {
+                  v.thumbnailUrl = dataUrl;
+                  updatedAny = true;
+                }
+              });
+              if (updatedAny) {
+                localStorage.setItem(STORAGE_KEYS.HDNC_VIDEOS, JSON.stringify(arr));
+                if (window.DanTranhAdminVideos && typeof window.DanTranhAdminVideos.renderAdminVideoTable === 'function') {
+                  window.DanTranhAdminVideos.renderAdminVideoTable();
+                }
+                if (window.DanTranhVideoHdnc && typeof window.DanTranhVideoHdnc.renderGrid === 'function') {
+                  window.DanTranhVideoHdnc.renderGrid();
+                }
+              }
+            } catch (eThumb) {}
+          });
+        });
       }
     }
 
@@ -1145,93 +1593,313 @@
 
   // Đẩy thông báo lên Cloud
   function syncAnnouncementsToCloud(announcementsList) {
-    pushPartialToCloud({ announcements: announcementsList, updatedAt: Date.now() });
+    return pushPartialToCloud({ announcements: announcementsList, updatedAt: Date.now() });
   }
 
   // Đẩy trạng thái đọc lên Cloud
   function syncReadsToCloud(username, readList) {
     var readsMap = getStoredReadsMap();
     readsMap[username] = readList;
-    pushPartialToCloud({ announcement_reads: readsMap, updatedAt: Date.now() });
+    return pushPartialToCloud({ announcement_reads: readsMap, updatedAt: Date.now() });
   }
 
   // Đẩy hòm thư Admin (reports) lên Cloud
   function syncReportsToCloud(reportsList) {
-    pushPartialToCloud({ reports: reportsList, updatedAt: Date.now() });
+    return pushPartialToCloud({ reports: reportsList, updatedAt: Date.now() });
   }
 
-  // Đẩy danh sách video hướng dẫn lên Cloud
+  // Đẩy danh sách video hướng dẫn lên Cloud (tách thumbnail lớn sang child bin để không vượt 32KB)
   function syncHdncVideosToCloud(videosList) {
-    if (!Array.isArray(videosList)) return;
-    pushPartialToCloud({ hdnc_videos: videosList, updatedAt: Date.now() });
-    broadcastSyncMessage({ type: 'HDNC_VIDEOS_UPDATED', timestamp: Date.now() });
+    if (!Array.isArray(videosList)) return Promise.resolve({ ok: false, error: 'Invalid list' });
+
+    var deletedIds = [];
+    try { deletedIds = JSON.parse(localStorage.getItem(STORAGE_KEYS.HDNC_DELETED) || '[]') || []; } catch (e) {}
+    var delSet = {};
+    deletedIds.forEach(function (d) { if (d) delSet[String(d)] = true; });
+
+    var activeVideos = videosList.filter(function (v) {
+      return v && v.id && !v.isPreset && !delSet[String(v.id)];
+    });
+
+    var chunkTasks = activeVideos.map(function (v) {
+      var clone = Object.assign({}, v, { isPreset: false, cloudSynced: true });
+      var thumb = clone.thumbnailUrl || '';
+      var isHttpUrl = thumb.indexOf('http://') === 0 || thumb.indexOf('https://') === 0;
+
+      if (thumb && !isHttpUrl && thumb.length > 3500) {
+        if (clone.thumbnailChunkRef && String(clone.thumbnailChunkRef).indexOf('extchunks://') === 0) {
+          clone.thumbnailUrl = '';
+          return Promise.resolve(clone);
+        }
+        return uploadStringToCloudChunks(thumb).then(function (ref) {
+          if (ref) {
+            clone.thumbnailChunkRef = ref;
+            v.thumbnailChunkRef = ref;
+          }
+          clone.thumbnailUrl = '';
+          return clone;
+        });
+      }
+      return Promise.resolve(clone);
+    });
+
+    return Promise.all(chunkTasks).then(function (cloudClones) {
+      return pushPartialToCloud({
+        hdnc_videos: cloudClones,
+        hdnc_deleted_ids: deletedIds.slice(-100),
+        updatedAt: Date.now()
+      }).then(function (res) {
+        if (res && res.ok) {
+          try {
+            var curLocal = JSON.parse(localStorage.getItem(STORAGE_KEYS.HDNC_VIDEOS) || '[]') || [];
+            var cloneMap = {};
+            cloudClones.forEach(function (c) { cloneMap[c.id] = c; });
+            curLocal.forEach(function (lv) {
+              if (lv && cloneMap[lv.id]) {
+                lv.cloudSynced = true;
+                if (cloneMap[lv.id].thumbnailChunkRef) {
+                  lv.thumbnailChunkRef = cloneMap[lv.id].thumbnailChunkRef;
+                }
+              }
+            });
+            localStorage.setItem(STORAGE_KEYS.HDNC_VIDEOS, JSON.stringify(curLocal));
+          } catch (eMark) {}
+        }
+        broadcastSyncMessage({ type: 'HDNC_VIDEOS_UPDATED', timestamp: Date.now() });
+        return res;
+      });
+    });
   }
 
-  // Đẩy bài viết diễn đàn lên Cloud
+  // Đẩy bài viết diễn đàn lên Cloud (chỉ bài người dùng tạo / tương tác thật + tách ảnh/tệp lớn sang child bin)
   function syncForumPostsToCloud(postsList) {
-    if (!Array.isArray(postsList)) return;
-    // Lọc các bài viết người dùng tạo hoặc có tương tác để payload gọn nhẹ và đồng bộ tức thì
-    var userPosts = postsList.filter(function (p) {
-      if (!p) return false;
-      return p.isUserCreated || !String(p.id).startsWith('post_seed_') || (Array.isArray(p.comments) && p.comments.length > 0) || (p.upvotes && p.upvotes > 0);
+    if (!Array.isArray(postsList)) return Promise.resolve({ ok: false, error: 'Invalid posts' });
+
+    var deletedIds = [];
+    try { deletedIds = JSON.parse(localStorage.getItem(STORAGE_KEYS.FORUM_DELETED) || '[]') || []; } catch (e) {}
+    var bannedUsers = [];
+    try { bannedUsers = JSON.parse(localStorage.getItem(STORAGE_KEYS.FORUM_BANNED) || '[]') || []; } catch (e) {}
+
+    var realPosts = postsList.filter(function (p) {
+      if (!p || !p.id) return false;
+      var idStr = String(p.id);
+      if (idStr.indexOf('post_seed_') !== 0 || p.isUserCreated) return true;
+      var hasUserComment = Array.isArray(p.comments) && p.comments.some(function (c) {
+        return c && String(c.id || '').indexOf('cmt_') === 0;
+      });
+      return hasUserComment || (p.myVote !== undefined && p.myVote !== 0);
     });
-    var toSync = userPosts.length > 0 ? userPosts : postsList.slice(0, 10);
-    pushPartialToCloud({ forum_posts: toSync, updatedAt: Date.now() });
-    broadcastSyncMessage({ type: 'FORUM_POSTS_UPDATED', timestamp: Date.now() });
+
+    var offloadTasks = realPosts.map(function (p) {
+      var clone = Object.assign({}, p);
+      if (p.attachment) clone.attachment = Object.assign({}, p.attachment);
+      var subTasks = [];
+
+      if (clone.image && String(clone.image).length > 3500 && String(clone.image).indexOf('extchunks://') !== 0) {
+        if (clone.imageChunkRef && String(clone.imageChunkRef).indexOf('extchunks://') === 0) {
+          clone.image = clone.imageChunkRef;
+        } else {
+          subTasks.push(
+            uploadStringToCloudChunks(clone.image).then(function (ref) {
+              if (ref) {
+                clone.imageChunkRef = ref;
+                clone.image = ref;
+                p.imageChunkRef = ref;
+              } else {
+                clone.image = null;
+              }
+            })
+          );
+        }
+      }
+
+      if (clone.attachment && clone.attachment.dataUrl && String(clone.attachment.dataUrl).length > 3500 && String(clone.attachment.dataUrl).indexOf('extchunks://') !== 0) {
+        if (clone.attachment.dataChunkRef && String(clone.attachment.dataChunkRef).indexOf('extchunks://') === 0) {
+          clone.attachment.dataUrl = clone.attachment.dataChunkRef;
+        } else {
+          subTasks.push(
+            uploadStringToCloudChunks(clone.attachment.dataUrl).then(function (ref) {
+              if (ref) {
+                clone.attachment.dataChunkRef = ref;
+                clone.attachment.dataUrl = ref;
+                if (p.attachment) p.attachment.dataChunkRef = ref;
+              } else {
+                clone.attachment.dataUrl = '';
+              }
+            })
+          );
+        }
+      }
+
+      return Promise.all(subTasks).then(function () { return clone; });
+    });
+
+    return Promise.all(offloadTasks).then(function (sanitizedPosts) {
+      var resPromise = pushPartialToCloud({
+        forum_posts: sanitizedPosts,
+        forum_deleted_ids: deletedIds.slice(-150),
+        forum_banned_users: bannedUsers,
+        updatedAt: Date.now()
+      });
+      broadcastSyncMessage({ type: 'FORUM_POSTS_UPDATED', timestamp: Date.now() });
+      return resPromise;
+    });
   }
 
   // Đẩy danh sách người dùng đăng ký lên Cloud
   function syncUsersToCloud(usersList) {
-    pushPartialToCloud({ users: usersList, updatedAt: Date.now() });
+    return pushPartialToCloud({ users: usersList, updatedAt: Date.now() });
   }
 
   // Đẩy cấu hình âm thanh lên Cloud
   function syncAudioConfigToCloud(audioConfig) {
-    pushPartialToCloud({ server_audio: audioConfig, updatedAt: Date.now() });
+    return pushPartialToCloud({ server_audio: audioConfig, updatedAt: Date.now() });
   }
 
-  // Đẩy một phần dữ liệu lên Cloud qua PATCH hoặc PUT
+  // Đẩy một phần dữ liệu lên Cloud qua PATCH (kèm GET + merge + PUT fallback an toàn, không ghi đè mất dữ liệu)
   function pushPartialToCloud(partialData) {
     var cfg = getCloudConfig();
+
+    // Thông báo tức thì qua BroadcastChannel tới các Tab/Cửa sổ khác cùng trình duyệt
+    broadcastSyncMessage({ type: 'CLOUD_PUSH', data: partialData, timestamp: Date.now() });
 
     // 1. Firebase
     if (cfg.firebaseDbUrl && window.firebase && window.firebase.database) {
       try {
         window.firebase.database().ref('dan_tranh_cloud').update(partialData);
-      } catch (e) {}
-      return;
+        return Promise.resolve({ ok: true, provider: 'firebase' });
+      } catch (e) {
+        return Promise.resolve({ ok: false, error: e && e.message });
+      }
     }
 
     // 2. Supabase
     if (cfg.supabaseUrl && cfg.supabaseAnonKey && window.supabase) {
       try {
         var client = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
-        client.from('dan_tranh_cloud').upsert([Object.assign({ id: 1 }, partialData)]);
-      } catch (e) {}
-      return;
+        return client.from('dan_tranh_cloud').upsert([Object.assign({ id: 1 }, partialData)]).then(function (res) {
+          return { ok: !res.error, error: res.error && res.error.message };
+        });
+      } catch (e) {
+        return Promise.resolve({ ok: false, error: e && e.message });
+      }
     }
 
     // 3. Relay Endpoint tự động (ExtendsClass JSON Storage)
     var endpoint = cfg.relayEndpoint || DEFAULT_RELAY_ENDPOINT;
     if (endpoint) {
+      var payloadStr = '';
       try {
-        fetch(endpoint, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(partialData)
-        }).catch(function () {
-          // Thử lại bằng POST / PUT nếu PATCH không khả dụng
-          fetch(endpoint, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(partialData)
-          }).catch(function () {});
+        payloadStr = JSON.stringify(partialData);
+      } catch (eSer) {
+        return Promise.resolve({ ok: false, error: 'Serialize error' });
+      }
+
+      return fetch(endpoint, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/merge-patch+json' },
+        body: payloadStr
+      })
+        .then(function (res) {
+          if (res.ok) {
+            return res.text().then(function (txt) {
+              var parsed = extractCleanJson(txt);
+              if (parsed && typeof parsed.status === 'number' && parsed.status !== 0) {
+                throw new Error('Relay returned status ' + parsed.status);
+              }
+              _cloudHealth.lastOkAt = Date.now();
+              _cloudHealth.lastError = null;
+              return { ok: true, status: res.status };
+            });
+          }
+          if (res.status === 413) {
+            var msg413 = 'HTTP 413 Payload Too Large (' + payloadStr.length + ' bytes)';
+            _cloudHealth.lastError = msg413;
+            _cloudHealth.lastErrorAt = Date.now();
+            console.warn('[CloudSync]', msg413);
+            return { ok: false, status: 413, error: msg413 };
+          }
+          // Fallback: GET bản mới nhất -> merge -> PUT (không bao giờ ghi đè bằng partialData đơn lẻ)
+          var sep = endpoint.indexOf('?') === -1 ? '?' : '&';
+          return fetch(endpoint + sep + '_t=' + Date.now(), { method: 'GET', cache: 'no-store' })
+            .then(function (r) { return r.ok ? r.text() : ''; })
+            .then(function (raw) {
+              var existing = extractCleanJson(raw);
+              if (existing && existing.data && typeof existing.data === 'string') {
+                existing = extractCleanJson(existing.data) || existing;
+              }
+              var merged = Object.assign({}, (existing && typeof existing === 'object') ? existing : {}, partialData);
+              return fetch(endpoint, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(merged)
+              }).then(function (putRes) {
+                if (!putRes.ok) throw new Error('HTTP ' + putRes.status);
+                _cloudHealth.lastOkAt = Date.now();
+                _cloudHealth.lastError = null;
+                return { ok: true, status: putRes.status };
+              });
+            });
+        })
+        .catch(function (err) {
+          var errMsg = (err && err.message) ? err.message : 'Lỗi kết nối máy chủ Cloud Relay';
+          _cloudHealth.lastError = errMsg;
+          _cloudHealth.lastErrorAt = Date.now();
+          console.warn('[CloudSync] pushPartialToCloud failed:', errMsg);
+          return { ok: false, error: errMsg };
         });
-      } catch (e) {}
     }
 
-    // Thông báo tức thì qua BroadcastChannel tới các Tab/Cửa sổ khác cùng trình duyệt
-    broadcastSyncMessage({ type: 'CLOUD_PUSH', data: partialData, timestamp: Date.now() });
+    return Promise.resolve({ ok: false, error: 'Chưa cấu hình Cloud Relay' });
+  }
+
+  function pushAllLocalDataToCloud() {
+    var videosList = [];
+    try {
+      var vRaw = JSON.parse(localStorage.getItem(STORAGE_KEYS.HDNC_VIDEOS) || '[]') || [];
+      if (Array.isArray(vRaw)) videosList = vRaw.filter(function (v) { return v && !v.isPreset; });
+    } catch (e) {}
+
+    var postsList = [];
+    try {
+      var pRaw = JSON.parse(localStorage.getItem(STORAGE_KEYS.FORUM_POSTS) || localStorage.getItem(STORAGE_KEYS.FORUM_POSTS_ALT) || '[]') || [];
+      if (Array.isArray(pRaw)) postsList = pRaw;
+    } catch (e) {}
+
+    var usersList = null;
+    try {
+      var uRaw = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS) || 'null');
+      if (Array.isArray(uRaw) && uRaw.length > 0) usersList = uRaw;
+    } catch (e) {}
+
+    var annList = getStoredAnnouncements();
+    var chain = Promise.resolve({ ok: true });
+
+    chain = chain.then(function (prev) {
+      return syncHdncVideosToCloud(videosList).then(function (r) {
+        return { ok: prev.ok && (!r || r.ok !== false), videoRes: r };
+      });
+    });
+
+    chain = chain.then(function (prev) {
+      return syncForumPostsToCloud(postsList).then(function (r) {
+        return { ok: prev.ok && (!r || r.ok !== false), videoRes: prev.videoRes, forumRes: r };
+      });
+    });
+
+    chain = chain.then(function (prev) {
+      var basePatch = { announcements: annList, updatedAt: Date.now() };
+      if (usersList) basePatch.users = usersList;
+      return pushPartialToCloud(basePatch).then(function (r) {
+        return { ok: prev.ok && (!r || r.ok !== false), videoRes: prev.videoRes, forumRes: prev.forumRes, baseRes: r };
+      });
+    });
+
+    return chain;
+  }
+
+  function getCloudHealth() {
+    return Object.assign({}, _cloudHealth);
   }
 
   // ============================================================================
@@ -1291,6 +1959,12 @@
     saveCloudConfig: saveCloudConfig,
     startSyncTicker: startPeriodicSyncTicker,
     triggerSyncNow: triggerCloudHeartbeatSync,
+    pushAllLocalDataToCloud: pushAllLocalDataToCloud,
+    getCloudHealth: getCloudHealth,
+    uploadStringToCloudChunks: uploadStringToCloudChunks,
+    downloadStringFromCloudChunks: downloadStringFromCloudChunks,
+    uploadBlobToCloudChunks: uploadBlobToCloudChunks,
+    downloadBlobFromCloudChunks: downloadBlobFromCloudChunks,
     getCurrentUsername: getCurrentUsername
   };
 
